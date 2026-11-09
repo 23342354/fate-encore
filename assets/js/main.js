@@ -188,46 +188,94 @@
   window.setTimeout(() => speak(opening), reduce ? 100 : 1500);
 
   /* ── 3-b. 스테이터스 패널 ───────────────────────────── */
-  const pf       = $('#profile');
-  const pfPanel  = $('.profile__panel');
-  const pfClose  = $('#pfClose');
-  const pfScrim  = $('#pfScrim');
-  const pfStats  = $('#pfStats');
-  const pfGlyph  = $('#pfGlyph');
+  const pf      = $('#profile');
+  const pfPanel = $('.profile__panel');
+  const pfClose = $('#pfClose');
+  const pfScrim = $('#pfScrim');
+  const CAST    = window.CAST || {};
 
   const STATS = [
-    ['근력', 'str'], ['내구', 'end'], ['민첩', 'agi'],
-    ['마력', 'mgi'], ['행운', 'lck'], ['보구', 'np'],
+    ['근력','str'], ['내구','end'], ['민첩','agi'],
+    ['마력','mgi'], ['행운','lck'], ['보구','np'],
   ];
+  const TABS = [
+    ['#tabStatus', '#paneStatus'],
+    ['#tabSkill',  '#paneSkill'],
+    ['#tabNp',     '#paneNp'],
+  ].map(([t, p]) => ({ tab: $(t), pane: $(p) }));
 
   let pfIndex = -1;
   let lastFocus = null;
 
-  const dash = v => (v && v.trim()) ? v : '—';
+  const dash = v => (v && String(v).trim()) ? String(v) : '—';
+  const esc  = s => s.replace(/[&<>"]/g, c =>
+    ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+
+  // 「 『 “ 로 시작하는 문단은 대사체로
+  const prose = paras => (paras && paras.length)
+    ? paras.map(p => {
+        const quote = /^[「『“"']/.test(p.trim());
+        return `<p class="${quote ? 'is-line' : ''}">${esc(p)}</p>`;
+      }).join('')
+    : '<p class="is-empty">—</p>';
+
+  function showTab(i) {
+    TABS.forEach((t, n) => {
+      const on = n === i;
+      t.tab.setAttribute('aria-selected', String(on));
+      t.tab.tabIndex = on ? 0 : -1;
+      t.pane.hidden = !on;
+    });
+  }
+  function currentTab() {
+    return TABS.findIndex(t => t.tab.getAttribute('aria-selected') === 'true');
+  }
+  function stepTab(delta) {
+    const next = (currentTab() + delta + TABS.length) % TABS.length;
+    showTab(next);
+    TABS[next].tab.focus();
+  }
+  TABS.forEach((t, i) => t.tab.addEventListener('click', () => showTab(i)));
 
   function fillProfile(index) {
     const item = lines[index];
     if (!item) return;
     pfIndex = index;
     const d = item.el.dataset;
+    const c = CAST[d.name] || {};
+    const s = c.stats || {};
 
-    pfGlyph.innerHTML = item.el.querySelector('.portrait__glyph').innerHTML;
+    $('#pfGlyph').innerHTML    = item.el.querySelector('.portrait__glyph').innerHTML;
     $('#pfClass').textContent  = d.class;
     $('#pfName').textContent   = d.name;
     $('#pfMaster').textContent = dash(d.master);
-    $('#pfGender').textContent = dash(d.gender);
-    $('#pfAlign').textContent  = dash(d.alignment);
-    $('#pfSize').textContent   = `${dash(d.height)} / ${dash(d.weight)}`;
-    $('#pfNpName').textContent = dash(d.npName);
-    $('#pfBio').textContent    = dash(d.bio);
+    $('#pfGender').textContent = dash(c.gender);
+    $('#pfAlign').textContent  = dash(c.alignment);
+    $('#pfSize').textContent   = `${dash(c.height)} / ${dash(c.weight)}`;
     $('#pfQuote').textContent  = `「${d.line}」`;
+    $('#pfBio').innerHTML      = prose(c.bio);
 
-    pfStats.innerHTML = STATS.map(([label, key]) =>
+    $('#pfStats').innerHTML = STATS.map(([label, key]) =>
       `<li><span class="profile__stat-label">${label}</span>` +
-      `<span class="profile__stat-rank">${dash(d[key])}</span></li>`
+      `<span class="profile__stat-rank">${esc(dash(s[key]))}</span></li>`
     ).join('');
 
+    $('#pfNpName').textContent = dash(c.npName);
+    $('#pfNpRank').textContent = dash(s.np);
+    $('#pfNpText').innerHTML   = prose(c.np);
+
+    $('#pfSkills').innerHTML = (c.skills && c.skills.length)
+      ? c.skills.map(sk => `<li class="skill">
+          <p class="skill__kind">${esc(sk.kind)}</p>
+          <p class="skill__name">${esc(sk.name)}<span class="skill__rank">${esc(sk.rank)}</span></p>
+          ${sk.title ? `<p class="skill__title">${esc(sk.title)}</p>` : ''}
+          <div class="profile__prose">${prose(sk.text)}</div>
+        </li>`).join('')
+      : '<li class="skill"><p class="is-empty">—</p></li>';
+
     $('#pfCount').textContent = `${index + 1} / ${lines.length}`;
+    showTab(0);
+    pfPanel.scrollTop = 0;
   }
 
   function openProfile(index) {
@@ -237,31 +285,31 @@
     document.body.style.overflow = 'hidden';
     pfClose.focus();
   }
-
   function closeProfile() {
     pf.hidden = true;
     document.body.style.overflow = '';
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
-
   function stepProfile(delta) {
     const next = (pfIndex + delta + lines.length) % lines.length;
     fillProfile(next);
     speak(next);
   }
 
-  pfClose && pfClose.addEventListener('click', closeProfile);
-  pfScrim && pfScrim.addEventListener('click', closeProfile);
+  pfClose.addEventListener('click', closeProfile);
+  pfScrim.addEventListener('click', closeProfile);
   $('#pfPrev').addEventListener('click', () => stepProfile(-1));
   $('#pfNext').addEventListener('click', () => stepProfile(1));
 
   document.addEventListener('keydown', e => {
     if (pf.hidden) return;
-    if (e.key === 'Escape')     { e.stopPropagation(); closeProfile(); }
-    if (e.key === 'ArrowLeft')  stepProfile(-1);
-    if (e.key === 'ArrowRight') stepProfile(1);
+    if (e.key === 'Escape') { closeProfile(); return; }
+    const inTabs = e.target.closest && e.target.closest('.profile__tabs');
+    if (e.key === 'ArrowLeft')  inTabs ? stepTab(-1) : stepProfile(-1);
+    if (e.key === 'ArrowRight') inTabs ? stepTab(1)  : stepProfile(1);
     if (e.key === 'Tab') {
-      const f = pfPanel.querySelectorAll('button');
+      const f = Array.from(pfPanel.querySelectorAll('button'))
+        .filter(b => b.tabIndex !== -1);
       const first = f[0], last = f[f.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }

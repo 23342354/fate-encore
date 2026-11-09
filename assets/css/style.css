@@ -551,7 +551,7 @@ a{color:var(--gold-lit)}
 }
 .profile__panel{
   position:relative;z-index:1;
-  width:min(54rem,100%);max-height:90vh;overflow-y:auto;
+  width:min(58rem,100%);max-height:90vh;overflow-y:auto;
   display:grid;grid-template-columns:minmax(0,12.5rem) minmax(0,1fr);
   gap:clamp(1.4rem,3vw,2.6rem);
   padding:clamp(1.5rem,3.5vw,2.6rem);
@@ -638,4 +638,51 @@ a{color:var(--gold-lit)}
   .profile__portrait{max-width:11rem;margin:0 auto}
   .profile__stats{grid-template-columns:repeat(2,1fr)}
   .profile__meta > div{grid-template-columns:5rem minmax(0,1fr);gap:.7rem}
+}
+
+/* ─────────── 스테이터스 탭 ─────────── */
+.profile__tabs{
+  display:flex;gap:.3rem;margin:0 0 1.4rem;
+  border-bottom:1px solid rgba(201,162,39,.28);
+}
+.profile__tab{
+  padding:.55rem 1.1rem;cursor:pointer;
+  font-family:var(--serif);font-size:.95rem;letter-spacing:.06em;
+  color:var(--text-dim);background:transparent;border:0;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .25s ease,border-color .25s ease;
+}
+.profile__tab:hover{color:var(--gold-lit)}
+.profile__tab[aria-selected="true"]{color:var(--ivory);border-bottom-color:var(--gold)}
+.profile__pane:focus-visible{outline:2px solid var(--gold-lit);outline-offset:4px}
+
+.profile__prose p{
+  font-family:var(--sans);font-size:.95rem;line-height:1.85;
+  letter-spacing:-.004em;color:var(--text);margin:0 0 .75rem;
+}
+.profile__prose p:last-child{margin-bottom:0}
+.profile__prose .is-line{
+  color:var(--blush);font-family:var(--serif);font-size:.99rem;
+  letter-spacing:0;padding-left:.9rem;
+  border-left:1px solid rgba(201,162,39,.45);
+}
+.is-empty{color:var(--text-dim)}
+
+.skills{list-style:none;margin:0;padding:0;display:grid;gap:1.9rem}
+.skill{padding-top:1.3rem;border-top:1px solid rgba(201,162,39,.22)}
+.skill:first-child{padding-top:0;border-top:0}
+.skill__kind{
+  font-size:.8rem;letter-spacing:.14em;color:var(--gold);margin:0 0 .35rem;
+}
+.skill__name{
+  display:flex;align-items:baseline;gap:.7rem;
+  font-size:1.15rem;font-weight:700;color:var(--ivory);
+  margin:0 0 .25rem;letter-spacing:.03em;
+}
+.skill__rank{
+  font-family:var(--display);font-size:1.3rem;font-weight:400;
+  color:var(--gold-lit);letter-spacing:.04em;
+}
+.skill__title{
+  font-size:.92rem;color:var(--blush);margin:0 0 .8rem;letter-spacing:.02em;
 }
