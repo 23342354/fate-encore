@@ -151,7 +151,7 @@
   }
 
   portraits.forEach((p, i) => {
-    p.addEventListener('click', () => { setAuto(false); speak(i); });
+    p.addEventListener('click', () => { setAuto(false); speak(i); openProfile(i); });
   });
 
   vnBox && vnBox.addEventListener('click', e => {
@@ -186,6 +186,87 @@
 
   // 막이 오른 뒤 첫 대사
   window.setTimeout(() => speak(opening), reduce ? 100 : 1500);
+
+  /* ── 3-b. 스테이터스 패널 ───────────────────────────── */
+  const pf       = $('#profile');
+  const pfPanel  = $('.profile__panel');
+  const pfClose  = $('#pfClose');
+  const pfScrim  = $('#pfScrim');
+  const pfStats  = $('#pfStats');
+  const pfGlyph  = $('#pfGlyph');
+
+  const STATS = [
+    ['근력', 'str'], ['내구', 'end'], ['민첩', 'agi'],
+    ['마력', 'mgi'], ['행운', 'lck'], ['보구', 'np'],
+  ];
+
+  let pfIndex = -1;
+  let lastFocus = null;
+
+  const dash = v => (v && v.trim()) ? v : '—';
+
+  function fillProfile(index) {
+    const item = lines[index];
+    if (!item) return;
+    pfIndex = index;
+    const d = item.el.dataset;
+
+    pfGlyph.innerHTML = item.el.querySelector('.portrait__glyph').innerHTML;
+    $('#pfClass').textContent  = d.class;
+    $('#pfName').textContent   = d.name;
+    $('#pfMaster').textContent = dash(d.master);
+    $('#pfGender').textContent = dash(d.gender);
+    $('#pfAlign').textContent  = dash(d.alignment);
+    $('#pfSize').textContent   = `${dash(d.height)} / ${dash(d.weight)}`;
+    $('#pfNpName').textContent = dash(d.npName);
+    $('#pfBio').textContent    = dash(d.bio);
+    $('#pfQuote').textContent  = `「${d.line}」`;
+
+    pfStats.innerHTML = STATS.map(([label, key]) =>
+      `<li><span class="profile__stat-label">${label}</span>` +
+      `<span class="profile__stat-rank">${dash(d[key])}</span></li>`
+    ).join('');
+
+    $('#pfCount').textContent = `${index + 1} / ${lines.length}`;
+  }
+
+  function openProfile(index) {
+    lastFocus = document.activeElement;
+    fillProfile(index);
+    pf.hidden = false;
+    document.body.style.overflow = 'hidden';
+    pfClose.focus();
+  }
+
+  function closeProfile() {
+    pf.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function stepProfile(delta) {
+    const next = (pfIndex + delta + lines.length) % lines.length;
+    fillProfile(next);
+    speak(next);
+  }
+
+  pfClose && pfClose.addEventListener('click', closeProfile);
+  pfScrim && pfScrim.addEventListener('click', closeProfile);
+  $('#pfPrev').addEventListener('click', () => stepProfile(-1));
+  $('#pfNext').addEventListener('click', () => stepProfile(1));
+
+  document.addEventListener('keydown', e => {
+    if (pf.hidden) return;
+    if (e.key === 'Escape')     { e.stopPropagation(); closeProfile(); }
+    if (e.key === 'ArrowLeft')  stepProfile(-1);
+    if (e.key === 'ArrowRight') stepProfile(1);
+    if (e.key === 'Tab') {
+      const f = pfPanel.querySelectorAll('button');
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
 
   /* ── 4. 상단 바 ─────────────────────────────────────── */
   const topbar = $('#topbar');
