@@ -54,6 +54,8 @@
   --main:'IbmPlexSans','IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif;
   --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   --display:"Italiana",'IbmPlexSans',sans-serif;
+  /* 제호 — 타임스 뉴 로만, 없으면 자폭이 같은 Tinos */
+  --title:'Times New Roman','Tinos',Times,'Liberation Serif',serif;
 
   /* 리듬 */
   --measure:34rem;
@@ -151,8 +153,10 @@ a{color:var(--gold-lit)}
 }
 .topbar__mark{text-decoration:none}
 .topbar__mark-latin{
-  font-family:var(--display);font-size:1.3rem;letter-spacing:.14em;
+  display:inline-block;
+  font-family:var(--title);font-size:1.45rem;letter-spacing:.1em;
   color:var(--gold-lit);
+  transform:scaleX(.86);transform-origin:left center;
 }
 .topbar__nav{display:flex;gap:clamp(.9rem,2.5vw,2rem)}
 .topbar__nav a{
@@ -196,18 +200,22 @@ a{color:var(--gold-lit)}
   opacity:.85;
 }
 
-.hero__plate{position:relative;z-index:2;max-width:46rem}
+.hero__plate{position:relative;z-index:2;max-width:58rem}
 .hero__title{
-  font-family:var(--display);font-weight:400;
-  font-size:clamp(3rem,11.5vw,8.5rem);
-  line-height:.98;letter-spacing:.04em;margin:0 0 1.2rem;
+  display:inline-block;
+  font-family:var(--title);font-weight:400;
+  font-size:clamp(2.6rem,15vw,9.5rem);
+  line-height:1.06;letter-spacing:.05em;margin:0 0 1.2rem;
+  white-space:nowrap;
+  transform:scaleX(.86);
+  font-synthesis:none;
   background:linear-gradient(176deg,#FFF6DF 6%,var(--gold-lit) 38%,var(--gold) 62%,#8A6B14 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 .14rem .9rem rgba(201,162,39,.3));
 }
 .hero__title-slash{
-  display:inline-block;padding:0 .22em;
-  font-size:.62em;vertical-align:.18em;
+  display:inline-block;padding:0 .08em;
+  font-size:.85em;vertical-align:-.01em;
 }
 .hero__sub{
   font-size:clamp(1rem,2.1vw,1.2rem);line-height:1.9;color:var(--text);
@@ -475,8 +483,10 @@ a{color:var(--gold-lit)}
   border-top:var(--rule);
 }
 .footer__mark{
-  font-family:var(--display);font-size:1.6rem;letter-spacing:.16em;
+  display:inline-block;
+  font-family:var(--title);font-size:1.75rem;letter-spacing:.1em;
   color:var(--gold);margin:0 0 1.4rem;
+  transform:scaleX(.86);
 }
 .footer__fan{
   max-width:40rem;margin:0 auto 1.2rem;
