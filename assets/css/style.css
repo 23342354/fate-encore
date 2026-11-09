@@ -345,7 +345,7 @@ a{color:var(--gold-lit)}
 .portrait__label{
   position:absolute;left:0;right:0;bottom:0;
   display:grid;gap:.12rem;
-  padding:3rem .8rem .95rem;
+  padding:3.4rem .8rem 1.75rem;
   background:linear-gradient(transparent,rgba(14,3,8,.5) 42%,rgba(14,3,8,.92));
 }
 .portrait__glyph{
