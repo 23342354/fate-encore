@@ -686,3 +686,29 @@ a{color:var(--gold-lit)}
 .skill__title{
   font-size:.92rem;color:var(--blush);margin:0 0 .8rem;letter-spacing:.02em;
 }
+
+/* ─────────── 스크롤바 ─────────── */
+/* 파이어폭스 */
+html{scrollbar-width:thin;scrollbar-color:rgba(201,162,39,.5) rgba(22,5,14,.7)}
+.profile__panel,.vn__log{scrollbar-width:thin;scrollbar-color:rgba(201,162,39,.5) transparent}
+
+/* 웹킷 — 벨벳 레일 위의 금박 손잡이 */
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{
+  background:linear-gradient(90deg,rgba(0,0,0,.55),rgba(30,7,18,.75));
+  border-left:1px solid rgba(201,162,39,.16);
+}
+::-webkit-scrollbar-thumb{
+  border-radius:999px;
+  border:2px solid rgba(20,4,10,.9);
+  background:linear-gradient(180deg,var(--gold-lit),var(--gold) 45%,#8A6B14);
+}
+::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,#FFF6DF,var(--gold-lit) 50%,var(--gold));
+}
+::-webkit-scrollbar-thumb:active{background:var(--gold-lit)}
+::-webkit-scrollbar-corner{background:transparent}
+
+/* 패널 안쪽은 레일을 비워 패널 테두리와 겹치지 않게 */
+.profile__panel::-webkit-scrollbar-track,
+.vn__log::-webkit-scrollbar-track{background:transparent;border-left:0}
