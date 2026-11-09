@@ -20,6 +20,7 @@
 
   /* 글꼴 */
   --serif:"Gowun Batang","Nanum Myeongjo",'Apple SD Gothic Neo',"Batang",serif;
+  --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   --display:"Italiana","Gowun Batang",serif;
 
   /* 리듬 */
@@ -253,8 +254,14 @@ a{color:var(--gold-lit)}
   margin:0 0 2.3rem;
 }
 .program__lead{
-  font-size:1.2rem;line-height:1.95;color:var(--ivory);
-  margin-bottom:1.5rem;
+  font-family:var(--sans);font-weight:400;
+  font-size:1.14rem;line-height:1.8;color:var(--ivory);
+  letter-spacing:-.004em;margin-bottom:1.5rem;
+}
+/* 서곡 본문 — 긴 산문이라 가독성 좋은 산세리프로 */
+.program > p:not([class]){
+  font-family:var(--sans);
+  font-size:1rem;line-height:1.85;letter-spacing:-.004em;
 }
 .invitation{
   margin:1.9rem 0 2.1rem;padding:1.6rem 1.4rem;
@@ -268,7 +275,8 @@ a{color:var(--gold-lit)}
   color:var(--blush);letter-spacing:.02em;
 }
 .program__sign{
-  margin:2.4rem 0 0;font-size:.92rem;color:var(--text-dim);text-align:right;
+  font-family:var(--sans);letter-spacing:-.004em;
+  margin:2.4rem 0 0;font-size:.9rem;color:var(--text-dim);text-align:right;
 }
 
 /* ─────────── 캐스트 ─────────── */
