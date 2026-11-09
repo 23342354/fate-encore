@@ -329,7 +329,17 @@ a{color:var(--gold-lit)}
 .portrait__name{
   font-size:1.05rem;font-weight:700;color:var(--ivory);line-height:1.45;
 }
+.portrait__master{
+  display:block;margin-top:.75rem;
+  font-size:.88rem;line-height:1.6;color:var(--text);
+}
+.portrait__master-label{
+  font-family:var(--display);font-size:.76rem;letter-spacing:.22em;
+  color:var(--gold);margin-right:.6em;
+}
 .portrait--sealed{cursor:default}
+.portrait--sealed .portrait__master{color:rgba(233,216,220,.45)}
+.portrait--sealed .portrait__master-label{color:rgba(201,162,39,.42)}
 .portrait--sealed .portrait__arch{
   background:linear-gradient(180deg,rgba(69,9,27,.3),rgba(22,5,14,.82));
   border-color:rgba(201,162,39,.18);
