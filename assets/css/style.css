@@ -185,15 +185,6 @@ a{color:var(--gold-lit)}
   margin:0 auto 2.6rem;max-width:30rem;
 }
 .hero__actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-.hero__scroll{
-  position:absolute;bottom:clamp(10.5rem,20vh,13rem);left:50%;transform:translateX(-50%);
-  margin:0;font-size:.78rem;letter-spacing:.42em;color:var(--text-dim);
-  writing-mode:vertical-rl;
-}
-.hero__scroll::after{
-  content:"";display:block;width:1px;height:3rem;margin:.9rem auto 0;
-  background:linear-gradient(var(--gold),transparent);
-}
 
 /* ─────────── 버튼 ─────────── */
 .btn{
@@ -255,12 +246,26 @@ a{color:var(--gold-lit)}
 }
 .program__title{
   font-size:clamp(1.9rem,4.4vw,2.6rem);font-weight:700;
-  margin:0 0 2.2rem;color:var(--ivory);letter-spacing:.08em;
+  margin:0 0 .6rem;color:var(--ivory);letter-spacing:.08em;
+}
+.program__war{
+  font-size:.98rem;letter-spacing:.12em;color:var(--gold);
+  margin:0 0 2.3rem;
 }
 .program__lead{
-  font-size:1.3rem;line-height:1.9;color:var(--blush);
-  padding-bottom:1.6rem;margin-bottom:1.9rem;
-  border-bottom:var(--rule);
+  font-size:1.2rem;line-height:1.95;color:var(--ivory);
+  margin-bottom:1.5rem;
+}
+.invitation{
+  margin:1.9rem 0 2.1rem;padding:1.6rem 1.4rem;
+  border-top:1px solid rgba(201,162,39,.45);
+  border-bottom:1px solid rgba(201,162,39,.45);
+  background:linear-gradient(180deg,rgba(246,211,220,.07),transparent);
+  text-align:center;
+}
+.invitation p{
+  margin:0;font-size:1.18rem;line-height:1.9;
+  color:var(--blush);letter-spacing:.02em;
 }
 .program__sign{
   margin:2.4rem 0 0;font-size:.92rem;color:var(--text-dim);text-align:right;
@@ -270,10 +275,11 @@ a{color:var(--gold-lit)}
 .cast{
   list-style:none;margin:0 auto;padding:0;
   max-width:52rem;
-  display:grid;gap:clamp(1.5rem,3.5vw,2.75rem);
-  grid-template-columns:repeat(2,1fr);
+  --cast-gap:clamp(1.5rem,3.5vw,2.75rem);
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:var(--cast-gap);
 }
-.cast__item{display:flex}
+.cast__item{display:flex;flex:0 0 calc((100% - var(--cast-gap)) / 2)}
 .portrait{
   flex:1;display:flex;flex-direction:column;align-items:center;
   gap:.55rem;padding:0 0 1.4rem;
@@ -341,7 +347,7 @@ a{color:var(--gold-lit)}
 .portrait[aria-pressed="true"] .portrait__name{color:var(--blush)}
 
 @media (min-width:48rem){
-  .cast{grid-template-columns:repeat(3,1fr)}
+  .cast__item{flex:0 0 calc((100% - 2 * var(--cast-gap)) / 3)}
 }
 
 /* ─────────── 막 구성 ─────────── */
@@ -494,7 +500,6 @@ a{color:var(--gold-lit)}
   .topbar{flex-direction:column;align-items:flex-start;gap:.5rem}
   .topbar__nav{gap:1rem;font-size:.9rem}
   .hero{padding-top:9.5rem}
-  .hero__scroll{display:none}
   .spec__row{grid-template-columns:1fr;gap:.2rem}
   .vn__text{min-height:4.4rem}
   .program__lead{font-size:1.15rem}
