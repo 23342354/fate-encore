@@ -45,7 +45,12 @@ assets/js/main.js       막 오름 연출 · 대화창 · 스테이터스 · 섹
 --curtain:#8C1230;   /* 커튼의 심홍 */
 --gold:#C9A227;      /* 금박 */
 --blush:#F6D3DC;     /* 대화창 글자색 */
+--main:'IbmPlexSans';  /* 제목·대화창·카드 */
+--sans:'Pretendard';   /* 서곡과 긴 산문 */
+--display:'Italiana';  /* 라틴 대문자 */
 ```
+
+`--main` 의 IBM Plex Sans KR 은 `@font-face` 로 직접 불러온다. 쓸 수 있는 굵기는 200 · 300 · 400 · 450 · 500 · 600 이며, 가장 굵은 자족이 600 이라 그보다 굵게 쓰면 브라우저가 가짜 볼드를 만든다.
 
 캐스트를 바꾸려면 `index.html` 의 `.portrait` 버튼에 붙은 데이터 속성만 고치면 된다. 스크립트가 이 값을 그대로 읽어서 대화창에 쓴다.
 

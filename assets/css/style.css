@@ -3,6 +3,38 @@
    벨벳 커튼과 금박. 무대 하나, 관객 하나.
    =========================================================== */
 
+/* ─────────── IBM Plex Sans KR ─────────── */
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-ExtraLight.woff') format('woff');
+  font-weight:200;font-display:swap;
+}
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Light.woff') format('woff');
+  font-weight:300;font-display:swap;
+}
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Regular.woff') format('woff');
+  font-weight:normal;font-display:swap;
+}
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Text.woff') format('woff');
+  font-weight:450;font-display:swap;
+}
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-Medium.woff') format('woff');
+  font-weight:500;font-display:swap;
+}
+@font-face{
+  font-family:'IbmPlexSans';
+  src:url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/IBMPlexSansKR-SemiBold.woff') format('woff');
+  font-weight:600;font-display:swap;
+}
+
 :root{
   /* 색 ─ 극장 */
   --velvet-deep:#16050E;
@@ -19,9 +51,9 @@
   --text-dim:#B2929B;
 
   /* 글꼴 */
-  --serif:"Gowun Batang","Nanum Myeongjo",'Apple SD Gothic Neo',"Batang",serif;
+  --main:'IbmPlexSans','IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif;
   --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
-  --display:"Italiana","Gowun Batang",serif;
+  --display:"Italiana",'IbmPlexSans',sans-serif;
 
   /* 리듬 */
   --measure:34rem;
@@ -43,9 +75,9 @@ body{
     linear-gradient(180deg,var(--velvet) 0%,var(--velvet-deep) 55%,#120409 100%);
   background-attachment:fixed;
   color:var(--text);
-  font-family:var(--serif);
+  font-family:var(--main);
   font-size:1.0625rem;
-  line-height:1.95;
+  line-height:1.85;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
@@ -58,7 +90,7 @@ body::before{
 }
 
 p{margin:0 0 1.35em}
-strong{color:var(--gold-lit);font-weight:700}
+strong{color:var(--gold-lit);font-weight:600}
 a{color:var(--gold-lit)}
 
 .skip-link{
@@ -186,12 +218,12 @@ a{color:var(--gold-lit)}
 /* ─────────── 버튼 ─────────── */
 .btn{
   display:inline-block;padding:.85rem 2.2rem;
-  font-family:var(--serif);font-size:.98rem;letter-spacing:.1em;
+  font-family:var(--main);font-size:.98rem;letter-spacing:.1em;
   text-decoration:none;cursor:pointer;
   border:1px solid var(--gold);background:transparent;color:var(--gold-lit);
   transition:background .3s ease,color .3s ease,box-shadow .3s ease;
 }
-.btn--gold{background:var(--gold);color:#23060F;font-weight:700;border-color:var(--gold-lit)}
+.btn--gold{background:var(--gold);color:#23060F;font-weight:600;border-color:var(--gold-lit)}
 .btn--gold:hover,.btn--gold:focus-visible{
   background:var(--gold-lit);box-shadow:0 0 1.6rem rgba(235,208,137,.4);
 }
@@ -213,7 +245,7 @@ a{color:var(--gold-lit)}
   color:var(--gold);margin:0 0 .5rem;
 }
 .section__title{
-  font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:700;line-height:1.3;
+  font-size:clamp(1.9rem,4.4vw,2.7rem);font-weight:600;line-height:1.3;
   margin:0 0 .9rem;color:var(--ivory);letter-spacing:.06em;
 }
 .section__note{color:var(--text-dim);font-size:.95rem;margin:0}
@@ -242,7 +274,7 @@ a{color:var(--gold-lit)}
   color:var(--gold);margin:0 0 .4rem;
 }
 .program__title{
-  font-size:clamp(1.9rem,4.4vw,2.6rem);font-weight:700;
+  font-size:clamp(1.9rem,4.4vw,2.6rem);font-weight:600;
   margin:0 0 .6rem;color:var(--ivory);letter-spacing:.08em;
 }
 .program__war{
@@ -288,7 +320,7 @@ a{color:var(--gold-lit)}
   flex:1;display:flex;flex-direction:column;align-items:center;
   gap:.55rem;padding:0;
   background:none;border:0;cursor:pointer;
-  font-family:var(--serif);color:inherit;text-align:center;
+  font-family:var(--main);color:inherit;text-align:center;
 }
 /* 프로세니엄 아치 */
 .portrait__arch{
@@ -327,7 +359,7 @@ a{color:var(--gold-lit)}
   color:var(--gold);line-height:1.4;
 }
 .portrait__name{
-  font-size:1.05rem;font-weight:700;color:var(--ivory);line-height:1.45;
+  font-size:1.05rem;font-weight:600;color:var(--ivory);line-height:1.45;
 }
 .portrait__master{
   display:block;margin-top:.75rem;
@@ -392,7 +424,7 @@ a{color:var(--gold-lit)}
   vertical-align:-.06em;padding:0 .18em;
 }
 .act__title{
-  font-size:1.55rem;font-weight:700;color:var(--ivory);
+  font-size:1.55rem;font-weight:600;color:var(--ivory);
   margin:0 0 .5rem;letter-spacing:.06em;
 }
 .act__who{font-size:.88rem;color:var(--text-dim);margin:0 0 1.1rem}
@@ -419,7 +451,7 @@ a{color:var(--gold-lit)}
 }
 .newsletter__input{
   flex:1 1 16rem;min-width:0;padding:.85rem 1.1rem;
-  font-family:var(--serif);font-size:1rem;
+  font-family:var(--main);font-size:1rem;
   color:var(--ivory);background:rgba(22,5,14,.6);
   border:1px solid rgba(201,162,39,.4);
 }
@@ -468,7 +500,7 @@ a{color:var(--gold-lit)}
 .vn__plate{
   position:absolute;top:-1.1rem;left:clamp(1.1rem,3vw,2.1rem);
   margin:0;padding:.22rem 1.2rem;
-  font-size:.95rem;font-weight:700;letter-spacing:.08em;
+  font-size:.95rem;font-weight:600;letter-spacing:.08em;
   color:#23060F;background:linear-gradient(180deg,var(--gold-lit),var(--gold));
   box-shadow:0 .2rem .9rem rgba(0,0,0,.4);
 }
@@ -494,10 +526,10 @@ a{color:var(--gold-lit)}
 .vn__btn[aria-pressed="true"],.vn__btn[aria-expanded="true"]{
   color:#23060F;background:var(--gold);border-color:var(--gold-lit);
 }
-.vn__btn--close{font-family:var(--serif);letter-spacing:0;padding:.35rem .7rem}
+.vn__btn--close{font-family:var(--main);letter-spacing:0;padding:.35rem .7rem}
 .vn__reopen{
   display:block;margin:0 auto;pointer-events:auto;cursor:pointer;
-  padding:.5rem 1.4rem;font-family:var(--serif);font-size:.88rem;
+  padding:.5rem 1.4rem;font-family:var(--main);font-size:.88rem;
   color:var(--gold-lit);background:rgba(22,5,14,.9);
   border:1px solid rgba(201,162,39,.5);
 }
@@ -515,7 +547,7 @@ a{color:var(--gold-lit)}
 }
 .vn__log-list{margin:0;padding:0 0 0 1.1rem;font-size:.95rem;line-height:1.85}
 .vn__log-list li{margin-bottom:.6rem;color:var(--text-dim)}
-.vn__log-list b{color:var(--gold-lit);font-weight:700}
+.vn__log-list b{color:var(--gold-lit);font-weight:600}
 
 /* ─────────── 좁은 화면 ─────────── */
 @media (max-width:40rem){
@@ -562,7 +594,7 @@ a{color:var(--gold-lit)}
 .profile__close{
   position:absolute;top:.6rem;right:.7rem;
   width:2.2rem;height:2.2rem;cursor:pointer;
-  font-family:var(--serif);font-size:1rem;
+  font-family:var(--main);font-size:1rem;
   color:var(--text-dim);background:transparent;border:0;
   transition:color .25s ease;
 }
@@ -586,7 +618,7 @@ a{color:var(--gold-lit)}
   color:var(--gold);margin:0 0 .3rem;
 }
 .profile__name{
-  font-size:clamp(1.5rem,3.4vw,2rem);font-weight:700;letter-spacing:.04em;
+  font-size:clamp(1.5rem,3.4vw,2rem);font-weight:600;letter-spacing:.04em;
   color:var(--ivory);margin:0 0 1.4rem;line-height:1.35;
 }
 .profile__meta{margin:0 0 1.3rem;display:grid;gap:.5rem}
@@ -623,7 +655,7 @@ a{color:var(--gold-lit)}
 }
 .profile__step{
   padding:.45rem 1rem;cursor:pointer;
-  font-family:var(--serif);font-size:.9rem;
+  font-family:var(--main);font-size:.9rem;
   color:var(--gold-lit);background:transparent;
   border:1px solid rgba(201,162,39,.35);
   transition:background .25s ease,border-color .25s ease;
@@ -647,7 +679,7 @@ a{color:var(--gold-lit)}
 }
 .profile__tab{
   padding:.55rem 1.1rem;cursor:pointer;
-  font-family:var(--serif);font-size:.95rem;letter-spacing:.06em;
+  font-family:var(--main);font-size:.95rem;letter-spacing:.06em;
   color:var(--text-dim);background:transparent;border:0;
   border-bottom:2px solid transparent;margin-bottom:-1px;
   transition:color .25s ease,border-color .25s ease;
@@ -662,7 +694,7 @@ a{color:var(--gold-lit)}
 }
 .profile__prose p:last-child{margin-bottom:0}
 .profile__prose .is-line{
-  color:var(--blush);font-family:var(--serif);font-size:.99rem;
+  color:var(--blush);font-family:var(--main);font-size:.99rem;
   letter-spacing:0;padding-left:.9rem;
   border-left:1px solid rgba(201,162,39,.45);
 }
@@ -676,7 +708,7 @@ a{color:var(--gold-lit)}
 }
 .skill__name{
   display:flex;align-items:baseline;gap:.7rem;
-  font-size:1.15rem;font-weight:700;color:var(--ivory);
+  font-size:1.15rem;font-weight:600;color:var(--ivory);
   margin:0 0 .25rem;letter-spacing:.03em;
 }
 .skill__rank{
