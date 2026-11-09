@@ -76,7 +76,7 @@
     el:   p
   }));
 
-  // 첫 대사: 프로스페로(CASTER)가 막을 열어준다
+  // 첫 대사는 CASTER 가 맡는다 (index.html 의 vn__plate 초기값과 맞출 것)
   const opening = Math.max(0, lines.findIndex(l => l.cls === 'CASTER'));
 
   function stopTyping() {
