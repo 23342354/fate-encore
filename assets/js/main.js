@@ -58,7 +58,7 @@
   const btnLog   = $('#btnLog');
   const btnHide  = $('#btnHide');
   const btnShow  = $('#btnShow');
-  const portraits = $$('.portrait');
+  const portraits = $$('button.portrait');
 
   const SPEED = 42;          // 글자당 ms
   const AUTO_WAIT = 3400;    // AUTO 모드 대기
