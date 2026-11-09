@@ -51,7 +51,7 @@ assets/js/main.js       막 오름 연출 · 대화창 · 스테이터스 · 섹
 --title:'Times New Roman';  /* 제호 */
 ```
 
-제호는 타임스 뉴 로만을 `transform:scaleX(.86)` 으로 장평을 조여 쓴다. 타임스가 없는 기기를 위해 자폭이 같은 Tinos 를 구글 폰트에서 받아 둔다. `--main` 의 IBM Plex Sans KR 은 `@font-face` 로 직접 불러온다. 쓸 수 있는 굵기는 200 · 300 · 400 · 450 · 500 · 600 이며, 가장 굵은 자족이 600 이라 그보다 굵게 쓰면 브라우저가 가짜 볼드를 만든다.
+제호는 `index.html` 안의 SVG 다. `textLength` 와 `lengthAdjust="spacingAndGlyphs"` 가 폭을 못 박아, 기기에 어떤 세리프가 깔려 있든 정해진 폭에 맞춰 장평이 조절된다. 글꼴은 타임스 뉴 로만, 없으면 자폭이 같은 Tinos 다. 제호 문구를 바꾸려면 SVG 의 `<text>` 내용과 `aria-label` 을 같이 고친다. `--main` 의 IBM Plex Sans KR 은 `@font-face` 로 직접 불러온다. 쓸 수 있는 굵기는 200 · 300 · 400 · 450 · 500 · 600 이며, 가장 굵은 자족이 600 이라 그보다 굵게 쓰면 브라우저가 가짜 볼드를 만든다.
 
 캐스트를 바꾸려면 `index.html` 의 `.portrait` 버튼에 붙은 데이터 속성만 고치면 된다. 스크립트가 이 값을 그대로 읽어서 대화창에 쓴다.
 

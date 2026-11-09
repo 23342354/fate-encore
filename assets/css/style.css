@@ -200,22 +200,17 @@ a{color:var(--gold-lit)}
   opacity:.85;
 }
 
-.hero__plate{position:relative;z-index:2;max-width:58rem}
+.hero__plate{position:relative;z-index:2;width:100%;max-width:58rem}
+/* 제호 — SVG 로 짠다. textLength 가 폭을 못 박아, 기기에 어떤
+   세리프가 깔려 있든 정해진 폭에 맞춰 장평이 조절된다. */
 .hero__title{
-  display:inline-block;
-  font-family:var(--title);font-weight:400;
-  font-size:clamp(2.6rem,15vw,9.5rem);
-  line-height:1.06;letter-spacing:.05em;margin:0 0 1.2rem;
-  white-space:nowrap;
-  transform:scaleX(.86);
-  font-synthesis:none;
-  background:linear-gradient(176deg,#FFF6DF 6%,var(--gold-lit) 38%,var(--gold) 62%,#8A6B14 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  width:100%;margin:0 0 1.2rem;
   filter:drop-shadow(0 .14rem .9rem rgba(201,162,39,.3));
 }
-.hero__title-slash{
-  display:inline-block;padding:0 .08em;
-  font-size:.85em;vertical-align:-.01em;
+.hero__logo{display:block;width:100%;height:auto}
+.hero__logo text{
+  font-family:var(--title);font-size:164px;font-weight:400;
+  font-synthesis:none;
 }
 .hero__sub{
   font-size:clamp(1rem,2.1vw,1.2rem);line-height:1.9;color:var(--text);
