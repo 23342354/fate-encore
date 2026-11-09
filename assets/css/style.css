@@ -79,11 +79,21 @@ a{color:var(--gold-lit)}
 .drape{
   position:absolute;top:0;bottom:0;width:52vw;
   background:
-    linear-gradient(90deg,rgba(0,0,0,.55),transparent 22%,rgba(0,0,0,.28) 60%,rgba(0,0,0,.7)),
+    /* 바깥쪽으로 갈수록 깊어지는 그늘 */
+    linear-gradient(90deg,rgba(0,0,0,.72),rgba(0,0,0,.1) 26%,rgba(0,0,0,.3) 68%,rgba(0,0,0,.82)),
+    /* 굵은 주름 — 주기 8.3vw */
     repeating-linear-gradient(90deg,
-      var(--curtain) 0 1.6vw,
-      var(--curtain-lit) 1.6vw 2.6vw,
-      var(--garnet) 2.6vw 4.6vw);
+      rgba(0,0,0,.36) 0,
+      rgba(0,0,0,0) 3.6vw,
+      rgba(0,0,0,.36) 8.3vw),
+    /* 잔주름 — 주기 5.1vw. 두 주기가 어긋나며 규칙성을 깬다 */
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,.26) 0,
+      rgba(246,211,220,.06) 2.2vw,
+      rgba(0,0,0,.3) 3.4vw,
+      rgba(0,0,0,.05) 5.1vw),
+    /* 바탕 — 천이 걷히는 위아래는 어둡게 */
+    linear-gradient(180deg,#2B0710,#5E0A20 34%,#4C0A1C 72%,#1B0508);
   transition:transform 1.5s cubic-bezier(.66,0,.2,1);
   will-change:transform;
 }
