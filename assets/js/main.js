@@ -260,9 +260,15 @@
       `<span class="profile__stat-rank">${esc(dash(s[key]))}</span></li>`
     ).join('');
 
-    $('#pfNpName').textContent = dash(c.npName);
-    $('#pfNpRank').textContent = dash(s.np);
-    $('#pfNpText').innerHTML   = prose(c.np);
+    // 이명·종별은 적어 둔 캐릭터에게만 줄이 생긴다
+    $('#pfNpMeta').innerHTML = [
+      ['보구명', dash(c.npName), 'pfNpName'],
+      ['이명',   c.npAlias,      'pfNpAlias'],
+      ['종별',   c.npType,       'pfNpType'],
+      ['랭크',   dash(s.np),     'pfNpRank'],
+    ].filter(([, v]) => v).map(([k, v, id]) =>
+      `<div><dt>${k}</dt><dd id="${id}">${esc(v)}</dd></div>`).join('');
+    $('#pfNpText').innerHTML = prose(c.np);
 
     $('#pfSkills').innerHTML = (c.skills && c.skills.length)
       ? c.skills.map(sk => `<li class="skill">
