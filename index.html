@@ -323,6 +323,8 @@
       <div class="profile__tabs" role="tablist" aria-label="스테이터스 항목">
         <button class="profile__tab" type="button" role="tab" id="tabStatus"
                 aria-controls="paneStatus" aria-selected="true">스테이터스</button>
+        <button class="profile__tab" type="button" role="tab" id="tabLore"
+                aria-controls="paneLore" aria-selected="false" tabindex="-1">설정</button>
         <button class="profile__tab" type="button" role="tab" id="tabSkill"
                 aria-controls="paneSkill" aria-selected="false" tabindex="-1">스킬</button>
         <button class="profile__tab" type="button" role="tab" id="tabNp"
@@ -341,6 +343,10 @@
           <div><dt>소개</dt><dd class="profile__bio" id="pfBio"></dd></div>
         </dl>
         <blockquote class="profile__quote"><p id="pfQuote"></p></blockquote>
+      </div>
+
+      <div class="profile__pane" id="paneLore" role="tabpanel" aria-labelledby="tabLore" tabindex="0" hidden>
+        <div class="lore" id="pfLore"></div>
       </div>
 
       <div class="profile__pane" id="paneSkill" role="tabpanel" aria-labelledby="tabSkill" tabindex="0" hidden>

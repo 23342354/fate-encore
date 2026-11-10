@@ -754,3 +754,50 @@ html{scrollbar-width:thin;scrollbar-color:rgba(201,162,39,.5) rgba(22,5,14,.7)}
 /* 패널 안쪽은 레일을 비워 패널 테두리와 겹치지 않게 */
 .profile__panel::-webkit-scrollbar-track,
 .vn__log::-webkit-scrollbar-track{background:transparent;border-left:0}
+
+/* ─────────── 설정 탭 ─────────── */
+.lore section + section{
+  margin-top:1.9rem;padding-top:1.4rem;
+  border-top:1px solid rgba(201,162,39,.2);
+}
+.lore__heading{
+  font-size:1.08rem;font-weight:600;color:var(--blush);
+  margin:0 0 .9rem;letter-spacing:0;
+}
+.lore p{
+  font-family:var(--sans);font-size:.95rem;line-height:1.85;
+  letter-spacing:-.004em;color:var(--text);margin:0 0 .75rem;
+}
+.lore p:last-child{margin-bottom:0}
+.lore .is-line{
+  color:var(--blush);font-family:var(--main);font-size:.99rem;
+  letter-spacing:0;padding-left:.9rem;
+  border-left:1px solid rgba(201,162,39,.45);
+}
+.lore__table{
+  width:100%;border-collapse:collapse;table-layout:fixed;
+  margin:.3rem 0 1.3rem;font-size:.9rem;
+}
+.lore__table th:nth-child(1){width:20%}
+.lore__table th:nth-child(2){width:31%}
+.lore__table th{
+  text-align:left;font-weight:600;font-size:.82rem;letter-spacing:.04em;
+  color:var(--gold);padding:.5rem .9rem .5rem 0;
+  border-bottom:1px solid rgba(201,162,39,.35);
+}
+.lore__table td{
+  padding:.75rem .9rem .75rem 0;vertical-align:top;line-height:1.75;
+  border-bottom:1px solid rgba(201,162,39,.14);
+  font-family:var(--sans);letter-spacing:-.004em;
+}
+.lore__table td:first-child{color:var(--gold-lit)}
+.lore__table td:nth-child(2){color:var(--ivory)}
+
+@media (max-width:40rem){
+  .lore__table thead{display:none}
+  .lore__table tr{display:block;padding:.9rem 0;border-bottom:1px solid rgba(201,162,39,.14)}
+  .lore__table{table-layout:auto}
+  .lore__table td{display:block;width:auto;padding:.1rem 0;border:0}
+  .lore__table td:first-child{font-size:.82rem;letter-spacing:.04em}
+  .lore__table td:nth-child(2){font-weight:600;margin-bottom:.3rem}
+}

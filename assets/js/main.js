@@ -200,6 +200,7 @@
   ];
   const TABS = [
     ['#tabStatus', '#paneStatus'],
+    ['#tabLore',   '#paneLore'],
     ['#tabSkill',  '#paneSkill'],
     ['#tabNp',     '#paneNp'],
   ].map(([t, p]) => ({ tab: $(t), pane: $(p) }));
@@ -211,11 +212,22 @@
   const esc  = s => s.replace(/[&<>"]/g, c =>
     ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 
+  // **별 두 개** 로 감싼 부분은 금색 강조
+  const rich = s => esc(s).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+
+  function loreTable(t) {
+    if (!t || !t.rows || !t.rows.length) return '';
+    const head = (t.head || []).map(c => `<th>${esc(c)}</th>`).join('');
+    const rows = t.rows.map(r =>
+      `<tr>${r.map(c => `<td>${rich(c)}</td>`).join('')}</tr>`).join('');
+    return `<table class="lore__table"><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
   // 「 『 “ 로 시작하는 문단은 대사체로
   const prose = paras => (paras && paras.length)
     ? paras.map(p => {
         const quote = /^[「『“"']/.test(p.trim());
-        return `<p class="${quote ? 'is-line' : ''}">${esc(p)}</p>`;
+        return `<p class="${quote ? 'is-line' : ''}">${rich(p)}</p>`;
       }).join('')
     : '<p class="is-empty">—</p>';
 
@@ -278,6 +290,14 @@
           <div class="profile__prose">${prose(sk.text)}</div>
         </li>`).join('')
       : '<li class="skill"><p class="is-empty">—</p></li>';
+
+    $('#pfLore').innerHTML = (c.lore && c.lore.length)
+      ? c.lore.map(bl => '<section>'
+          + (bl.heading ? `<h4 class="lore__heading">${esc(bl.heading)}</h4>` : '')
+          + loreTable(bl.table)
+          + prose(bl.text)
+          + '</section>').join('')
+      : '<p class="is-empty">—</p>';
 
     $('#pfCount').textContent = `${index + 1} / ${lines.length}`;
     showTab(0);
