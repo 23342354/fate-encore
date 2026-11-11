@@ -213,7 +213,10 @@
     ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 
   // **별 두 개** 로 감싼 부분은 금색 강조
-  const rich = s => esc(s).replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>');
+  // **별 두 개** 는 금색 강조, 줄바꿈은 그대로 줄바꿈
+  const rich = s => esc(s)
+    .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n/g, '<br>');
 
   function loreTable(t) {
     if (!t || !t.rows || !t.rows.length) return '';
