@@ -284,6 +284,8 @@
       ['이명',   c.npAlias,      'pfNpAlias'],
       ['종별',   c.npType,       'pfNpType'],
       ['랭크',   dash(s.np),     'pfNpRank'],
+      ['렌지',   c.npRange,      'pfNpRange'],
+      ['최대포착', c.npTargets,   'pfNpTargets'],
     ].filter(([, v]) => v).map(([k, v, id]) =>
       `<div><dt>${k}</dt><dd id="${id}">${esc(v)}</dd></div>`).join('');
     $('#pfNpText').innerHTML = prose(c.np);
