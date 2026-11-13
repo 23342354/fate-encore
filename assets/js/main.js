@@ -232,7 +232,7 @@
         // 여는 따옴표로 시작하고 닫는 따옴표로 끝나야 대사체.
         // "잘했어"라는 말은… 처럼 인용으로 시작하는 서술문은 제외된다.
         const t = p.trim();
-        const quote = /^[「『“"']/.test(t) && /[」』”"']\.?$/.test(t);
+        const quote = /^[「『“‘"']/.test(t) && /[」』”’"']\.?$/.test(t);
         return `<p class="${quote ? 'is-line' : ''}">${rich(p)}</p>`;
       }).join('')
     : '<p class="is-empty">—</p>';
