@@ -135,9 +135,13 @@
   <header class="section__head">
     <p class="section__latin">Dramatis Personae</p>
     <h2 class="section__title">캐스트</h2>
-    <p class="section__note">일곱 쌍의 마스터와 서번트 가운데 넷이 공개되었다. 초상을 고르면 스테이터스가 열린다.</p>
+    <p class="section__note">일곱 쌍의 마스터와 서번트 가운데 넷이 공개되었다. 좌우로 돌려 고르고, 초상을 누르면 스테이터스가 열린다.</p>
   </header>
 
+  <div class="orbit">
+    <div class="orbit__ring" aria-hidden="true"></div>
+    <button class="orbit__nav orbit__nav--prev" type="button" id="orbitPrev" aria-label="이전 서번트">‹</button>
+    <button class="orbit__nav orbit__nav--next" type="button" id="orbitNext" aria-label="다음 서번트">›</button>
   <ul class="cast" id="castList">
     <li class="cast__item">
       <div class="portrait portrait--sealed">
@@ -240,6 +244,8 @@
       </button>
     </li>
   </ul>
+  </div>
+  <div class="orbit__dots" id="orbitDots" aria-label="서번트 선택"></div>
 </section>
 
 <!-- ─────────── 막 구성 ─────────── -->

@@ -152,6 +152,7 @@
 
   portraits.forEach((p, i) => {
     p.addEventListener('click', () => { setAuto(false); speak(i); openProfile(i); });
+    // 궤도 회전은 li 의 클릭 처리가 맡는다
   });
 
   vnBox && vnBox.addEventListener('click', e => {
@@ -349,6 +350,51 @@
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
   });
+
+  /* ── 3-c. 궤도 ──────────────────────────────────────── */
+  const stage = $$('.cast__item');
+  const dotBox = $('#orbitDots');
+  let orbitAt = 0;
+  const dots = [];
+
+  stage.forEach((li, i) => {
+    const card = li.querySelector('.portrait');
+    const sealed = card.classList.contains('portrait--sealed');
+    const cls = card.querySelector('.portrait__class').textContent;
+    const nm  = card.querySelector('.portrait__name').textContent;
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'orbit__dot' + (sealed ? ' orbit__dot--sealed' : '');
+    dot.setAttribute('aria-label', `${cls} ${nm}`);
+    dot.addEventListener('click', () => turnTo(i));
+    dotBox.appendChild(dot);
+    dots.push(dot);
+    // 가장자리 카드를 누르면 가운데로 돌아온다
+    li.addEventListener('click', () => turnTo(i));
+  });
+
+  function layoutOrbit() {
+    const n = stage.length;
+    stage.forEach((li, i) => {
+      let d = i - orbitAt;
+      if (d >  n / 2) d -= n;
+      if (d < -n / 2) d += n;
+      li.dataset.pos = d;
+      li.setAttribute('aria-hidden', Math.abs(d) >= 3 ? 'true' : 'false');
+    });
+    dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === orbitAt)));
+  }
+  function turnTo(i) { orbitAt = (i + stage.length) % stage.length; layoutOrbit(); }
+  function turnBy(d) { turnTo(orbitAt + d); }
+
+  // 처음 가운데는 대화창에서 첫 대사를 맡는 서번트
+  const firstLit = stage.findIndex(li =>
+    li.querySelector('button.portrait')?.dataset.class === lines[opening]?.cls);
+  if (firstLit >= 0) orbitAt = firstLit;
+
+  $('#orbitPrev').addEventListener('click', () => turnBy(-1));
+  $('#orbitNext').addEventListener('click', () => turnBy(1));
+  layoutOrbit();
 
   /* ── 4. 상단 바 ─────────────────────────────────────── */
   const topbar = $('#topbar');
