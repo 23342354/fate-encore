@@ -9,6 +9,7 @@
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const CAST = window.CAST || {};
+  const MASTERS = window.MASTERS || {};
 
   /* ── 0. 참전 명단 ───────────────────────────────────────
      클래스 순서 그대로. name 이 없는 줄은 미공개 카드가 된다.
@@ -37,6 +38,9 @@
       glyph: svg('<path d="M16 44 L16 26 l8 8 8 -14 8 14 8 -8 0 18 z"/><path d="M16 48 L48 48"/>') },
   ];
   const lines = ROSTER.filter(r => r.name);   // 공개된 서번트만
+  // 마스터 문양 — 령주를 본뜬 표식. 마스터마다 다르게 하려면 ROSTER 에 masterGlyph 를 적는다
+  const GLYPH_MASTER = svg('<path d="M32 9 C25 19 25 27 32 33 C39 27 39 19 32 9 Z"/><path d="M13 29 C21 35 27 41 32 55 C37 41 43 35 51 29"/><path d="M21 24 q-7 11 4 19"/><path d="M43 24 q7 11 -4 19"/>');
+  const masterGlyph = r => r.masterGlyph || GLYPH_MASTER;
 
   const dash = v => (v && String(v).trim()) ? String(v) : '—';
   const esc  = s => s.replace(/[&<>"]/g, c =>
@@ -163,7 +167,7 @@
   title.addEventListener('click', start);
 
   /* ── 3. 화면 전환 ───────────────────────────────────── */
-  const SCREENS = ['home', 'servants', 'summon', 'story', 'info'];
+  const SCREENS = ['home', 'cast', 'summon', 'story', 'info'];
   const screens = $$('.screen');
   const dockBtns = $$('.dock__btn');
 
@@ -240,6 +244,7 @@
   $('#speech').addEventListener('click', advance);
   arch.addEventListener('click', advance);
   $('#standProfile').addEventListener('click', () => openProfile(current));
+  $('#standMaster').addEventListener('click', () => openProfile(current, 'master'));
 
   /* ── 5. 서번트 카드 ─────────────────────────────────── */
   function cardHTML(r) {
@@ -262,12 +267,45 @@
       </span>
     </button>`;
   }
-  $('#cardList').innerHTML = ROSTER.map(r => `<li>${cardHTML(r)}</li>`).join('');
+  function masterCardHTML(r) {
+    if (!r.name) {
+      return `<div class="card card--master card--sealed">
+        <span class="card__art">
+          <span class="card__class">${r.cls}</span>
+          <span class="card__glyph" aria-hidden="true">${GLYPH_SEALED}</span>
+          <span class="card__plate"><span class="card__name">마스터 미공개</span><span class="card__master">SERVANT 미공개</span></span>
+        </span>
+      </div>`;
+    }
+    return `<button class="card card--master" type="button" data-master="${lines.indexOf(r)}" aria-label="${esc(r.master)} 프로필 열기">
+      <span class="card__art">
+        <span class="card__class">${r.cls}</span>
+        <span class="card__glyph" aria-hidden="true">${masterGlyph(r)}</span>
+        <span class="card__plate"><span class="card__name">${esc(r.master)}</span><span class="card__master">SERVANT ${esc(r.name)}</span></span>
+      </span>
+    </button>`;
+  }
+  $('#cardList').innerHTML   = ROSTER.map(r => `<li>${cardHTML(r)}</li>`).join('');
+  $('#masterList').innerHTML = ROSTER.map(r => `<li>${masterCardHTML(r)}</li>`).join('');
+
+  // 서번트 / 마스터 보기 전환
+  const segS = $('#segServant'), segM = $('#segMaster');
+  function showSide(side) {
+    const m = side === 'master';
+    segS.setAttribute('aria-pressed', String(!m));
+    segM.setAttribute('aria-pressed', String(m));
+    $('#cardList').hidden = m;
+    $('#masterList').hidden = !m;
+  }
+  segS.addEventListener('click', () => showSide('servant'));
+  segM.addEventListener('click', () => showSide('master'));
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
 
   document.addEventListener('click', e => {
     const card = e.target.closest('button.card');
-    if (card) openProfile(Number(card.dataset.idx));
+    if (!card) return;
+    if (card.dataset.master != null) openProfile(Number(card.dataset.master), 'master');
+    else openProfile(Number(card.dataset.idx));
   });
 
   /* ── 6. 소환 ────────────────────────────────────────── */
@@ -354,8 +392,11 @@
   ].map(([t, p]) => ({ tab: $(t), pane: $(p) }));
 
   let pfIndex = -1;
+  let pfMode = 'servant';      // 'servant' | 'master'
   let lastFocus = null;
 
+  // 마스터 프로필에는 스킬·보구 탭이 없다. 보이는 탭만 돈다
+  const visibleTabs = () => TABS.filter(t => !t.tab.hidden);
   function showTab(i) {
     TABS.forEach((t, n) => {
       const on = n === i;
@@ -364,30 +405,55 @@
       t.pane.hidden = !on;
     });
   }
-  function currentTab() {
-    return TABS.findIndex(t => t.tab.getAttribute('aria-selected') === 'true');
-  }
   function stepTab(delta) {
-    const next = (currentTab() + delta + TABS.length) % TABS.length;
-    showTab(next);
-    TABS[next].tab.focus();
+    const vis = visibleTabs();
+    const at = vis.findIndex(t => t.tab.getAttribute('aria-selected') === 'true');
+    const next = vis[(at + delta + vis.length) % vis.length];
+    showTab(TABS.indexOf(next));
+    next.tab.focus();
   }
   TABS.forEach((t, i) => t.tab.addEventListener('click', () => showTab(i)));
 
-  function fillProfile(index) {
+  const metaRow = (label, value, id) =>
+    `<div><dt>${label}</dt><dd${id ? ` id="${id}"` : ''}>${value}</dd></div>`;
+  const linkBtn = (text, attr) =>
+    `<button class="pf-link" type="button" ${attr}>${esc(text)}</button>`;
+
+  function loreHTML(lore) {
+    return (lore && lore.length)
+      ? lore.map(bl => '<section>'
+          + (bl.heading ? `<h4 class="lore__heading">${esc(bl.heading)}</h4>` : '')
+          + loreTable(bl.table)
+          + prose(bl.text)
+          + '</section>').join('')
+      : '<p class="is-empty">—</p>';
+  }
+
+  function setMode(mode) {
+    pfMode = mode;
+    const m = mode === 'master';
+    $('#tabStatus').textContent = m ? '프로필' : '스테이터스';
+    $('#tabSkill').hidden = m;
+    $('#tabNp').hidden = m;
+    $('#pfStats').hidden = m;
+    $('#pfArch').classList.toggle('profile__arch--master', m);
+  }
+
+  function fillServant(index) {
     const item = lines[index];
-    if (!item) return;
-    pfIndex = index;
     const c = CAST[item.name] || {};
     const s = c.stats || {};
+    setMode('servant');
 
     $('#pfGlyph').innerHTML    = item.glyph;
     $('#pfClass').textContent  = item.cls;
     $('#pfName').textContent   = item.name;
-    $('#pfMaster').textContent = dash(item.master);
-    $('#pfGender').textContent = dash(c.gender);
-    $('#pfAlign').textContent  = dash(c.alignment);
-    $('#pfSize').textContent   = `${dash(c.height)} / ${dash(c.weight)}`;
+    $('#pfMeta').innerHTML =
+        metaRow('마스터', linkBtn(item.master, `data-to-master="${index}"`), 'pfMaster')
+      + metaRow('성별', esc(dash(c.gender)), 'pfGender')
+      + metaRow('속성', esc(dash(c.alignment)), 'pfAlign')
+      + metaRow('신장 / 체중', esc(`${dash(c.height)} / ${dash(c.weight)}`), 'pfSize');
+    $('#pfQuoteBox').hidden = false;
     $('#pfQuote').textContent  = `「${item.line}」`;
     $('#pfBio').innerHTML      = prose(c.bio);
 
@@ -417,23 +483,44 @@
         </li>`).join('')
       : '<li class="skill"><p class="is-empty">—</p></li>';
 
-    $('#pfLore').innerHTML = (c.lore && c.lore.length)
-      ? c.lore.map(bl => '<section>'
-          + (bl.heading ? `<h4 class="lore__heading">${esc(bl.heading)}</h4>` : '')
-          + loreTable(bl.table)
-          + prose(bl.text)
-          + '</section>').join('')
-      : '<p class="is-empty">—</p>';
+    $('#pfLore').innerHTML = loreHTML(c.lore);
+  }
 
+  function fillMaster(index) {
+    const item = lines[index];
+    const m = MASTERS[item.master] || {};
+    setMode('master');
+
+    $('#pfGlyph').innerHTML    = masterGlyph(item);
+    $('#pfClass').textContent  = `${item.cls} · MASTER`;
+    $('#pfName').textContent   = item.master;
+    $('#pfMeta').innerHTML =
+        metaRow('서번트', linkBtn(item.name, `data-to-servant="${index}"`), 'pfServant')
+      + metaRow('성별', esc(dash(m.gender)), 'pfGender')
+      + metaRow('나이', esc(dash(m.age)), 'pfAge')
+      + metaRow('신장 / 체중', esc(`${dash(m.height)} / ${dash(m.weight)}`), 'pfSize')
+      + metaRow('소속', esc(dash(m.affiliation)), 'pfAffil')
+      + metaRow('마술', esc(dash(m.magic)), 'pfMagic');
+    const line = (m.line || '').trim();
+    $('#pfQuoteBox').hidden = !line;
+    $('#pfQuote').textContent = line ? `「${line}」` : '';
+    $('#pfBio').innerHTML  = prose(m.bio);
+    $('#pfLore').innerHTML = loreHTML(m.lore);
+  }
+
+  function fillProfile(index, mode = pfMode) {
+    if (!lines[index]) return;
+    pfIndex = index;
+    mode === 'master' ? fillMaster(index) : fillServant(index);
     $('#pfCount').textContent = `${index + 1} / ${lines.length}`;
     showTab(0);
     pfPanel.scrollTop = 0;
   }
 
-  function openProfile(index) {
+  function openProfile(index, mode = 'servant') {
     if (!lines[index]) return;
     if (pf.hidden) lastFocus = document.activeElement;
-    fillProfile(index);
+    fillProfile(index, mode);
     pf.hidden = false;
     pfClose.focus();
   }
@@ -446,6 +533,14 @@
     fillProfile(next);
     feature(next);     // 로비의 대표 서번트도 같이 바꾼다
   }
+  // 서번트 ↔ 마스터 바로 넘어가기
+  $('#pfMeta').addEventListener('click', e => {
+    const b = e.target.closest('.pf-link');
+    if (!b) return;
+    if (b.dataset.toMaster  != null) fillProfile(Number(b.dataset.toMaster), 'master');
+    if (b.dataset.toServant != null) fillProfile(Number(b.dataset.toServant), 'servant');
+    pfClose.focus();
+  });
 
   pfClose.addEventListener('click', closeProfile);
   pfScrim.addEventListener('click', closeProfile);
@@ -462,7 +557,7 @@
       if (e.key === 'ArrowRight') inTabs ? stepTab(1)  : stepProfile(1);
       if (e.key === 'Tab') {
         const f = Array.from(pfPanel.querySelectorAll('button'))
-          .filter(b => b.tabIndex !== -1);
+          .filter(b => b.tabIndex !== -1 && !b.hidden && b.offsetParent !== null);
         const first = f[0], last = f[f.length - 1];
         if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
         else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }

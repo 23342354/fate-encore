@@ -517,6 +517,54 @@ button.card:active{transform:scale(.97)}
 .card--sealed .card__name{font-weight:400;color:rgba(var(--text-rgb),.6)}
 .card--sealed .card__class{opacity:.6}
 
+/* 서번트 / 마스터 전환 */
+.seg{
+  display:flex;width:max-content;margin:0 auto 1.1rem;padding:.22rem;gap:.2rem;
+  background:#fff;border:1px solid rgba(var(--line),.4);border-radius:999px;
+  box-shadow:0 .15rem .6rem rgba(16,28,36,.07);
+}
+.seg__btn{
+  min-width:6.5rem;padding:.42rem 1.2rem;cursor:pointer;
+  font-family:var(--main);font-size:.9rem;line-height:1.5;
+  color:var(--text-dim);background:none;border:0;border-radius:999px;
+  transition:background .2s ease,color .2s ease;
+}
+.seg__btn:hover{color:var(--accent-strong)}
+.seg__btn[aria-pressed="true"]{
+  color:#fff;font-weight:600;
+  background:linear-gradient(180deg,#5A93B2,var(--accent-strong));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+/* 마스터 카드 — 서번트의 밤 대신 종이. 같은 변수 이름에 낮 쪽 값을 다시 준다 */
+.card--master{background:linear-gradient(160deg,#F4EFDD,#A9B58F 34%,#5F8068 64%,#E3D9B8)}
+.card--master .card__art,
+.profile__arch--master{
+  --ink:#08090B;
+  --text:#2B343A;
+  --text-dim:#5F717B;
+  --accent:#366379;
+  --accent-strong:#1F4558;
+  --line:54,99,121;
+  --glow:118,170,207;
+  --surface:250,250,247;
+  --text-rgb:43,52,58;
+}
+.card--master .card__art{
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 26%,rgba(227,217,184,.75),transparent 70%),
+    linear-gradient(180deg,#FBFAF5,#DCE4DD);
+  box-shadow:inset 0 0 0 1px rgba(95,128,104,.35);
+}
+.card--master .card__glyph{color:rgba(54,99,121,.62)}
+.card--master .card__plate{
+  background:linear-gradient(transparent,rgba(250,250,247,.72) 40%,rgba(250,250,247,.97));
+}
+.card--master .card__class{background:rgba(255,255,255,.7);border-color:rgba(95,128,104,.5)}
+.card--master.card--sealed{background:linear-gradient(160deg,#ECEDE8,#B7C6C5)}
+.card--master.card--sealed .card__art{background:linear-gradient(180deg,#F1F2EE,#CBD3D1)}
+.card--master.card--sealed .card__glyph{color:rgba(43,52,58,.16)}
+
 /* ─────────── 소환 ─────────── */
 .screen--summon{
   display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;
@@ -765,6 +813,24 @@ button.chapter:active{transform:scale(.985)}
   box-shadow:inset 0 0 0 5px rgba(var(--surface),.6),inset 0 0 2.4rem rgba(0,0,0,.6);
 }
 .profile__glyph{width:46%;color:var(--accent-strong)}
+.profile__arch--master{
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 24%,rgba(227,217,184,.8),transparent 70%),
+    linear-gradient(180deg,#FBFAF5,#D6E0D9);
+  border-color:rgba(95,128,104,.55);
+  box-shadow:inset 0 0 0 5px rgba(255,255,255,.6),inset 0 0 2rem rgba(95,128,104,.18);
+}
+.profile__arch--master .profile__glyph{color:rgba(54,99,121,.7)}
+
+/* 서번트 ↔ 마스터 이동 링크 */
+.pf-link{
+  padding:0;cursor:pointer;font:inherit;line-height:inherit;text-align:left;
+  color:var(--accent-strong);background:none;border:0;
+  text-decoration:underline;text-decoration-color:rgba(var(--line),.45);
+  text-underline-offset:.22em;
+}
+.pf-link::after{content:" ›";text-decoration:none;display:inline-block;margin-left:.15em;color:var(--accent)}
+.pf-link:hover{text-decoration-color:currentColor}
 .profile__glyph svg{width:100%;height:auto;display:block}
 
 .profile__class{

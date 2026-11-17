@@ -126,7 +126,7 @@
           <p class="standinfo__text">
             <span class="standinfo__class" id="standClass">CASTER</span>
             <span class="standinfo__name" id="standName">오스카 조로아스터</span>
-            <span class="standinfo__master"><span class="standinfo__label">MASTER</span><span id="standMaster">마키오카 모쿠렌</span></span>
+            <span class="standinfo__master"><span class="standinfo__label">MASTER</span><button class="pf-link" type="button" id="standMaster">마키오카 모쿠렌</button></span>
           </p>
           <button class="gbtn gbtn--light gbtn--sm" type="button" id="standProfile"><span>프로필</span></button>
         </div>
@@ -137,14 +137,19 @@
         </button>
       </section>
 
-      <!-- 서번트 -->
-      <section class="screen" id="s-servants" data-screen="servants" hidden>
+      <!-- 캐스트 -->
+      <section class="screen" id="s-cast" data-screen="cast" hidden>
         <header class="screen__head">
-          <h2 class="screen__title">서번트</h2>
-          <p class="screen__latin">Servant</p>
-          <p class="screen__note">일곱 기 가운데 넷이 공개되었다. 카드를 누르면 프로필이 열린다.</p>
+          <h2 class="screen__title">캐스트</h2>
+          <p class="screen__latin">Dramatis Personae</p>
+          <p class="screen__note">일곱 쌍 가운데 넷이 공개되었다. 카드를 누르면 프로필이 열린다.</p>
         </header>
+        <div class="seg" role="group" aria-label="보기 전환">
+          <button class="seg__btn" type="button" id="segServant" aria-pressed="true">서번트</button>
+          <button class="seg__btn" type="button" id="segMaster" aria-pressed="false">마스터</button>
+        </div>
         <ul class="cards" id="cardList"></ul>
+        <ul class="cards" id="masterList" hidden></ul>
       </section>
 
       <!-- 소환 -->
@@ -278,9 +283,9 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5.5v-6h-5v6H4z"/></svg>
         <span>홈</span>
       </button>
-      <button class="dock__btn" type="button" data-go="servants">
+      <button class="dock__btn" type="button" data-go="cast">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="10" height="14" rx="1.2"/><path d="M17 7.5h1.8A1.2 1.2 0 0 1 20 8.7v10.6a1.2 1.2 0 0 1-1.2 1.2h-7.6A1.2 1.2 0 0 1 10 19.3"/></svg>
-        <span>서번트</span>
+        <span>캐스트</span>
       </button>
       <button class="dock__btn dock__btn--summon" type="button" data-go="summon">
         <span class="dock__orb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 14 10l8.5 2-8.5 2-2 8.5-2-8.5-8.5-2 8.5-2z"/></svg></span>
@@ -349,7 +354,7 @@
     <button class="profile__close" type="button" id="pfClose" aria-label="닫기">✕</button>
 
     <div class="profile__portrait">
-      <span class="profile__arch">
+      <span class="profile__arch" id="pfArch">
         <span class="profile__glyph" id="pfGlyph" aria-hidden="true"></span>
       </span>
     </div>
@@ -370,17 +375,12 @@
       </div>
 
       <div class="profile__pane" id="paneStatus" role="tabpanel" aria-labelledby="tabStatus" tabindex="0">
-        <dl class="profile__meta">
-          <div><dt>마스터</dt><dd id="pfMaster"></dd></div>
-          <div><dt>성별</dt><dd id="pfGender"></dd></div>
-          <div><dt>속성</dt><dd id="pfAlign"></dd></div>
-          <div><dt>신장 / 체중</dt><dd id="pfSize"></dd></div>
-        </dl>
+        <dl class="profile__meta" id="pfMeta"></dl>
         <ul class="profile__stats" id="pfStats"></ul>
         <dl class="profile__meta profile__meta--np">
           <div><dt>소개</dt><dd class="profile__bio" id="pfBio"></dd></div>
         </dl>
-        <blockquote class="profile__quote"><p id="pfQuote"></p></blockquote>
+        <blockquote class="profile__quote" id="pfQuoteBox"><p id="pfQuote"></p></blockquote>
       </div>
 
       <div class="profile__pane" id="paneLore" role="tabpanel" aria-labelledby="tabLore" tabindex="0" hidden>
@@ -406,6 +406,7 @@
 </div>
 
 <script src="assets/js/cast.js" defer></script>
+<script src="assets/js/masters.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>
