@@ -21,6 +21,7 @@
      { cg:'키', text:'지문' }      일러스트 한 장 (없으면 지문 글귀)
      { fx:'이름' }                연출 — light · reveal · lighton · window · open
                                   confetti · seals · glass · sealdraw · sealfull
+                                  nightfall (우키하 노을 → 밤)
      { bgm:0.2 }                  배경음악 크기 (0 ~ 1)
      { sfx:'키' }                 효과음
      { wait:1500 }                잠깐 멈춤 (ms)
@@ -35,7 +36,8 @@ window.PROLOGUE_ASSETS = {
     // 첫 창문 — 불빛이 켜진 자리에서 불 꺼진 방이 드러나고, 형광등이 켜진다
     window:    'assets/img/story/window-dark.jpg',
     windowLit: 'assets/img/story/window-lit.jpg',
-    ukiha:    '',   // 저녁 무렵의 우키하
+    ukiha:      'assets/img/story/ukiha-sunset.jpg',  // 저녁 무렵의 우키하 — 노을
+    ukihaNight: 'assets/img/story/ukiha-street.jpg',  // 같은 거리의 밤. fx:'nightfall' 에서 노을 위로 번진다
     room:     '',   // 불을 켜지 않은 방, 탁자 위 봉투
     envelope: '',   // 크림색 봉투 확대
     montage:  '',   // 안내문 뒤로 교차하는 우키하 풍경
@@ -88,6 +90,7 @@ window.PROLOGUE = [
   { wait: 2600 },
 
   { narr: '밤이 일찍 찾아오는 계절이었다.' },
+  { fx: 'nightfall' },  // 저녁빛이 내려앉고 창문에 불이 켜진다 — 노을이 밤으로
   { narr: '산자락 아래로 저녁빛이 내려앉으면, 오래된 집들의 창문에 하나둘 불이 켜졌다. 장 본 비닐봉지가 바스락거리며 골목을 지나갔고, 처마 밑으로는 간장 졸이는 냄새가 번졌다. 가게 주인은 문 앞에 내놓았던 물건을 안으로 들였다.' },
   { narr: '식탁에는 저녁이 놓일 것이다.\n누군가는 늦는다는 연락을 받을 것이고, 누군가는 식어 가는 국을 다시 데울 것이다.' },
   { narr: '오늘도, 어제와 크게 다르지 않은 밤.' },

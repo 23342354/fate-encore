@@ -745,6 +745,10 @@ button.chapter:active{transform:scale(.985)}
   background:#000 center/cover no-repeat;overflow:hidden;
 }
 .vnp__bg.is-front{opacity:1}
+/* 그림이 들어간 장면 — 임시 배경용 background 규칙이 그림 위치를 덮어쓰지 않게 */
+.vnp__bg.has-img{
+  background-color:#000;background-position:center;background-size:cover;background-repeat:no-repeat;
+}
 .vnp__fx{pointer-events:none}
 
 /* 지명 자막 */
@@ -881,6 +885,15 @@ button.chapter:active{transform:scale(.985)}
 @keyframes lit{to{opacity:.92}}
 
 .is-ukiha{background:#0B141E}
+/* 그림이 들어간 우키하 — 천천히 다가가고, 노을 위로 밤이 번진다 */
+.vnp__bg.has-img.is-ukiha{animation:streetIn 24s ease-out forwards}
+@keyframes streetIn{from{transform:scale(1.08)}to{transform:scale(1)}}
+.art__night{
+  position:absolute;inset:0;pointer-events:none;
+  background:center/cover no-repeat;
+  opacity:0;transition:opacity 9s ease-in-out;
+}
+.art__night.is-on{opacity:1}
 .art__sky{
   position:absolute;inset:0;
   background:linear-gradient(180deg,#2C4466 0%,#7A6F8A 30%,#D08A66 52%,#F2B47C 64%,#F7D9A8 78%);

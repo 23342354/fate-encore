@@ -453,12 +453,22 @@
     pov:      () => ROOM() + `<div class="art__mark">${GLYPH_MASTER}</div>`,
   };
 
+  // 그림 위에 얹는 연출 — 그림이 들어간 장면에만
+  const OVER = {
+    // 같은 거리의 밤 그림을 겹쳐 두었다가 nightfall 에서 번지게 한다
+    ukiha: () => ASSETS.bg.ukihaNight ? `<div class="art__night" style="background-image:url('${ASSETS.bg.ukihaNight}')"></div>` : '',
+  };
+  // 그림이 있는 장면은 서곡을 열 때 미리 받아 둔다
+  function preloadBg() {
+    Object.values(ASSETS.bg).filter(Boolean).forEach(src => { const i = new Image(); i.src = src; });
+  }
+
   function setBg(key) {
     const next = bgLayers[1 - bgFront], prev = bgLayers[bgFront];
     const src = ASSETS.bg[key];
-    next.className = `vnp__bg is-${key}`;
+    next.className = `vnp__bg is-${key}` + (src ? ' has-img' : '');
     next.style.backgroundImage = src ? `url("${src}")` : '';
-    next.innerHTML = src ? '' : (ART[key] ? ART[key]() : '');
+    next.innerHTML = src ? (OVER[key] ? OVER[key]() : '') : (ART[key] ? ART[key]() : '');
     next.classList.add('is-front');
     prev.classList.remove('is-front');
     bgFront = 1 - bgFront;
@@ -501,6 +511,7 @@
       box.insertAdjacentHTML('beforeend', `<span class="fx-photo__img fx-photo__img--lit" style="background-image:url('${ASSETS.bg.windowLit}')"></span>`);
       return null;
     },
+    nightfall: () => { const n = $('.vnp__bg.is-front .art__night', vnp); n && n.classList.add('is-on'); return null; },
     window:   () => '<span class="fx-window"><i></i></span>',
     open:     () => { const e = $('.art__env', vnp); e && e.classList.add('is-open'); return null; },
     confetti: () => '<span class="fx-confetti"></span>',
@@ -693,7 +704,7 @@
     vnp.hidden = false;
     vnp.focus({ preventScroll: true });
     bgmTo(0);                   // 스크립트가 침묵으로 시작한다
-    [ASSETS.bg.window, ASSETS.bg.windowLit].filter(Boolean).forEach(src => { const i = new Image(); i.src = src; });
+    preloadBg();
     next();
   }
   function closePrologue() {
