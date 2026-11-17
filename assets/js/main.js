@@ -74,6 +74,50 @@
       }).join('')
     : '<p class="is-empty">—</p>';
 
+  /* ── 타자기 ────────────────────────────────────────────
+     글자를 하나씩 덧붙이면 줄이 다시 나뉘면서 문장이 흔들린다.
+     그래서 문장 전체를 처음부터 투명하게 깔아 두고 한 글자씩 보이게 한다.
+     줄바꿈(\n)과 **강조** 도 처음부터 제자리에 있다.
+     ▼ 표시는 마지막 글자와 붙여 두어 혼자 다음 줄로 떨어지지 않는다. */
+  const MORE = '<span class="more" aria-hidden="true">▼</span>';
+  function charsHTML(text) {
+    const toks = [];
+    let bold = false;
+    text.split(/(\*\*|\n)/).forEach(part => {
+      if (part === '**') { toks.push({ tag: bold ? '</strong>' : '<strong>' }); bold = !bold; return; }
+      if (part === '\n') { toks.push({ tag: '<br>' }); return; }
+      for (const c of part) toks.push({ c });
+    });
+    let last = -1;
+    toks.forEach((t, i) => { if (t.c != null && t.c.trim()) last = i; });
+    return toks.map((t, i) => {
+      if (t.tag) return t.tag;
+      const ch = `<span class="ch">${esc(t.c)}</span>`;
+      return i === last ? `<span class="nb">${ch}${MORE}</span>` : ch;
+    }).join('') + (last < 0 ? MORE : '');
+  }
+  // el 에 문장을 깔고, 한 글자씩 보이게 하는 함수를 돌려준다
+  function typewriter(el, text, ms, onDone) {
+    el.innerHTML = charsHTML(text);
+    el.classList.remove('is-done');
+    const chs = el.querySelectorAll('.ch');
+    let i = 0, timer = null;
+    const finish = () => {
+      if (timer) { window.clearInterval(timer); timer = null; }
+      chs.forEach(c => c.classList.add('on'));
+      el.classList.add('is-done');
+      onDone && onDone();
+    };
+    if (reduce || ms <= 0 || !chs.length) { finish(); return { finish, stop() {} }; }
+    timer = window.setInterval(() => {
+      // 공백은 바로 건너뛴다
+      while (i < chs.length && !chs[i].textContent.trim()) chs[i++].classList.add('on');
+      if (i < chs.length) chs[i++].classList.add('on');
+      if (i >= chs.length) finish();
+    }, ms);
+    return { finish, stop() { if (timer) { window.clearInterval(timer); timer = null; } } };
+  }
+
   /* ── 1. 마법진 눈금 ─────────────────────────────────── */
   (function drawTicks() {
     const g = $('#sigilTicks');
@@ -212,23 +256,15 @@
   const opening = Math.max(0, lines.findIndex(l => l.cls === 'CASTER'));
 
   function stopTyping() {
-    if (typer) { window.clearInterval(typer); typer = null; }
+    if (typer) { typer.stop(); typer = null; }
   }
-  function finishLine(text) {
-    stopTyping();
-    speechText.textContent = text;
-    speechText.classList.add('is-done');
+  function finishLine() {
+    if (typer) { const t = typer; typer = null; t.finish(); }
   }
   function type(text) {
     stopTyping();
-    speechText.classList.remove('is-done');
-    if (reduce) { finishLine(text); return; }
-    speechText.textContent = '';
-    let i = 0;
-    typer = window.setInterval(() => {
-      speechText.textContent = text.slice(0, ++i);
-      if (i >= text.length) finishLine(text);
-    }, SPEED);
+    const t = typewriter(speechText, text, SPEED, () => { typer = null; });
+    if (!speechText.classList.contains('is-done')) typer = t;
   }
 
   function feature(index) {
@@ -250,7 +286,7 @@
   }
   function advance() {
     // 타이핑 중이면 먼저 끝까지 출력, 아니면 다음 서번트
-    if (typer) { finishLine(lines[current].line); return; }
+    if (typer) { finishLine(); return; }
     feature((current + 1) % lines.length);
   }
   $('#speech').addEventListener('click', advance);
@@ -553,36 +589,26 @@
       `<li class="${l.kind ? 'is-' + l.kind : ''}">${rich(l.text)}</li>`).join('');
   }
   function finishVType() {
-    if (vTyper) { window.clearInterval(vTyper); vTyper = null; }
-    if (vTyped) { vTyped.el.innerHTML = rich(vTyped.text); vTyped.el.classList.add('is-done'); vTyped = null; }
-    markReady();
+    if (vTyper) { const t = vTyper; vTyper = null; t.finish(); }
   }
   function typeInto(el, text) {
-    if (reduce || skipOn) { el.innerHTML = rich(text); el.classList.add('is-done'); markReady(); return; }
     vTyped = { el, text };
-    let i = 0;
-    vTyper = window.setInterval(() => {
-      i++;
-      el.textContent = text.slice(0, i);
-      if (i >= text.length) finishVType();
-    }, TYPE_MS);
+    const t = typewriter(el, text, skipOn ? 0 : TYPE_MS, () => { vTyper = null; vTyped = null; markReady(); });
+    if (!el.classList.contains('is-done')) vTyper = t;   // 바로 끝난 경우는 붙잡지 않는다
   }
   function addParagraph(text, kind) {
     hideCards();
     vnpPage.classList.add('is-on');
-    $$('.is-done', vnpPage).forEach(p => p.classList.remove('is-last'));
+    $$('.vnp__p', vnpPage).forEach(p => p.classList.remove('is-last'));
     const p = document.createElement('p');
     p.className = 'vnp__p is-last' + (kind ? ' vnp__p--' + kind : '');
-    // 화면이 넘칠 것 같으면 지우고 새로 시작
-    p.innerHTML = rich(text);
     vnpPage.appendChild(p);
+    typeInto(p, text);     // 문장 전체가 투명하게 먼저 깔린다
+    // 화면이 넘치면 지우고 새로 시작 — 전체 길이로 판단하므로 도중에 넘치지 않는다
     if (vnpPage.scrollHeight > vnpPage.clientHeight + 2 && vnpPage.children.length > 1) {
-      vnpPage.innerHTML = '';
-      vnpPage.appendChild(p);
+      $$('.vnp__p', vnpPage).forEach(x => { if (x !== p) x.remove(); });
     }
-    p.textContent = '';
     pushVLog(text, kind);
-    typeInto(p, text);
   }
 
   // ── 진행 ──
@@ -591,7 +617,7 @@
     window.clearTimeout(vAuto);
     if (skipOn) vAuto = window.setTimeout(next, 140);
     else if (autoOn2) {
-      const len = vTyped ? vTyped.text.length : (vnpPage.lastElementChild ? vnpPage.lastElementChild.textContent.length : 20);
+      const len = vnpPage.lastElementChild ? vnpPage.lastElementChild.textContent.length : 20;
       vAuto = window.setTimeout(next, 1400 + len * 40);
     }
   }
@@ -685,7 +711,7 @@
 
   function resetPlayer() {
     window.clearTimeout(vWait); window.clearTimeout(vAuto);
-    if (vTyper) { window.clearInterval(vTyper); vTyper = null; }
+    if (vTyper) { vTyper.stop(); vTyper = null; }
     vTyped = null; holding = false; ready = false; at = -1;
     setAuto2(false); setSkip(false);
     vLog.length = 0; $('#vnpLogList').innerHTML = '';
