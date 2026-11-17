@@ -911,13 +911,12 @@ button.chapter:active{transform:scale(.985)}
   top:47%;
   transform:translate(-50%,-50%) perspective(1100px) rotateX(24deg) rotate(-5deg);
   box-shadow:0 2.2rem 2.6rem -0.6rem rgba(40,28,14,.55),0 .3rem .8rem rgba(40,28,14,.35);
-  background:linear-gradient(160deg,#F3EAD2,#DCCDA8);
 }
 @keyframes envInFlat{from{opacity:0;transform:translate(-50%,-46%) perspective(1100px) rotateX(24deg) rotate(-5deg) scale(.94)}}
 .vnp__bg.has-img .art__env--big{animation:envInFlat 1.6s cubic-bezier(.2,.8,.3,1)}
 /* 밀랍 봉인 — 봉투가 열리면 떨어져 나간다 */
 .art__env-seal{
-  position:absolute;left:50%;top:58%;width:9%;aspect-ratio:1;z-index:2;
+  position:absolute;left:50%;top:58%;width:9%;aspect-ratio:1;z-index:7;
   transform:translate(-50%,-50%);border-radius:50%;
   background:radial-gradient(circle at 40% 35%,#C2453E,#8E1E22 60%,#6E1418);
   box-shadow:0 .1rem .3rem rgba(0,0,0,.35),inset 0 0 0 .18rem rgba(255,140,120,.25);
@@ -996,19 +995,65 @@ button.chapter:active{transform:scale(.985)}
 }
 @keyframes envIn{from{opacity:0;transform:translate(-50%,-46%) rotate(-2deg) scale(.94)}}
 .art__env-name{
-  position:absolute;left:0;right:0;bottom:22%;text-align:center;
+  position:absolute;z-index:5;left:0;right:0;bottom:22%;text-align:center;
   font-family:'Nanum Myeongjo',serif;font-weight:700;font-size:clamp(1.1rem,3.6vw,1.6rem);letter-spacing:.2em;
   background:linear-gradient(180deg,#F5DF9C,#B88B2E 60%,#E9C873);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   filter:drop-shadow(0 1px 0 rgba(90,60,10,.35));
 }
-.art__env-sheet{
-  position:absolute;left:8%;right:8%;top:6%;height:80%;z-index:-1;
-  background:#FBF7EC;box-shadow:0 0 0 1px rgba(160,130,70,.25);
-  transition:transform 1s ease .5s;
-}
 .art__env.is-open .art__env-flap{transform:rotateX(180deg)}
-.art__env.is-open .art__env-sheet{transform:translateY(-38%)}
+
+/* ── 큰 봉투의 겹 ── */
+.art__env--big{background:none}
+.art__env-back{
+  position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,#CDBE98,#BFAE85);
+  box-shadow:inset 0 0 0 1px rgba(150,125,80,.35);
+}
+.art__env--big .art__env-flap{
+  z-index:6;
+  background:linear-gradient(180deg,#EADFC2,#D8C8A2);
+  /* 반쯤 뒤집혔을 때(0.5초) 편지지 뒤로 넘어간다 */
+  transition:transform 1s ease,z-index 0s linear .5s;
+}
+.art__env--big .art__env-flap::after{   /* 덮개 안쪽 면 — 뒤집힌 뒤에 보인다 */
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(0deg,#D3C49E,#C4B38A);
+  opacity:0;transition:opacity 0s linear .5s;
+}
+.art__env--big.is-open .art__env-flap{z-index:2}
+.art__env--big.is-open .art__env-flap::after{opacity:1}
+.art__env-sheet{
+  position:absolute;z-index:3;left:7%;right:7%;top:5%;height:86%;
+  background:
+    linear-gradient(90deg,transparent 14%,rgba(150,140,120,.22) 14% 86%,transparent 86%) 0 30%/100% 2px no-repeat,
+    linear-gradient(90deg,transparent 14%,rgba(150,140,120,.22) 14% 80%,transparent 80%) 0 40%/100% 2px no-repeat,
+    linear-gradient(90deg,transparent 14%,rgba(150,140,120,.22) 14% 84%,transparent 84%) 0 50%/100% 2px no-repeat,
+    linear-gradient(90deg,transparent 38%,rgba(196,156,70,.55) 38% 62%,transparent 62%) 0 14%/100% 2px no-repeat,
+    #FBF7EC;
+  box-shadow:0 0 0 1px rgba(160,130,70,.25),0 -.2rem .6rem rgba(60,40,10,.12);
+  transition:transform 1.1s cubic-bezier(.3,.7,.3,1) .7s;
+}
+.art__env--big.is-open .art__env-sheet{transform:translateY(-46%)}
+/* 앞 주머니 — 양옆과 아래 날개가 겹쳐 위가 V 자로 파인 면 */
+.art__env-front{
+  position:absolute;inset:0;z-index:4;
+  background:linear-gradient(160deg,#F3EAD2,#DCCDA8);
+  clip-path:polygon(0 0,50% 54%,100% 0,100% 100%,0 100%);
+  box-shadow:inset 0 0 0 1px rgba(150,125,80,.4);
+}
+.art__env-front::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,#EBE0C4,#D6C59C);
+  clip-path:polygon(0 100%,50% 50%,100% 100%);
+  filter:drop-shadow(0 -1px 0 rgba(150,125,80,.4));
+}
+.art__env-front::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(to top right,transparent calc(50% - 1px),rgba(150,125,80,.45) 50%,transparent calc(50% + 1px)) 0 0/50% 54% no-repeat,
+    linear-gradient(to top left,transparent calc(50% - 1px),rgba(150,125,80,.45) 50%,transparent calc(50% + 1px)) 100% 0/50% 54% no-repeat;
+}
 
 .is-montage{background:#0B141E}
 .art__pan{

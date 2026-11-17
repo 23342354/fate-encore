@@ -467,11 +467,19 @@
       <path class="art__ridge" d="M0 610 C240 550 420 600 640 570 C860 540 1060 600 1300 565 C1440 545 1520 570 1600 560 V900 H0Z"/>
       <g class="art__houses">${houses}</g><g class="art__wins">${wins}</g></svg>`;
   }
-  const envelopeHTML = (big) => `<div class="art__env${big ? ' art__env--big' : ''}">
-      <span class="art__env-flap"></span>
-      ${big ? '<span class="art__env-seal"></span>' : ''}
-      ${big ? '<span class="art__env-name">마스터 귀하</span><span class="art__env-sheet"></span>' : ''}
-    </div>`;
+  // 큰 봉투는 실제 봉투처럼 겹을 쌓는다 (아래에서 위로)
+  //   안쪽 면 → 열린 덮개 → 편지지 → 앞 주머니 → 금박 이름 → 닫힌 덮개 → 봉인
+  // 덮개는 뒤집히는 도중에 편지지 뒤로 넘어가고, 편지지는 주머니 위로 빠져나온다
+  const envelopeHTML = (big) => big
+    ? `<div class="art__env art__env--big">
+        <span class="art__env-back"></span>
+        <span class="art__env-flap"></span>
+        <span class="art__env-sheet"></span>
+        <span class="art__env-front"></span>
+        <span class="art__env-name">마스터 귀하</span>
+        <span class="art__env-seal"></span>
+      </div>`
+    : `<div class="art__env"><span class="art__env-flap"></span></div>`;
   const ROOM = () => `<div class="art__roomwin"></div><div class="art__beam"></div><div class="art__table"></div>${envelopeHTML(false)}`;
   const ART = {
     black:    () => '',
