@@ -24,6 +24,9 @@
   <div class="drape drape--r"></div>
 </div>
 
+<!-- 배경음악 — 브라우저는 사용자가 한 번 눌러야 소리를 내 준다. TAP TO START 에서 켠다 -->
+<audio id="bgm" src="assets/audio/bgm.mp3" loop preload="metadata"></audio>
+
 <div class="app" id="app">
 
   <!-- 배경 — 마법진 -->
@@ -63,9 +66,12 @@
     <h1 class="title__logo-wrap">
       <img class="title__logo" src="assets/img/logo.png" width="1034" height="677" alt="Fate / Encore — An encore for wishes unfulfilled.">
     </h1>
-    <p class="title__sub">이루지 못한 소원에,<br>다시 한번 박수를.</p>
+    <p class="title__sub">이루지 못한 소원에, <br>다시 한번 박수를.</p>
     <button class="title__start" type="button" id="btnStart">TAP TO START</button>
-    <p class="title__foot">비공식 팬 제작물 · © 2026 팬 서클 「제2막」</p>
+    <p class="title__foot">
+      <span class="title__music">♪ One Last Wish Once More For All That Never Was — @5minutejamms · 소리가 함께 재생된다</span>
+      <span>비공식 팬 제작물 · © 2026 팬 서클 「제2막」</span>
+    </p>
   </section>
 
   <!-- ─────────── 게임 화면 ─────────── -->
@@ -77,6 +83,11 @@
         <span class="hud__who"><b>마스터</b><small>제6차 성배전쟁 · 우키하</small></span>
       </div>
       <div class="hud__res">
+        <button class="chip chip--btn" type="button" id="btnBgm" aria-pressed="true" aria-label="배경음악 끄기">
+          <svg class="chip__on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>
+          <svg class="chip__off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+          <span class="chip__label">BGM</span>
+        </button>
         <span class="chip" title="령주">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 20 12 12 22 4 12z"/></svg>
           <span class="chip__label">령주</span><b>3</b>
@@ -244,8 +255,17 @@
             </form>
           </section>
           <section class="panel">
+            <h3 class="panel__title">음악</h3>
+            <dl class="spec">
+              <div class="spec__row"><dt>BGM</dt><dd>One Last Wish Once More For All That Never Was</dd></div>
+              <div class="spec__row"><dt>음악</dt><dd>@5minutejamms</dd></div>
+            </dl>
+            <p class="fan fan--meta">상단의 BGM 버튼으로 끄고 켤 수 있다.</p>
+          </section>
+          <section class="panel">
             <h3 class="panel__title">안내</h3>
             <p class="fan">본 사이트는 TYPE-MOON 작품을 좋아하는 사람이 만든 <strong>비공식 팬 제작물</strong>이며, 저작권자 및 관련 회사와 아무런 관계가 없습니다. 등장하는 영령·등장인물·각본은 전부 창작이거나 퍼블릭 도메인 인물을 바탕으로 합니다.</p>
+            <p class="fan fan--meta">BGM: One Last Wish Once More For All That Never Was — @5minutejamms</p>
             <p class="fan fan--meta">© 2026 팬 서클 「제2막」</p>
           </section>
         </div>

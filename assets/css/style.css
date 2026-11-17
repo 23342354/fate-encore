@@ -171,31 +171,38 @@ a{color:var(--accent-strong)}
 .sigil__text{font-family:var(--display);font-size:19px;letter-spacing:.42em;opacity:.85}
 
 /* ─────────── 타이틀 화면 ─────────── */
+/* 로고 묶음은 가운데, 출처 줄은 바닥. 높이가 모자라면 로고가 줄어든다 */
 .title{
-  position:absolute;inset:0;z-index:5;
-  display:grid;place-items:center;align-content:center;gap:1.1rem;
-  padding:2rem var(--gutter) 3.5rem;text-align:center;cursor:pointer;
+  position:absolute;inset:0;z-index:5;overflow-y:auto;
+  display:flex;flex-direction:column;align-items:center;gap:1.1rem;
+  padding:1.5rem var(--gutter) 1rem;text-align:center;cursor:pointer;
   transition:opacity .6s ease,transform .6s ease,visibility 0s .6s;
 }
 .title.is-gone{opacity:0;transform:scale(1.04);visibility:hidden;pointer-events:none}
-.title__logo-wrap{margin:0;line-height:0}
+.title__logo-wrap{margin:auto 0 0;line-height:0}
 .title__logo{
   display:block;margin:0 auto;width:auto;height:auto;
   max-width:min(100%,48rem);
-  max-height:max(12rem,calc(100vh - 18rem));
-  max-height:max(12rem,calc(100dvh - 18rem));
+  max-height:max(7rem,calc(100vh - 21rem));
+  max-height:max(7rem,calc(100dvh - 21rem));
 }
 .title__sub{margin:0;font-size:clamp(1rem,2.1vw,1.15rem);line-height:1.9;color:var(--text)}
 .title__start{
-  margin-top:.4rem;padding:.9rem 2rem;cursor:pointer;
+  margin:.2rem 0 auto;padding:.9rem 2rem;cursor:pointer;
   font-family:var(--display);font-size:clamp(.95rem,4.4vw,1.15rem);letter-spacing:.42em;text-indent:.42em;white-space:nowrap;
   color:var(--accent-strong);background:none;border:0;
   animation:blink 2.2s ease-in-out infinite;
 }
 @keyframes blink{50%{opacity:.25}}
 .title__foot{
-  position:absolute;left:0;right:0;bottom:1rem;margin:0;
-  font-size:.76rem;color:var(--text-dim);
+  margin:0;display:grid;gap:.15rem;
+  font-size:.76rem;line-height:1.6;color:var(--text-dim);
+}
+.title__music{color:var(--accent)}
+@media (max-height:30rem){
+  .title{gap:.5rem;padding-top:1rem;padding-bottom:.7rem}
+  .title__sub br{display:none}
+  .title__start{padding:.5rem 2rem}
 }
 
 /* ─────────── 게임 화면 ─────────── */
@@ -239,6 +246,13 @@ a{color:var(--accent-strong)}
 .chip svg{width:.95rem;height:.95rem;color:var(--accent)}
 .chip__label{color:var(--text-dim)}
 .chip b{font-weight:600}
+.chip--btn{cursor:pointer;font-family:var(--main);transition:background .2s ease,color .2s ease}
+.chip--btn:hover{background:#EEF4F7}
+.chip--btn .chip__off{display:none}
+.chip--btn[aria-pressed="false"]{color:var(--text-dim)}
+.chip--btn[aria-pressed="false"] svg{color:var(--text-dim)}
+.chip--btn[aria-pressed="false"] .chip__on{display:none}
+.chip--btn[aria-pressed="false"] .chip__off{display:block}
 
 /* 화면 */
 .screens{position:relative;min-height:0}
@@ -623,7 +637,7 @@ button.chapter:active{transform:scale(.985)}
 .info{max-width:54rem;margin:0 auto;display:grid;gap:1rem}
 @media (min-width:60rem){
   .info{grid-template-columns:1fr 1fr;align-items:start}
-  .info .panel:first-child{grid-row:span 2}
+  .info .panel:first-child{grid-row:span 3}
 }
 .panel{
   padding:1.1rem 1.3rem 1.2rem;

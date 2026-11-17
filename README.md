@@ -10,6 +10,7 @@
 index.html              게임 화면 전체 (타이틀 · 로비 · 각 메뉴 화면)
 assets/css/style.css    전체 스타일
 assets/img/logo.png     제호 로고 (배경이 투명한 PNG)
+assets/audio/bgm.mp3    배경음악 — One Last Wish Once More For All That Never Was / @5minutejamms
 assets/js/cast.js       캐릭터 설정 — 설정을 고칠 곳은 여기다
 assets/js/main.js       참전 명단 · 화면 전환 · 로비 대사 · 소환 · 프로필
 ```
@@ -27,7 +28,8 @@ assets/js/main.js       참전 명단 · 화면 전환 · 로비 대사 · 소�
 | 서번트 | 일곱 클래스 카드 도감. 공개된 카드를 누르면 프로필이 열린다 |
 | 소환 | 마법진 연출 뒤에 카드가 뒤집힌다. 1회는 공개된 서번트 가운데 하나, 7회는 일곱 클래스 전부 |
 | 스토리 | 서곡(읽기)과 잠긴 네 막 |
-| 정보 | 게임 정보 · 소식지 · 팬 제작물 안내 |
+| 정보 | 게임 정보 · 소식지 · 음악 출처 · 팬 제작물 안내 |
+| 배경음악 | TAP TO START 를 누르면 재생된다. 상단 HUD 의 BGM 버튼으로 끄고 켜며, 끈 상태는 브라우저에 기억된다 |
 | 프로필 | 페이트식 서번트 상세. 스테이터스 / 설정 / 스킬 / 보구 네 탭 |
 
 ### 조작
@@ -132,3 +134,8 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 ---
 
 © 2026 팬 서클 「제2막」
+
+## 음악
+
+- BGM: One Last Wish Once More For All That Never Was — @5minutejamms
+- 파일은 `assets/audio/bgm.mp3` 다. 같은 이름으로 덮어쓰면 곡이 바뀐다. 곡을 바꾸면 `index.html` 의 출처 표기 세 곳(타이틀 하단, 정보 > 음악, 정보 > 안내)도 같이 고친다

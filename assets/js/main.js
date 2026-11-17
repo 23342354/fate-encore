@@ -97,9 +97,60 @@
   }
   if (reduce) raiseCurtain(); else window.setTimeout(raiseCurtain, 420);
 
+  /* ── 2-b. 배경음악 ─────────────────────────────────────
+     끄고 켠 상태는 이 브라우저에 기억해 둔다.
+     브라우저가 막으면 조용히 넘어가고, 버튼을 누르면 다시 시도한다. */
+  const bgm    = $('#bgm');
+  const btnBgm = $('#btnBgm');
+  const BGM_VOLUME = 0.45;
+  let bgmOn = true;
+  let fadeTimer = null;
+  try { bgmOn = window.localStorage.getItem('fe-bgm') !== 'off'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
+
+  function paintBgm() {
+    btnBgm.setAttribute('aria-pressed', String(bgmOn));
+    btnBgm.setAttribute('aria-label', bgmOn ? '배경음악 끄기' : '배경음악 켜기');
+  }
+  function fadeTo(target, done) {
+    window.clearInterval(fadeTimer);
+    if (reduce) { bgm.volume = target; done && done(); return; }
+    fadeTimer = window.setInterval(() => {
+      const v = bgm.volume + (target > bgm.volume ? .05 : -.05);
+      if (Math.abs(target - bgm.volume) <= .05) {
+        bgm.volume = target;
+        window.clearInterval(fadeTimer);
+        done && done();
+      } else {
+        bgm.volume = Math.min(1, Math.max(0, v));
+      }
+    }, 60);
+  }
+  function playBgm() {
+    if (!bgmOn) return;
+    bgm.volume = 0;
+    const p = bgm.play();
+    if (p && p.then) p.then(() => fadeTo(BGM_VOLUME)).catch(() => {});
+    else fadeTo(BGM_VOLUME);
+  }
+  function stopBgm() { fadeTo(0, () => bgm.pause()); }
+
+  btnBgm.addEventListener('click', () => {
+    bgmOn = !bgmOn;
+    try { window.localStorage.setItem('fe-bgm', bgmOn ? 'on' : 'off'); } catch (e) { /* 무시 */ }
+    paintBgm();
+    bgmOn ? playBgm() : stopBgm();
+  });
+  // 다른 탭으로 가면 멈추고, 돌아오면 이어서
+  document.addEventListener('visibilitychange', () => {
+    if (!started || !bgmOn) return;
+    if (document.hidden) bgm.pause(); else playBgm();
+  });
+  paintBgm();
+
   function start() {
     if (started) return;
     started = true;
+    playBgm();      // 타이틀을 누른 그 순간이라야 브라우저가 소리를 허락한다
     title.classList.add('is-gone');
     game.hidden = false;
     // 한 박자 뒤에 켜야 페이드가 걸린다
