@@ -207,9 +207,23 @@
   });
   paintBgm();
 
+  // 처음 온 사람에게는 TAP TO START 직후 서곡을 한 번 틀어 준다.
+  // 한 번 보여 주면(끝까지 보든, 중간에 나가든) 다시는 저절로 틀지 않는다.
+  // 주소 끝에 ?intro 를 붙이면 다시 볼 수 있다 (확인용)
+  const INTRO_KEY = 'fe-intro';
+  function introPending() {
+    if (/[?&]intro\b/.test(location.search)) return true;
+    try { return window.localStorage.getItem(INTRO_KEY) !== 'played'; } catch (e) { return false; }
+  }
+  function markIntro() {
+    try { window.localStorage.setItem(INTRO_KEY, 'played'); } catch (e) { /* 무시 */ }
+  }
+
   function start() {
     if (started) return;
     started = true;
+    const intro = introPending();
+    if (intro) bgmTarget = 0;   // 서곡은 침묵으로 시작한다 — 소리 허락만 받아 둔다
     playBgm();      // 타이틀을 누른 그 순간이라야 브라우저가 소리를 허락한다
     title.classList.add('is-gone');
     game.hidden = false;
@@ -219,6 +233,7 @@
     window.setTimeout(() => feature(opening), reduce ? 50 : 500);
     const first = $('.dock__btn[aria-current="page"]');
     first && first.focus({ preventScroll: true });
+    if (intro) { markIntro(); openPrologue(); }
   }
   title.addEventListener('click', start);
 
