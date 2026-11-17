@@ -898,6 +898,50 @@ button.chapter:active{transform:scale(.985)}
   opacity:0;transition:opacity 9s ease-in-out;
 }
 .art__night.is-on{opacity:1}
+
+/* 그림이 들어간 방 — 아주 천천히 다가간다 */
+.vnp__bg.has-img.is-room,.vnp__bg.has-img.is-roomLetter,.vnp__bg.has-img.is-pov,.vnp__bg.has-img.is-montage{
+  animation:roomPush 26s ease-out forwards;transform-origin:50% 62%;
+}
+@keyframes roomPush{from{transform:scale(1)}to{transform:scale(1.06)}}
+.vnp__bg.has-img.is-montage::after{display:none}
+
+/* 봉투 확대 — 흐린 탁자 위에 눕힌 봉투 */
+.vnp__bg.has-img .art__env--big{
+  top:47%;
+  transform:translate(-50%,-50%) perspective(1100px) rotateX(24deg) rotate(-5deg);
+  box-shadow:0 2.2rem 2.6rem -0.6rem rgba(40,28,14,.55),0 .3rem .8rem rgba(40,28,14,.35);
+  background:linear-gradient(160deg,#F3EAD2,#DCCDA8);
+}
+@keyframes envInFlat{from{opacity:0;transform:translate(-50%,-46%) perspective(1100px) rotateX(24deg) rotate(-5deg) scale(.94)}}
+.vnp__bg.has-img .art__env--big{animation:envInFlat 1.6s cubic-bezier(.2,.8,.3,1)}
+/* 밀랍 봉인 — 봉투가 열리면 떨어져 나간다 */
+.art__env-seal{
+  position:absolute;left:50%;top:58%;width:9%;aspect-ratio:1;z-index:2;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,#C2453E,#8E1E22 60%,#6E1418);
+  box-shadow:0 .1rem .3rem rgba(0,0,0,.35),inset 0 0 0 .18rem rgba(255,140,120,.25);
+  transition:opacity .5s ease,transform .6s ease;
+}
+.art__env.is-open .art__env-seal{opacity:0;transform:translate(-50%,-30%) scale(.8)}
+
+/* 안내문 — 방과 우키하 거리가 번갈아 교차한다 */
+.art__cross{
+  position:absolute;inset:0;background:center/cover no-repeat;opacity:0;
+  animation:cross 20s ease-in-out infinite;animation-delay:calc(4s + var(--i) * 7s);
+}
+@keyframes cross{0%{opacity:0}10%{opacity:1}32%{opacity:1}42%{opacity:0}100%{opacity:0}}
+
+/* 시점 — 화면 아래 끝, 손등에 새겨진 영주가 빛만 걸친다 */
+.vnp__bg.has-img .art__mark{
+  left:50%;bottom:-4%;width:min(34vw,10rem);
+  transform:translateX(-50%) rotate(-6deg);opacity:.92;
+  filter:drop-shadow(0 0 1.2rem rgba(224,48,42,.9)) drop-shadow(0 0 2.6rem rgba(224,48,42,.5));
+}
+.vnp__bg.has-img.is-pov::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 26% at 50% 104%,rgba(224,48,42,.28),transparent 70%);
+}
 .art__sky{
   position:absolute;inset:0;
   background:linear-gradient(180deg,#2C4466 0%,#7A6F8A 30%,#D08A66 52%,#F2B47C 64%,#F7D9A8 78%);
@@ -1125,6 +1169,12 @@ button.chapter:active{transform:scale(.985)}
   color:#E0302A;filter:drop-shadow(0 0 .5rem rgba(224,48,42,.7));
 }
 .fx-mark svg{width:100%;height:auto;display:block;overflow:visible}
+/* 영주가 새겨지는 동안 방은 어두워지고 시선이 영주로 모인다 */
+.fx-dim{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 44%,rgba(0,0,0,.2) 0,rgba(0,0,0,.8) 34vmin);
+  animation:pIn 1.4s ease;
+}
 .fx-mark path{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.6s ease forwards}
 .fx-mark path:nth-child(2){animation-delay:.4s}
 .fx-mark path:nth-child(3){animation-delay:.9s}
@@ -1156,6 +1206,7 @@ button.chapter:active{transform:scale(.985)}
   .fx-mark path{stroke-dashoffset:0}
   .art__dusk{opacity:.88}
   .art__win{opacity:.92}
+  .art__cross{display:none}
   .fx-photo__img--dark{-webkit-mask-image:none;mask-image:none}
 }
 

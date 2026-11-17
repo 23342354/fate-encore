@@ -38,13 +38,14 @@ window.PROLOGUE_ASSETS = {
     windowLit: 'assets/img/story/window-lit.jpg',
     ukiha:      'assets/img/story/ukiha-sunset.jpg',  // 저녁 무렵의 우키하 — 노을
     ukihaNight: 'assets/img/story/ukiha-street.jpg',  // 같은 거리의 밤. fx:'nightfall' 에서 노을 위로 번진다
-    room:     '',   // 불을 켜지 않은 방, 탁자 위 봉투
-    envelope: '',   // 크림색 봉투 확대
-    montage:  '',   // 안내문 뒤로 교차하는 우키하 풍경
+    room:       'assets/img/story/room-envelope.jpg', // 방, 탁자 위에 봉인된 봉투
+    envelope:   'assets/img/story/envelope-desk.jpg', // 봉투 확대 — 흐리게 당긴 탁자. 봉투는 코드로 얹는다
+    montage:    'assets/img/story/room-letter.jpg',   // 안내문 — 열린 봉투와 꺼낸 초대장. 우키하 거리가 교차한다
+    roomLetter: 'assets/img/story/room-letter.jpg',   // 다시, 초대장이 놓인 방
     void:     '',   // 붉은 문양이 떠오르는 어둠
     alley:    '',   // 해가 진 뒤의 골목
     windows:  '',   // 불 켜진 창문들, 어두운 창문 하나
-    pov:      '',   // 당신의 시점 — 탁자 위 초대장과 영주가 새겨진 손
+    pov:        'assets/img/story/room-letter.jpg',   // 당신의 시점 — 탁자 위 초대장. 영주는 코드로 얹는다
   },
   sfx: {
     wind:      '',  // 멀리서 들리는 겨울바람
@@ -182,7 +183,7 @@ window.PROLOGUE = [
   { narr: '누가 당신의 이름을 알고 있었는가.' },
   { narr: '그리고 누가,\n당신이 아직 그것을 바라고 있다는 사실을 알아차렸는가.' },
 
-  { bg: 'room' },
+  { bg: 'roomLetter' },
   { bgm: 0.18 },
   { wait: 1400 },
   { narr: '안내문에는 그에 대한 답이 없다.' },

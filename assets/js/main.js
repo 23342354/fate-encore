@@ -469,6 +469,7 @@
   }
   const envelopeHTML = (big) => `<div class="art__env${big ? ' art__env--big' : ''}">
       <span class="art__env-flap"></span>
+      ${big ? '<span class="art__env-seal"></span>' : ''}
       ${big ? '<span class="art__env-name">마스터 귀하</span><span class="art__env-sheet"></span>' : ''}
     </div>`;
   const ROOM = () => `<div class="art__roomwin"></div><div class="art__beam"></div><div class="art__table"></div>${envelopeHTML(false)}`;
@@ -493,6 +494,13 @@
   const OVER = {
     // 같은 거리의 밤 그림을 겹쳐 두었다가 nightfall 에서 번지게 한다
     ukiha: () => ASSETS.bg.ukihaNight ? `<div class="art__night" style="background-image:url('${ASSETS.bg.ukihaNight}')"></div>` : '',
+    // 흐리게 당긴 탁자 위에 큰 봉투 — 봉투가 열리고 색종이가 떨어지는 연출이 그대로 쓰인다
+    envelope: () => envelopeHTML(true),
+    // 안내문 뒤로 우키하 거리가 교차한다 (밤 → 노을 → 다시 방)
+    montage: () => [ASSETS.bg.ukihaNight, ASSETS.bg.ukiha].filter(Boolean)
+      .map((src, i) => `<div class="art__cross" style="background-image:url('${src}');--i:${i}"></div>`).join(''),
+    // 당신의 시점 — 탁자 앞, 영주가 새겨진 손등
+    pov: () => `<div class="art__mark">${GLYPH_MASTER}</div>`,
   };
   // 그림이 있는 장면은 서곡을 열 때 미리 받아 둔다
   function preloadBg() {
@@ -557,7 +565,7 @@
                       ${sealMask('assets/img/seal-mokuren.png')}
                     </div>`,
     glass:    () => { const g = $('.art__glass', vnp); g && g.classList.add('is-seen'); return null; },
-    sealdraw: () => `<div class="fx-mark">${GLYPH_MASTER.replace(/<path /g, '<path pathLength="1" ')}</div>`,
+    sealdraw: () => `<div class="fx-dim"></div><div class="fx-mark">${GLYPH_MASTER.replace(/<path /g, '<path pathLength="1" ')}</div>`,
     sealfull: () => { const m = $('.fx-mark', vnp); m && m.classList.add('is-full'); return null; },
   };
   function runFx(name) {
