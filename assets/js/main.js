@@ -462,7 +462,13 @@
     next.classList.add('is-front');
     prev.classList.remove('is-front');
     bgFront = 1 - bgFront;
-    vnpFx.innerHTML = '';
+    if (vnpFx.firstChild) {
+      const out = document.createElement('div');
+      out.className = 'fx-leave';
+      while (vnpFx.firstChild) out.appendChild(vnpFx.firstChild);
+      vnpFx.appendChild(out);
+      window.setTimeout(() => out.remove(), reduce ? 0 : 1500);
+    }
     vnp.dataset.scene = key;
   }
 
@@ -470,8 +476,31 @@
   function sealMask(src) {
     return `<span class="fx-seal fx-seal--img" style="-webkit-mask-image:url('${src}');mask-image:url('${src}')"></span>`;
   }
+  // 그림 위의 한 점을 짚을 수 있게, 화면을 덮는 그림 크기의 틀을 만든다
+  // (배경의 background-size:cover 와 같은 자리에 놓인다)
+  const SPOT = 'left:50.1%;top:41.2%';    // 창밖 가로등 자리 — 그림 기준
+  const photoBox = () => $('.fx-photo', vnpFx) || (vnpFx.insertAdjacentHTML('beforeend', '<div class="fx-photo"></div>'), $('.fx-photo', vnpFx));
   const FX = {
-    light:    () => '<span class="fx-light"></span>',
+    light:    () => {
+      if (!ASSETS.bg.window) return '<span class="fx-light"></span>';
+      photoBox().insertAdjacentHTML('beforeend', `<span class="fx-light fx-light--spot" style="${SPOT}"></span>`);
+      return null;
+    },
+    reveal:   () => {
+      if (!ASSETS.bg.window) return FX.window();
+      const box = photoBox();
+      box.insertAdjacentHTML('afterbegin', `<span class="fx-photo__img fx-photo__img--dark" style="background-image:url('${ASSETS.bg.window}')"></span>`);
+      box.classList.add('is-revealing');
+      return null;
+    },
+    lighton:  () => {
+      if (!ASSETS.bg.windowLit) return null;
+      const box = photoBox();
+      const spot = $('.fx-light--spot', box);
+      spot && spot.remove();
+      box.insertAdjacentHTML('beforeend', `<span class="fx-photo__img fx-photo__img--lit" style="background-image:url('${ASSETS.bg.windowLit}')"></span>`);
+      return null;
+    },
     window:   () => '<span class="fx-window"><i></i></span>',
     open:     () => { const e = $('.art__env', vnp); e && e.classList.add('is-open'); return null; },
     confetti: () => '<span class="fx-confetti"></span>',
@@ -664,6 +693,7 @@
     vnp.hidden = false;
     vnp.focus({ preventScroll: true });
     bgmTo(0);                   // 스크립트가 침묵으로 시작한다
+    [ASSETS.bg.window, ASSETS.bg.windowLit].filter(Boolean).forEach(src => { const i = new Image(); i.src = src; });
     next();
   }
   function closePrologue() {

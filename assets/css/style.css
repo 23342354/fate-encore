@@ -1007,6 +1007,47 @@ button.chapter:active{transform:scale(.985)}
 .art__mark svg{width:100%;height:auto;display:block}
 
 /* ── 연출 ── */
+/* 장면이 바뀔 때 앞 장면의 연출은 흐려지며 빠진다 */
+.fx-leave{position:absolute;inset:0;animation:fxLeave 1.4s ease forwards}
+@keyframes fxLeave{to{opacity:0}}
+
+/* 첫 창문 — 그림 크기의 틀이 화면을 덮는다 (가로세로 3:2) */
+.fx-photo{
+  position:absolute;left:50%;top:50%;
+  width:max(100vw,150vh);height:max(100vh,66.667vw);
+  transform:translate(-50%,-50%);
+}
+.fx-photo.is-revealing{animation:drift 14s ease-out forwards}
+@keyframes drift{from{transform:translate(-50%,-50%) scale(1.07)}to{transform:translate(-50%,-50%) scale(1)}}
+.fx-photo__img{position:absolute;inset:0;background:center/100% 100% no-repeat}
+/* 불빛 자리에서부터 둥글게 번지며 방이 드러난다 */
+@property --reveal{syntax:'<percentage>';inherits:false;initial-value:0%}
+.fx-photo__img--dark{
+  -webkit-mask-image:radial-gradient(circle at 50.1% 41.2%,#000 var(--reveal),transparent calc(var(--reveal) + 24%));
+  mask-image:radial-gradient(circle at 50.1% 41.2%,#000 var(--reveal),transparent calc(var(--reveal) + 24%));
+  animation:reveal 3.8s cubic-bezier(.4,0,.3,1) forwards;
+}
+@keyframes reveal{
+  0%{--reveal:0%;opacity:0}
+  12%{opacity:1}
+  100%{--reveal:130%;opacity:1}
+}
+/* 형광등 — 두어 번 깜빡이고 켜진다 */
+.fx-photo__img--lit{opacity:0;animation:tube 1.5s linear forwards}
+@keyframes tube{
+  0%{opacity:0}
+  8%{opacity:.7}
+  12%{opacity:.08}
+  22%{opacity:.85}
+  27%{opacity:.25}
+  40%{opacity:1}
+  100%{opacity:1}
+}
+.fx-light--spot{
+  z-index:2;transition:opacity 2.4s ease;
+}
+.fx-photo.is-revealing .fx-light--spot{opacity:0;transition-delay:1.2s}
+
 .fx-light{
   position:absolute;left:50%;top:45%;width:.6rem;height:.6rem;border-radius:50%;
   transform:translate(-50%,-50%);background:#FFD79A;
@@ -1098,6 +1139,7 @@ button.chapter:active{transform:scale(.985)}
   .fx-mark path{stroke-dashoffset:0}
   .art__dusk{opacity:.88}
   .art__win{opacity:.92}
+  .fx-photo__img--dark{-webkit-mask-image:none;mask-image:none}
 }
 
 /* ─────────── 스테이터스 패널 ─────────── */

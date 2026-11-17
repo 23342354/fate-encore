@@ -19,8 +19,8 @@
      { notice:'글' }              안내문 한 문단
      { letter:'글', hand:true }   종이 카드. hand 는 다른 필체
      { cg:'키', text:'지문' }      일러스트 한 장 (없으면 지문 글귀)
-     { fx:'이름' }                연출 — light · window · open · confetti
-                                  seals · glass · sealdraw · sealfull
+     { fx:'이름' }                연출 — light · reveal · lighton · window · open
+                                  confetti · seals · glass · sealdraw · sealfull
      { bgm:0.2 }                  배경음악 크기 (0 ~ 1)
      { sfx:'키' }                 효과음
      { wait:1500 }                잠깐 멈춤 (ms)
@@ -32,6 +32,9 @@
 window.PROLOGUE_ASSETS = {
   bg: {
     black:    '',   // 검은 화면
+    // 첫 창문 — 불빛이 켜진 자리에서 불 꺼진 방이 드러나고, 형광등이 켜진다
+    window:    'assets/img/story/window-dark.jpg',
+    windowLit: 'assets/img/story/window-lit.jpg',
     ukiha:    '',   // 저녁 무렵의 우키하
     room:     '',   // 불을 켜지 않은 방, 탁자 위 봉투
     envelope: '',   // 크림색 봉투 확대
@@ -67,12 +70,15 @@ window.PROLOGUE = [
   { narr: '그렇게 많은 것을 손에 넣고도, 사람에게는 늘 잃어버린 것이 남았다.' },
 
   { clear: true },
-  { fx: 'light' },
-  { wait: 1600 },
-  { fx: 'window' },
+  { fx: 'light' },      // 검은 화면에 작은 불빛 하나
   { wait: 1800 },
+  { fx: 'reveal' },     // 그 불빛이 창문임이 서서히 드러난다
+  { wait: 3600 },
 
   { narr: '그리고 이곳에도.' },
+  { clear: true },
+  { fx: 'lighton' },    // 형광등이 켜진다 — 이 방에도 누군가 있다
+  { wait: 1700 },
   { narr: '아직, 무언가를 바라는 사람들이 있다.' },
 
   { bg: 'ukiha' },
