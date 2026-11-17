@@ -1,5 +1,6 @@
 /* ===========================================================
-   Fate / Encore — 무대 진행
+   Fate / Encore — 게임 화면 진행
+   타이틀 → 로비. 하단 메뉴로 화면을 바꾼다.
    =========================================================== */
 (() => {
   'use strict';
@@ -7,214 +8,41 @@
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $  = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const CAST = window.CAST || {};
 
-  /* ── 1. 마법진 눈금 ─────────────────────────────────── */
-  (function drawTicks() {
-    const g = $('.hero__sigil-ticks');
-    if (!g) return;
-    const ns = 'http://www.w3.org/2000/svg';
-    const cx = 300, cy = 300;
-    for (let i = 0; i < 72; i++) {
-      const a = (i / 72) * Math.PI * 2;
-      const long = i % 6 === 0;
-      const r1 = 252, r2 = long ? 232 : 243;
-      const line = document.createElementNS(ns, 'line');
-      line.setAttribute('x1', (cx + Math.cos(a) * r1).toFixed(2));
-      line.setAttribute('y1', (cy + Math.sin(a) * r1).toFixed(2));
-      line.setAttribute('x2', (cx + Math.cos(a) * r2).toFixed(2));
-      line.setAttribute('y2', (cy + Math.sin(a) * r2).toFixed(2));
-      line.setAttribute('opacity', long ? '.95' : '.45');
-      g.appendChild(line);
-    }
-  })();
+  /* ── 0. 참전 명단 ───────────────────────────────────────
+     클래스 순서 그대로. name 이 없는 줄은 미공개 카드가 된다.
+     line 은 로비와 프로필에 나오는 한마디.
+     스테이터스·스킬 같은 설정은 cast.js 에서 진명으로 찾아온다. */
+  const svg = inner =>
+    `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">${inner}</svg>`;
+  const GLYPH_SEALED =
+    '<svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg>';
 
-  /* ── 2. 막 오름 ─────────────────────────────────────── */
-  const curtain = $('#curtain');
-  const hero    = $('#hero');
-
-  function raiseCurtain() {
-    if (!curtain) return;
-    hero && hero.classList.add('is-lit');
-    curtain.classList.add('is-open');
-    window.setTimeout(() => curtain.classList.add('is-done'), reduce ? 50 : 1700);
-  }
-
-  if (reduce) {
-    raiseCurtain();
-    document.documentElement.classList.add('no-motion');
-  } else {
-    window.setTimeout(raiseCurtain, 420);
-  }
-
-  /* ── 3. 대화창 ──────────────────────────────────────── */
-  const vn       = $('#vn');
-  const vnName   = $('#vnName');
-  const vnText   = $('#vnText');
-  const vnBox    = $('.vn__box');
-  const vnLog    = $('#vnLog');
-  const logList  = $('#vnLogList');
-  const btnAuto  = $('#btnAuto');
-  const btnSkip  = $('#btnSkip');
-  const btnLog   = $('#btnLog');
-  const btnHide  = $('#btnHide');
-  const btnShow  = $('#btnShow');
-  const portraits = $$('button.portrait');
-
-  const SPEED = 42;          // 글자당 ms
-  const AUTO_WAIT = 3400;    // AUTO 모드 대기
-
-  let typer = null;
-  let autoTimer = null;
-  let autoOn = false;
-  let current = -1;
-  const history = [];
-
-  const lines = portraits.map(p => ({
-    name: p.dataset.name,
-    cls:  p.dataset.class,
-    line: p.dataset.line,
-    el:   p
-  }));
-
-  // 첫 대사는 CASTER 가 맡는다 (index.html 의 vn__plate 초기값과 맞출 것)
-  const opening = Math.max(0, lines.findIndex(l => l.cls === 'CASTER'));
-
-  function stopTyping() {
-    if (typer) { window.clearInterval(typer); typer = null; }
-  }
-
-  function finishLine(text) {
-    stopTyping();
-    vnText.textContent = text;
-    vnText.classList.add('is-done');
-  }
-
-  function type(text) {
-    stopTyping();
-    vnText.classList.remove('is-done');
-    if (reduce) { finishLine(text); return; }
-    vnText.textContent = '';
-    let i = 0;
-    typer = window.setInterval(() => {
-      vnText.textContent = text.slice(0, ++i);
-      if (i >= text.length) finishLine(text);
-    }, SPEED);
-  }
-
-  function pushLog(entry) {
-    history.push(entry);
-    if (history.length > 40) history.shift();
-    if (!logList) return;
-    logList.innerHTML = history
-      .map(h => `<li><b>${h.name}</b> — ${h.line}</li>`)
-      .join('');
-    logList.scrollTop = logList.scrollHeight;
-  }
-
-  function speak(index, { log = true } = {}) {
-    const item = lines[index];
-    if (!item) return;
-    current = index;
-    portraits.forEach(p => p.setAttribute('aria-pressed', String(p === item.el)));
-    vnName.textContent = item.name;
-    type(item.line);
-    if (log) pushLog(item);
-    if (vn.classList.contains('is-hidden')) showBox();
-  }
-
-  function advance() {
-    // 타이핑 중이면 먼저 끝까지 출력, 아니면 다음 대사
-    if (typer) { finishLine(lines[current].line); return; }
-    speak((current + 1) % lines.length);
-  }
-
-  function showBox() {
-    vn.classList.remove('is-hidden');
-    btnShow.hidden = true;
-  }
-  function hideBox() {
-    vn.classList.add('is-hidden');
-    btnShow.hidden = false;
-    setAuto(false);
-  }
-
-  function setAuto(on) {
-    autoOn = on;
-    btnAuto.setAttribute('aria-pressed', String(on));
-    window.clearInterval(autoTimer);
-    if (on) {
-      autoTimer = window.setInterval(() => {
-        if (document.hidden) return;
-        speak((current + 1) % lines.length);
-      }, AUTO_WAIT);
-    }
-  }
-
-  portraits.forEach((p, i) => {
-    p.addEventListener('click', () => { setAuto(false); speak(i); openProfile(i); });
-    // 궤도 회전은 li 의 클릭 처리가 맡는다
-  });
-
-  vnBox && vnBox.addEventListener('click', e => {
-    if (e.target.closest('.vn__btn')) return;   // 조작 버튼은 제외
-    setAuto(false);
-    advance();
-  });
-
-  btnSkip && btnSkip.addEventListener('click', () => {
-    if (typer) finishLine(lines[current].line);
-    else advance();
-  });
-
-  btnAuto && btnAuto.addEventListener('click', () => setAuto(!autoOn));
-
-  btnLog && btnLog.addEventListener('click', () => {
-    const open = vnLog.hidden;
-    vnLog.hidden = !open;
-    btnLog.setAttribute('aria-expanded', String(open));
-  });
-
-  btnHide && btnHide.addEventListener('click', hideBox);
-  btnShow && btnShow.addEventListener('click', showBox);
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !vnLog.hidden) {
-      vnLog.hidden = true;
-      btnLog.setAttribute('aria-expanded', 'false');
-      btnLog.focus();
-    }
-  });
-
-  // 막이 오른 뒤 첫 대사
-  window.setTimeout(() => speak(opening), reduce ? 100 : 1500);
-
-  /* ── 3-b. 스테이터스 패널 ───────────────────────────── */
-  const pf      = $('#profile');
-  const pfPanel = $('.profile__panel');
-  const pfClose = $('#pfClose');
-  const pfScrim = $('#pfScrim');
-  const CAST    = window.CAST || {};
-
-  const STATS = [
-    ['근력','str'], ['내구','end'], ['민첩','agi'],
-    ['마력','mgi'], ['행운','lck'], ['보구','np'],
+  const ROSTER = [
+    { cls: 'SABER' },
+    { cls: 'ARCHER', name: '도로시', master: '이치노세 류가',
+      line: '저를 기다린 사람은 없었어도 제가 기다린 사람들은 있었으니까요.',
+      glyph: svg('<path d="M18 12 q22 20 0 40"/><path d="M18 12 L18 52"/><path d="M22 32 L50 32"/><path d="M44 26 l6 6 -6 6"/>') },
+    { cls: 'LANCER' },
+    { cls: 'RIDER' },
+    { cls: 'CASTER', name: '오스카 조로아스터', master: '마키오카 모쿠렌',
+      line: '어서 와. 먼 길을 걸어온 사람에게는 그만한 기적이 필요한 법이지.',
+      glyph: svg('<path d="M20 52 L44 20"/><circle cx="46" cy="16" r="5"/><path d="M14 30 l6 -6 6 6 -6 6 z"/><path d="M40 46 l4 -4 4 4 -4 4 z"/>') },
+    { cls: 'ASSASSIN', name: '로드', master: '릴리안 루스텔리아',
+      line: '움직여도 괜찮아. 나는 살아 있는 너를 그리고 싶으니.',
+      glyph: svg('<path d="M32 14 q-14 10 -14 22 a14 14 0 0 0 28 0 q0 -12 -14 -22"/><path d="M26 40 q6 6 12 0"/>') },
+    { cls: 'BERSERKER', name: '카르타필루스', master: '오즈 누벨',
+      line: '나는 기도한다. 최후의 날이 오기까지를.',
+      glyph: svg('<path d="M16 44 L16 26 l8 8 8 -14 8 14 8 -8 0 18 z"/><path d="M16 48 L48 48"/>') },
   ];
-  const TABS = [
-    ['#tabStatus', '#paneStatus'],
-    ['#tabLore',   '#paneLore'],
-    ['#tabSkill',  '#paneSkill'],
-    ['#tabNp',     '#paneNp'],
-  ].map(([t, p]) => ({ tab: $(t), pane: $(p) }));
-
-  let pfIndex = -1;
-  let lastFocus = null;
+  const lines = ROSTER.filter(r => r.name);   // 공개된 서번트만
 
   const dash = v => (v && String(v).trim()) ? String(v) : '—';
   const esc  = s => s.replace(/[&<>"]/g, c =>
     ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 
-  // **별 두 개** 로 감싼 부분은 금색 강조
-  // **별 두 개** 는 금색 강조, 줄바꿈은 그대로 줄바꿈
+  // **별 두 개** 는 짙은 청록 강조, 줄바꿈은 그대로 줄바꿈
   const rich = s => esc(s)
     .replace(/\*\*([\s\S]+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\n/g, '<br>');
@@ -238,6 +66,245 @@
       }).join('')
     : '<p class="is-empty">—</p>';
 
+  /* ── 1. 마법진 눈금 ─────────────────────────────────── */
+  (function drawTicks() {
+    const g = $('#sigilTicks');
+    if (!g) return;
+    const ns = 'http://www.w3.org/2000/svg';
+    for (let i = 0; i < 72; i++) {
+      const a = (i / 72) * Math.PI * 2;
+      const long = i % 6 === 0;
+      const r1 = 252, r2 = long ? 232 : 243;
+      const line = document.createElementNS(ns, 'line');
+      line.setAttribute('x1', (300 + Math.cos(a) * r1).toFixed(2));
+      line.setAttribute('y1', (300 + Math.sin(a) * r1).toFixed(2));
+      line.setAttribute('x2', (300 + Math.cos(a) * r2).toFixed(2));
+      line.setAttribute('y2', (300 + Math.sin(a) * r2).toFixed(2));
+      line.setAttribute('opacity', long ? '.95' : '.45');
+      g.appendChild(line);
+    }
+  })();
+
+  /* ── 2. 막 오름 → 타이틀 → 로비 ─────────────────────── */
+  const curtain = $('#curtain');
+  const title   = $('#title');
+  const game    = $('#game');
+  let started = false;
+
+  function raiseCurtain() {
+    curtain.classList.add('is-open');
+    window.setTimeout(() => curtain.classList.add('is-done'), reduce ? 50 : 1700);
+  }
+  if (reduce) raiseCurtain(); else window.setTimeout(raiseCurtain, 420);
+
+  function start() {
+    if (started) return;
+    started = true;
+    title.classList.add('is-gone');
+    game.hidden = false;
+    // 한 박자 뒤에 켜야 페이드가 걸린다
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => game.classList.add('is-on')));
+    go(location.hash.slice(1), false);
+    window.setTimeout(() => feature(opening), reduce ? 50 : 500);
+    const first = $('.dock__btn[aria-current="page"]');
+    first && first.focus({ preventScroll: true });
+  }
+  title.addEventListener('click', start);
+
+  /* ── 3. 화면 전환 ───────────────────────────────────── */
+  const SCREENS = ['home', 'servants', 'summon', 'story', 'info'];
+  const screens = $$('.screen');
+  const dockBtns = $$('.dock__btn');
+
+  function go(name, push = true) {
+    if (!SCREENS.includes(name)) name = 'home';
+    screens.forEach(s => { s.hidden = s.dataset.screen !== name; });
+    dockBtns.forEach(b => {
+      if (b.dataset.go === name) b.setAttribute('aria-current', 'page');
+      else b.removeAttribute('aria-current');
+    });
+    if (push && location.hash !== '#' + name) {
+      try { window.history.pushState(null, '', '#' + name); } catch (e) { /* 미리보기 틀 안에서는 막힐 수 있다 */ }
+    }
+  }
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-go]');
+    if (el) go(el.dataset.go);
+  });
+  window.addEventListener('popstate', () => { if (started) go(location.hash.slice(1), false); });
+
+  /* ── 4. 로비 — 대표 서번트와 한마디 ─────────────────── */
+  const speechName = $('#speechName');
+  const speechText = $('#speechText');
+  const arch       = $('#standArch');
+  const SPEED = 42;   // 글자당 ms
+
+  let typer = null;
+  let current = -1;
+  // 첫 대사는 CASTER 가 맡는다 (index.html 의 초기 이름과 맞출 것)
+  const opening = Math.max(0, lines.findIndex(l => l.cls === 'CASTER'));
+
+  function stopTyping() {
+    if (typer) { window.clearInterval(typer); typer = null; }
+  }
+  function finishLine(text) {
+    stopTyping();
+    speechText.textContent = text;
+    speechText.classList.add('is-done');
+  }
+  function type(text) {
+    stopTyping();
+    speechText.classList.remove('is-done');
+    if (reduce) { finishLine(text); return; }
+    speechText.textContent = '';
+    let i = 0;
+    typer = window.setInterval(() => {
+      speechText.textContent = text.slice(0, ++i);
+      if (i >= text.length) finishLine(text);
+    }, SPEED);
+  }
+
+  function feature(index) {
+    const item = lines[index];
+    if (!item) return;
+    const changed = index !== current;
+    current = index;
+    $('#standGlyph').innerHTML    = item.glyph;
+    $('#standClass').textContent  = item.cls;
+    $('#standName').textContent   = item.name;
+    $('#standMaster').textContent = item.master;
+    speechName.textContent = item.name;
+    if (changed && !reduce) {
+      arch.classList.remove('is-swap');
+      void arch.offsetWidth;            // 애니메이션 다시 걸기
+      arch.classList.add('is-swap');
+    }
+    type(item.line);
+  }
+  function advance() {
+    // 타이핑 중이면 먼저 끝까지 출력, 아니면 다음 서번트
+    if (typer) { finishLine(lines[current].line); return; }
+    feature((current + 1) % lines.length);
+  }
+  $('#speech').addEventListener('click', advance);
+  arch.addEventListener('click', advance);
+  $('#standProfile').addEventListener('click', () => openProfile(current));
+
+  /* ── 5. 서번트 카드 ─────────────────────────────────── */
+  function cardHTML(r) {
+    if (!r.name) {
+      return `<div class="card card--sealed">
+        <span class="card__art">
+          <span class="card__class">${r.cls}</span>
+          <span class="card__glyph" aria-hidden="true">${GLYPH_SEALED}</span>
+          <span class="card__plate"><span class="card__name">진명 미공개</span><span class="card__master">MASTER 미공개</span></span>
+        </span>
+      </div>`;
+    }
+    const rank = ((CAST[r.name] || {}).stats || {}).np;
+    return `<button class="card" type="button" data-idx="${lines.indexOf(r)}" aria-label="${esc(r.cls)} ${esc(r.name)} 프로필 열기">
+      <span class="card__art">
+        <span class="card__class">${r.cls}</span>
+        ${rank ? `<span class="card__rank"><small>보구</small>${esc(rank)}</span>` : ''}
+        <span class="card__glyph" aria-hidden="true">${r.glyph}</span>
+        <span class="card__plate"><span class="card__name">${esc(r.name)}</span><span class="card__master">MASTER ${esc(r.master)}</span></span>
+      </span>
+    </button>`;
+  }
+  $('#cardList').innerHTML = ROSTER.map(r => `<li>${cardHTML(r)}</li>`).join('');
+  $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
+
+  document.addEventListener('click', e => {
+    const card = e.target.closest('button.card');
+    if (card) openProfile(Number(card.dataset.idx));
+  });
+
+  /* ── 6. 소환 ────────────────────────────────────────── */
+  const fx       = $('#fx');
+  const fxResult = $('#fxResult');
+  const fxTitle  = $('#fxTitle');
+  const pullsEl  = $('#pulls');
+  let fxTimer = null;
+  let fxFocus = null;
+  let lastPull = 1;
+
+  function summon(count) {
+    lastPull = count;
+    // 1회는 공개된 서번트 가운데 하나, 7회는 일곱 클래스 전부
+    const picks = count === 1
+      ? [lines[Math.floor(Math.random() * lines.length)]]
+      : ROSTER.slice();
+    pullsEl.className = 'pulls' + (count === 1 ? ' pulls--one' : '');
+    pullsEl.innerHTML = picks.map((r, i) =>
+      `<li class="pull" style="--i:${i}"><span class="pull__back" aria-hidden="true">✦</span>${cardHTML(r)}</li>`
+    ).join('');
+    fxTitle.textContent = count === 1
+      ? '서번트가 부름에 응했다'
+      : `일곱 기 가운데 ${lines.length}기가 부름에 응했다`;
+    if (fx.hidden) fxFocus = document.activeElement;
+    fxResult.hidden = true;
+    fx.hidden = false;
+    fx.className = 'fx is-charge';
+    window.clearTimeout(fxTimer);
+    fxTimer = window.setTimeout(showResult, reduce ? 0 : 1700);
+  }
+  function showResult() {
+    window.clearTimeout(fxTimer);
+    fxTimer = null;
+    fx.className = 'fx is-result';
+    fxResult.hidden = false;
+    $('#fxClose').focus({ preventScroll: true });
+  }
+  function closeFx() {
+    window.clearTimeout(fxTimer);
+    fxTimer = null;
+    fx.hidden = true;
+    if (fxFocus && fxFocus.focus) fxFocus.focus();
+  }
+  $('#pull1').addEventListener('click', () => summon(1));
+  $('#pull7').addEventListener('click', () => summon(7));
+  $('#fxAgain').addEventListener('click', () => summon(lastPull));
+  $('#fxClose').addEventListener('click', closeFx);
+  fx.addEventListener('click', () => { if (fxTimer) showResult(); });   // 연출 건너뛰기
+
+  /* ── 7. 서곡 읽기 ───────────────────────────────────── */
+  const reader = $('#reader');
+  let rdFocus = null;
+  function openReader() {
+    rdFocus = document.activeElement;
+    reader.hidden = false;
+    $('.reader__panel').scrollTop = 0;
+    $('#rdClose').focus();
+  }
+  function closeReader() {
+    reader.hidden = true;
+    if (rdFocus && rdFocus.focus) rdFocus.focus();
+  }
+  $('#bannerPrologue').addEventListener('click', openReader);
+  $('#chapterPrologue').addEventListener('click', openReader);
+  $('#rdClose').addEventListener('click', closeReader);
+  $('#rdScrim').addEventListener('click', closeReader);
+
+  /* ── 8. 프로필 ──────────────────────────────────────── */
+  const pf      = $('#profile');
+  const pfPanel = $('.profile__panel');
+  const pfClose = $('#pfClose');
+  const pfScrim = $('#pfScrim');
+
+  const STATS = [
+    ['근력','str'], ['내구','end'], ['민첩','agi'],
+    ['마력','mgi'], ['행운','lck'], ['보구','np'],
+  ];
+  const TABS = [
+    ['#tabStatus', '#paneStatus'],
+    ['#tabLore',   '#paneLore'],
+    ['#tabSkill',  '#paneSkill'],
+    ['#tabNp',     '#paneNp'],
+  ].map(([t, p]) => ({ tab: $(t), pane: $(p) }));
+
+  let pfIndex = -1;
+  let lastFocus = null;
+
   function showTab(i) {
     TABS.forEach((t, n) => {
       const on = n === i;
@@ -260,18 +327,17 @@
     const item = lines[index];
     if (!item) return;
     pfIndex = index;
-    const d = item.el.dataset;
-    const c = CAST[d.name] || {};
+    const c = CAST[item.name] || {};
     const s = c.stats || {};
 
-    $('#pfGlyph').innerHTML    = item.el.querySelector('.portrait__glyph').innerHTML;
-    $('#pfClass').textContent  = d.class;
-    $('#pfName').textContent   = d.name;
-    $('#pfMaster').textContent = dash(d.master);
+    $('#pfGlyph').innerHTML    = item.glyph;
+    $('#pfClass').textContent  = item.cls;
+    $('#pfName').textContent   = item.name;
+    $('#pfMaster').textContent = dash(item.master);
     $('#pfGender').textContent = dash(c.gender);
     $('#pfAlign').textContent  = dash(c.alignment);
     $('#pfSize').textContent   = `${dash(c.height)} / ${dash(c.weight)}`;
-    $('#pfQuote').textContent  = `「${d.line}」`;
+    $('#pfQuote').textContent  = `「${item.line}」`;
     $('#pfBio').innerHTML      = prose(c.bio);
 
     $('#pfStats').innerHTML = STATS.map(([label, key]) =>
@@ -314,21 +380,20 @@
   }
 
   function openProfile(index) {
-    lastFocus = document.activeElement;
+    if (!lines[index]) return;
+    if (pf.hidden) lastFocus = document.activeElement;
     fillProfile(index);
     pf.hidden = false;
-    document.body.style.overflow = 'hidden';
     pfClose.focus();
   }
   function closeProfile() {
     pf.hidden = true;
-    document.body.style.overflow = '';
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
   function stepProfile(delta) {
     const next = (pfIndex + delta + lines.length) % lines.length;
     fillProfile(next);
-    speak(next);
+    feature(next);     // 로비의 대표 서번트도 같이 바꾼다
   }
 
   pfClose.addEventListener('click', closeProfile);
@@ -336,93 +401,29 @@
   $('#pfPrev').addEventListener('click', () => stepProfile(-1));
   $('#pfNext').addEventListener('click', () => stepProfile(1));
 
+  /* ── 9. 키보드 ──────────────────────────────────────── */
   document.addEventListener('keydown', e => {
-    if (pf.hidden) return;
-    if (e.key === 'Escape') { closeProfile(); return; }
-    const inTabs = e.target.closest && e.target.closest('.profile__tabs');
-    if (e.key === 'ArrowLeft')  inTabs ? stepTab(-1) : stepProfile(-1);
-    if (e.key === 'ArrowRight') inTabs ? stepTab(1)  : stepProfile(1);
-    if (e.key === 'Tab') {
-      const f = Array.from(pfPanel.querySelectorAll('button'))
-        .filter(b => b.tabIndex !== -1);
-      const first = f[0], last = f[f.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    // 위에 뜬 창부터 닫는다: 프로필 → 서곡 → 소환 연출
+    if (!pf.hidden) {
+      if (e.key === 'Escape') { closeProfile(); return; }
+      const inTabs = e.target.closest && e.target.closest('.profile__tabs');
+      if (e.key === 'ArrowLeft')  inTabs ? stepTab(-1) : stepProfile(-1);
+      if (e.key === 'ArrowRight') inTabs ? stepTab(1)  : stepProfile(1);
+      if (e.key === 'Tab') {
+        const f = Array.from(pfPanel.querySelectorAll('button'))
+          .filter(b => b.tabIndex !== -1);
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+      return;
     }
+    if (e.key !== 'Escape') return;
+    if (!reader.hidden) closeReader();
+    else if (!fx.hidden) closeFx();
   });
 
-  /* ── 3-c. 궤도 ──────────────────────────────────────── */
-  const stage = $$('.cast__item');
-  const dotBox = $('#orbitDots');
-  let orbitAt = 0;
-  const dots = [];
-
-  stage.forEach((li, i) => {
-    const card = li.querySelector('.portrait');
-    const sealed = card.classList.contains('portrait--sealed');
-    const cls = card.querySelector('.portrait__class').textContent;
-    const nm  = card.querySelector('.portrait__name').textContent;
-    const dot = document.createElement('button');
-    dot.type = 'button';
-    dot.className = 'orbit__dot' + (sealed ? ' orbit__dot--sealed' : '');
-    dot.setAttribute('aria-label', `${cls} ${nm}`);
-    dot.addEventListener('click', () => turnTo(i));
-    dotBox.appendChild(dot);
-    dots.push(dot);
-    // 가장자리 카드를 누르면 가운데로 돌아온다
-    li.addEventListener('click', () => turnTo(i));
-  });
-
-  function layoutOrbit() {
-    const n = stage.length;
-    stage.forEach((li, i) => {
-      let d = i - orbitAt;
-      if (d >  n / 2) d -= n;
-      if (d < -n / 2) d += n;
-      li.dataset.pos = d;
-      li.setAttribute('aria-hidden', Math.abs(d) >= 3 ? 'true' : 'false');
-    });
-    dots.forEach((dot, i) => dot.setAttribute('aria-current', String(i === orbitAt)));
-  }
-  function turnTo(i) { orbitAt = (i + stage.length) % stage.length; layoutOrbit(); }
-  function turnBy(d) { turnTo(orbitAt + d); }
-
-  // 처음 가운데는 대화창에서 첫 대사를 맡는 서번트
-  const firstLit = stage.findIndex(li =>
-    li.querySelector('button.portrait')?.dataset.class === lines[opening]?.cls);
-  if (firstLit >= 0) orbitAt = firstLit;
-
-  $('#orbitPrev').addEventListener('click', () => turnBy(-1));
-  $('#orbitNext').addEventListener('click', () => turnBy(1));
-  layoutOrbit();
-
-  /* ── 4. 상단 바 ─────────────────────────────────────── */
-  const topbar = $('#topbar');
-  const onScroll = () => {
-    topbar.classList.toggle('is-stuck', window.scrollY > 60);
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-
-  /* ── 5. 현재 섹션 표시 ──────────────────────────────── */
-  const navLinks = $$('.topbar__nav a');
-  const sections = navLinks
-    .map(a => document.getElementById(a.getAttribute('href').slice(1)))
-    .filter(Boolean);
-
-  if ('IntersectionObserver' in window && sections.length) {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(en => {
-        if (!en.isIntersecting) return;
-        navLinks.forEach(a =>
-          a.classList.toggle('is-current', a.getAttribute('href') === '#' + en.target.id)
-        );
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    sections.forEach(s => io.observe(s));
-  }
-
-  /* ── 6. 소식지 ──────────────────────────────────────── */
+  /* ── 10. 소식지 ──────────────────────────────────────── */
   const form = $('#notifyForm');
   const msg  = $('#notifyMsg');
   form && form.addEventListener('submit', e => {

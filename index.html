@@ -24,81 +24,285 @@
   <div class="drape drape--r"></div>
 </div>
 
-<a class="skip-link" href="#overture">본문으로 건너뛰기</a>
+<div class="app" id="app">
 
-<header class="topbar" id="topbar">
-  <a class="topbar__mark" href="#top">
-    <span class="topbar__mark-latin">Fate / Encore</span>
-  </a>
-  <nav class="topbar__nav" aria-label="섹션 이동">
-    <a href="#overture">서곡</a>
-    <a href="#cast">캐스트</a>
-    <a href="#acts">막 구성</a>
-    <a href="#system">사양</a>
-  </nav>
-</header>
-
-<!-- ─────────── 히어로 ─────────── -->
-<main id="top">
-<section class="hero" id="hero">
-  <div class="hero__spot" aria-hidden="true"></div>
-
-  <svg class="hero__sigil" viewBox="0 0 600 600" aria-hidden="true" focusable="false">
-    <defs>
-      <path id="arcTop" d="M300,300 m-232,0 a232,232 0 1,1 464,0" />
-    </defs>
-    <g fill="none" stroke="currentColor">
-      <circle cx="300" cy="300" r="268" stroke-width="1"/>
-      <circle cx="300" cy="300" r="252" stroke-width="2.5"/>
-      <circle cx="300" cy="300" r="196" stroke-width="1"/>
-      <circle cx="300" cy="300" r="132" stroke-width="1"/>
-      <circle cx="300" cy="300" r="74"  stroke-width="2"/>
-      <g stroke-width="1.2">
-        <path d="M300 48 L521 408 L79 408 Z"/>
-        <path d="M300 552 L79 192 L521 192 Z"/>
+  <!-- 배경 — 마법진 -->
+  <div class="app__bg" aria-hidden="true">
+    <svg class="sigil" viewBox="0 0 600 600" focusable="false">
+      <defs>
+        <path id="arcTop" d="M300,300 m-232,0 a232,232 0 1,1 464,0" />
+      </defs>
+      <g id="sigilArt">
+        <g fill="none" stroke="currentColor">
+          <circle cx="300" cy="300" r="268" stroke-width="1"/>
+          <circle cx="300" cy="300" r="252" stroke-width="2.5"/>
+          <circle cx="300" cy="300" r="196" stroke-width="1"/>
+          <circle cx="300" cy="300" r="132" stroke-width="1"/>
+          <circle cx="300" cy="300" r="74"  stroke-width="2"/>
+          <g stroke-width="1.2">
+            <path d="M300 48 L521 408 L79 408 Z"/>
+            <path d="M300 552 L79 192 L521 192 Z"/>
+          </g>
+          <g stroke-width="1" opacity=".75">
+            <path d="M300 32 L300 568 M32 300 L568 300"/>
+          </g>
+          <g stroke-width="1">
+            <path d="M300 168 l24 48 54 8 -39 38 9 54 -48 -26 -48 26 9 -54 -39 -38 54 -8 z"/>
+          </g>
+        </g>
+        <g id="sigilTicks" stroke="currentColor" stroke-width="1"></g>
+        <text class="sigil__text" fill="currentColor">
+          <textPath href="#arcTop" startOffset="50%" text-anchor="middle">ENCORE · PLAVSVS NONDVM FINITVS · VKIHA</textPath>
+        </text>
       </g>
-      <g stroke-width="1" opacity=".75">
-        <path d="M300 32 L300 568 M32 300 L568 300"/>
-      </g>
-      <g stroke-width="1">
-        <path d="M300 168 l24 48 54 8 -39 38 9 54 -48 -26 -48 26 9 -54 -39 -38 54 -8 z"/>
-      </g>
-    </g>
-    <g class="hero__sigil-ticks" stroke="currentColor" stroke-width="1">
-      <!-- 눈금: JS로 생성 -->
-    </g>
-    <text class="hero__sigil-text" fill="currentColor">
-      <textPath href="#arcTop" startOffset="50%" text-anchor="middle">
-        ENCORE · PLAVSVS NONDVM FINITVS · VKIHA
-      </textPath>
-    </text>
-  </svg>
-
-  <div class="hero__plate">
-    <h1 class="hero__title">
-      <img class="hero__logo" src="assets/img/logo.png" width="1034" height="677" alt="Fate / Encore — An encore for wishes unfulfilled.">
-    </h1>
-    <p class="hero__sub">이루지 못한 소원에,<br>다시 한번 박수를.</p>
-    <div class="hero__actions">
-      <a class="btn btn--solid" href="#overture">막을 올린다</a>
-      <a class="btn btn--ghost" href="#cast">캐스트 보기</a>
-    </div>
+    </svg>
   </div>
 
-</section>
+  <!-- ─────────── 타이틀 화면 ─────────── -->
+  <section class="title" id="title">
+    <h1 class="title__logo-wrap">
+      <img class="title__logo" src="assets/img/logo.png" width="1034" height="677" alt="Fate / Encore — An encore for wishes unfulfilled.">
+    </h1>
+    <p class="title__sub">이루지 못한 소원에,<br>다시 한번 박수를.</p>
+    <button class="title__start" type="button" id="btnStart">TAP TO START</button>
+    <p class="title__foot">비공식 팬 제작물 · © 2026 팬 서클 「제2막」</p>
+  </section>
 
-<!-- ─────────── 서곡 ─────────── -->
-<section class="section section--program" id="overture">
-  <div class="program">
-    <span class="program__corner program__corner--tl" aria-hidden="true"></span>
-    <span class="program__corner program__corner--tr" aria-hidden="true"></span>
-    <span class="program__corner program__corner--bl" aria-hidden="true"></span>
-    <span class="program__corner program__corner--br" aria-hidden="true"></span>
-    <p class="program__latin">Ouverture</p>
-    <h2 class="program__title">서곡</h2>
-    <p class="program__war">제6차 성배전쟁 — 우키하 성배전쟁</p>
+  <!-- ─────────── 게임 화면 ─────────── -->
+  <div class="game" id="game" hidden>
 
-    <p class="program__lead">후쿠오카현 우키하. 산자락 아래로 저녁빛이 내려앉고, 오래된 집들의 창문에 하나둘 불이 켜지는 작은 도시. 그곳에서 어느 겨울, 6차 성배 전쟁이 시작된다.</p>
+    <header class="hud">
+      <div class="hud__player">
+        <span class="hud__badge" aria-hidden="true">VI</span>
+        <span class="hud__who"><b>마스터</b><small>제6차 성배전쟁 · 우키하</small></span>
+      </div>
+      <div class="hud__res">
+        <span class="chip" title="령주">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 20 12 12 22 4 12z"/></svg>
+          <span class="chip__label">령주</span><b>3</b>
+        </span>
+        <span class="chip" title="공개된 서번트">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 14 10l8.5 2-8.5 2-2 8.5-2-8.5-8.5-2 8.5-2z"/></svg>
+          <span class="chip__label">참전</span><b id="hudCount">4/7</b>
+        </span>
+      </div>
+    </header>
+
+    <main class="screens">
+
+      <!-- 홈 -->
+      <section class="screen screen--home" id="s-home" data-screen="home" aria-label="홈">
+        <div class="banners">
+          <button class="banner" type="button" id="bannerPrologue">
+            <span class="banner__tag">Prologue</span>
+            <span class="banner__title">서곡 공개</span>
+            <span class="banner__sub">발신인 없는 초대장이 도착했다</span>
+          </button>
+          <button class="banner banner--alt" type="button" data-go="summon">
+            <span class="banner__tag">Pick Up</span>
+            <span class="banner__title">제6차 성배전쟁 소환</span>
+            <span class="banner__sub">서번트 4기가 부름에 응한다</span>
+          </button>
+        </div>
+
+        <div class="stand">
+          <button class="arch" type="button" id="standArch" aria-label="다음 서번트의 한마디 듣기">
+            <span class="arch__glyph" id="standGlyph" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="standinfo">
+          <p class="standinfo__text">
+            <span class="standinfo__class" id="standClass">CASTER</span>
+            <span class="standinfo__name" id="standName">오스카 조로아스터</span>
+            <span class="standinfo__master"><span class="standinfo__label">MASTER</span><span id="standMaster">마키오카 모쿠렌</span></span>
+          </p>
+          <button class="gbtn gbtn--light gbtn--sm" type="button" id="standProfile"><span>프로필</span></button>
+        </div>
+
+        <button class="speech" type="button" id="speech" aria-label="다음 대사">
+          <span class="speech__name"><span id="speechName">오스카 조로아스터</span></span>
+          <span class="speech__text" id="speechText" aria-live="polite"></span>
+        </button>
+      </section>
+
+      <!-- 서번트 -->
+      <section class="screen" id="s-servants" data-screen="servants" hidden>
+        <header class="screen__head">
+          <h2 class="screen__title">서번트</h2>
+          <p class="screen__latin">Servant</p>
+          <p class="screen__note">일곱 기 가운데 넷이 공개되었다. 카드를 누르면 프로필이 열린다.</p>
+        </header>
+        <ul class="cards" id="cardList"></ul>
+      </section>
+
+      <!-- 소환 -->
+      <section class="screen screen--summon" id="s-summon" data-screen="summon" hidden>
+        <header class="summon__banner">
+          <p class="summon__tag">Pick Up Summon</p>
+          <h2 class="summon__title">제6차 성배전쟁 소환</h2>
+          <p class="summon__sub">공개된 서번트 4기가 같은 확률로 부름에 응한다.</p>
+        </header>
+        <div class="summon__ring" aria-hidden="true">
+          <svg class="summon__circle" viewBox="0 0 600 600" focusable="false"><use href="#sigilArt"/></svg>
+          <span class="summon__core"></span>
+        </div>
+        <div class="summon__actions">
+          <button class="gbtn gbtn--light" type="button" id="pull1"><span>1회 소환</span></button>
+          <button class="gbtn" type="button" id="pull7"><span>7회 소환</span></button>
+        </div>
+        <p class="summon__rate">재화는 들지 않는다. 몇 번이든 부를 수 있다.</p>
+      </section>
+
+      <!-- 스토리 -->
+      <section class="screen" id="s-story" data-screen="story" hidden>
+        <header class="screen__head">
+          <h2 class="screen__title">스토리</h2>
+          <p class="screen__latin">Story</p>
+          <p class="screen__note">서곡과 네 개의 막. 막의 내용은 아직 공개되지 않았다.</p>
+        </header>
+        <ol class="chapters">
+          <li>
+            <button class="chapter" type="button" id="chapterPrologue">
+              <span class="chapter__no"><span>序</span></span>
+              <span class="chapter__body">
+                <span class="chapter__title">서곡</span>
+                <span class="chapter__sub">제6차 성배전쟁 — 우키하 성배전쟁</span>
+              </span>
+              <span class="chapter__go">읽기</span>
+            </button>
+          </li>
+          <li>
+            <div class="chapter chapter--locked">
+              <span class="chapter__no"><span>1</span></span>
+              <span class="chapter__body">
+                <span class="chapter__title">제1막</span>
+                <span class="chapter__sub">비공개</span>
+              </span>
+              <span class="chapter__go" aria-label="잠김"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            </div>
+          </li>
+          <li>
+            <div class="chapter chapter--locked">
+              <span class="chapter__no"><span>2</span></span>
+              <span class="chapter__body">
+                <span class="chapter__title">제2막</span>
+                <span class="chapter__sub">비공개</span>
+              </span>
+              <span class="chapter__go" aria-label="잠김"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            </div>
+          </li>
+          <li>
+            <div class="chapter chapter--locked">
+              <span class="chapter__no"><span>3</span></span>
+              <span class="chapter__body">
+                <span class="chapter__title">제3막</span>
+                <span class="chapter__sub">비공개</span>
+              </span>
+              <span class="chapter__go" aria-label="잠김"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            </div>
+          </li>
+          <li>
+            <div class="chapter chapter--locked">
+              <span class="chapter__no"><span>4</span></span>
+              <span class="chapter__body">
+                <span class="chapter__title">제4막</span>
+                <span class="chapter__sub">비공개</span>
+              </span>
+              <span class="chapter__go" aria-label="잠김"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- 정보 -->
+      <section class="screen" id="s-info" data-screen="info" hidden>
+        <header class="screen__head">
+          <h2 class="screen__title">정보</h2>
+          <p class="screen__latin">Information</p>
+        </header>
+        <div class="info">
+          <section class="panel">
+            <h3 class="panel__title">게임 정보</h3>
+            <dl class="spec">
+              <div class="spec__row"><dt>장르</dt><dd>전기 비주얼노벨 / 성배전쟁 앙코르</dd></div>
+              <div class="spec__row"><dt>플랫폼</dt><dd>Windows / macOS (Ren'Py)</dd></div>
+              <div class="spec__row"><dt>분량</dt><dd>4막 / 그 외 비공개</dd></div>
+              <div class="spec__row"><dt>가격</dt><dd>무료 배포</dd></div>
+              <div class="spec__row"><dt>공개</dt><dd>2027년 봄 예정</dd></div>
+              <div class="spec__row"><dt>제작</dt><dd>팬 서클 「제2막」</dd></div>
+            </dl>
+          </section>
+          <section class="panel">
+            <h3 class="panel__title">소식지</h3>
+            <p class="newsletter__text">공개 시점에 알림을 받으려면 소식지에 주소를 남겨 두면 된다.</p>
+            <form class="newsletter__form" id="notifyForm" novalidate>
+              <label class="newsletter__label" for="notifyEmail">메일 주소</label>
+              <input class="newsletter__input" id="notifyEmail" name="email" type="email" placeholder="name@example.com" autocomplete="email" required>
+              <button class="gbtn gbtn--sm" type="submit"><span>소식지 받기</span></button>
+              <p class="newsletter__msg" id="notifyMsg" role="status"></p>
+            </form>
+          </section>
+          <section class="panel">
+            <h3 class="panel__title">안내</h3>
+            <p class="fan">본 사이트는 TYPE-MOON 작품을 좋아하는 사람이 만든 <strong>비공식 팬 제작물</strong>이며, 저작권자 및 관련 회사와 아무런 관계가 없습니다. 등장하는 영령·등장인물·각본은 전부 창작이거나 퍼블릭 도메인 인물을 바탕으로 합니다.</p>
+            <p class="fan fan--meta">© 2026 팬 서클 「제2막」</p>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <!-- 하단 메뉴 -->
+    <nav class="dock" aria-label="메뉴">
+      <button class="dock__btn" type="button" data-go="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5.5v-6h-5v6H4z"/></svg>
+        <span>홈</span>
+      </button>
+      <button class="dock__btn" type="button" data-go="servants">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="10" height="14" rx="1.2"/><path d="M17 7.5h1.8A1.2 1.2 0 0 1 20 8.7v10.6a1.2 1.2 0 0 1-1.2 1.2h-7.6A1.2 1.2 0 0 1 10 19.3"/></svg>
+        <span>서번트</span>
+      </button>
+      <button class="dock__btn dock__btn--summon" type="button" data-go="summon">
+        <span class="dock__orb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 14 10l8.5 2-8.5 2-2 8.5-2-8.5-8.5-2 8.5-2z"/></svg></span>
+        <span>소환</span>
+      </button>
+      <button class="dock__btn" type="button" data-go="story">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5H10q2 0 2 2v13q0-2-2-2H3.5zM20.5 5H14q-2 0-2 2v13q0-2 2-2h6.5z"/></svg>
+        <span>스토리</span>
+      </button>
+      <button class="dock__btn" type="button" data-go="info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6M12 7.5v.2"/></svg>
+        <span>정보</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<!-- ─────────── 소환 연출 ─────────── -->
+<div class="fx" id="fx" hidden>
+  <svg class="fx__circle" viewBox="0 0 600 600" aria-hidden="true" focusable="false"><use href="#sigilArt"/></svg>
+  <span class="fx__burst" aria-hidden="true"></span>
+  <p class="fx__hint" id="fxHint">화면을 누르면 건너뛴다</p>
+  <div class="fx__result" id="fxResult" role="dialog" aria-modal="true" aria-labelledby="fxTitle" hidden>
+    <p class="fx__title" id="fxTitle"></p>
+    <ul class="pulls" id="pulls"></ul>
+    <div class="fx__actions">
+      <button class="gbtn gbtn--light" type="button" id="fxClose"><span>닫기</span></button>
+      <button class="gbtn" type="button" id="fxAgain"><span>한 번 더</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── 서곡 읽기 ─────────── -->
+<div class="reader" id="reader" hidden>
+  <div class="profile__scrim" id="rdScrim"></div>
+  <div class="reader__panel" role="dialog" aria-modal="true" aria-labelledby="rdTitle">
+    <button class="profile__close" type="button" id="rdClose" aria-label="닫기">✕</button>
+    <p class="reader__latin">Ouverture</p>
+    <h2 class="reader__title" id="rdTitle">서곡</h2>
+    <p class="reader__war">제6차 성배전쟁 — 우키하 성배전쟁</p>
+
+    <p class="reader__lead">후쿠오카현 우키하. 산자락 아래로 저녁빛이 내려앉고, 오래된 집들의 창문에 하나둘 불이 켜지는 작은 도시. 그곳에서 어느 겨울, 6차 성배 전쟁이 시작된다.</p>
 
     <p>이들을 찾아온 것은 발신인 없는 초대장이다. 초대장의 내용은 간결하다.</p>
 
@@ -114,189 +318,9 @@
 
     <p>마스터들은 서로의 진명을 감추고, 동맹과 배신을 저울질하며 성배의 행방을 좇는다.</p>
 
-    <p class="program__sign">— 발신인 없는 초대장에 동봉된 안내에서</p>
+    <p class="reader__sign">— 발신인 없는 초대장에 동봉된 안내에서</p>
   </div>
-</section>
-
-<!-- ─────────── 캐스트 ─────────── -->
-<section class="section section--cast" id="cast">
-  <header class="section__head">
-    <p class="section__latin">Dramatis Personae</p>
-    <h2 class="section__title">캐스트</h2>
-    <p class="section__note">일곱 쌍의 마스터와 서번트 가운데 넷이 공개되었다. 좌우로 돌려 고르고, 초상을 누르면 스테이터스가 열린다.</p>
-  </header>
-
-  <div class="orbit">
-    <div class="orbit__ring" aria-hidden="true"></div>
-    <button class="orbit__nav orbit__nav--prev" type="button" id="orbitPrev" aria-label="이전 서번트">‹</button>
-    <button class="orbit__nav orbit__nav--next" type="button" id="orbitNext" aria-label="다음 서번트">›</button>
-  <ul class="cast" id="castList">
-    <li class="cast__item">
-      <div class="portrait portrait--sealed">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true"><svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg></span>
-          <span class="portrait__label">
-            <span class="portrait__class">SABER</span>
-            <span class="portrait__name">진명 미공개</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>미공개</span>
-      </div>
-    </li>
-    <li class="cast__item">
-      <button class="portrait" type="button" aria-pressed="false"
-              data-name="도로시" data-class="ARCHER" data-master="이치노세 류가"
-              data-line="저를 기다린 사람은 없었어도 제가 기다린 사람들은 있었으니까요.">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 12 q22 20 0 40"/><path d="M18 12 L18 52"/><path d="M22 32 L50 32"/><path d="M44 26 l6 6 -6 6"/></svg>
-          </span>
-          <span class="portrait__label">
-            <span class="portrait__class">ARCHER</span>
-            <span class="portrait__name">도로시</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>이치노세 류가</span>
-      </button>
-    </li>
-    <li class="cast__item">
-      <div class="portrait portrait--sealed">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true"><svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg></span>
-          <span class="portrait__label">
-            <span class="portrait__class">LANCER</span>
-            <span class="portrait__name">진명 미공개</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>미공개</span>
-      </div>
-    </li>
-    <li class="cast__item">
-      <div class="portrait portrait--sealed">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true"><svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg></span>
-          <span class="portrait__label">
-            <span class="portrait__class">RIDER</span>
-            <span class="portrait__name">진명 미공개</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>미공개</span>
-      </div>
-    </li>
-    <li class="cast__item">
-      <button class="portrait" type="button" aria-pressed="false"
-              data-name="오스카 조로아스터" data-class="CASTER" data-master="마키오카 모쿠렌"
-              data-line="어서 와. 먼 길을 걸어온 사람에게는 그만한 기적이 필요한 법이지.">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 52 L44 20"/><circle cx="46" cy="16" r="5"/><path d="M14 30 l6 -6 6 6 -6 6 z"/><path d="M40 46 l4 -4 4 4 -4 4 z"/></svg>
-          </span>
-          <span class="portrait__label">
-            <span class="portrait__class">CASTER</span>
-            <span class="portrait__name">오스카 조로아스터</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>마키오카 모쿠렌</span>
-      </button>
-    </li>
-    <li class="cast__item">
-      <button class="portrait" type="button" aria-pressed="false"
-              data-name="로드" data-class="ASSASSIN" data-master="릴리안 루스텔리아"
-              data-line="움직여도 괜찮아. 나는 살아 있는 너를 그리고 싶으니.">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M32 14 q-14 10 -14 22 a14 14 0 0 0 28 0 q0 -12 -14 -22"/><path d="M26 40 q6 6 12 0"/></svg>
-          </span>
-          <span class="portrait__label">
-            <span class="portrait__class">ASSASSIN</span>
-            <span class="portrait__name">로드</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>릴리안 루스텔리아</span>
-      </button>
-    </li>
-    <li class="cast__item">
-      <button class="portrait" type="button" aria-pressed="false"
-              data-name="카르타필루스" data-class="BERSERKER" data-master="오즈 누벨"
-              data-line="나는 기도한다. 최후의 날이 오기까지를.">
-        <span class="portrait__arch">
-          <span class="portrait__glyph" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M16 44 L16 26 l8 8 8 -14 8 14 8 -8 0 18 z"/><path d="M16 48 L48 48"/></svg>
-          </span>
-          <span class="portrait__label">
-            <span class="portrait__class">BERSERKER</span>
-            <span class="portrait__name">카르타필루스</span>
-          </span>
-        </span>
-        <span class="portrait__master"><span class="portrait__master-label">MASTER</span>오즈 누벨</span>
-      </button>
-    </li>
-  </ul>
-  </div>
-  <div class="orbit__dots" id="orbitDots" aria-label="서번트 선택"></div>
-</section>
-
-<!-- ─────────── 막 구성 ─────────── -->
-<section class="section section--acts" id="acts">
-  <header class="section__head">
-    <p class="section__latin">Acta</p>
-    <h2 class="section__title">막 구성</h2>
-    <p class="section__note">네 개의 막으로 구성된다. 내용은 아직 공개되지 않았다.</p>
-  </header>
-
-  <ol class="acts">
-    <li class="act act--sealed">
-      <p class="act__no">제<span>1</span>막</p>
-      <p class="act__hidden">비공개</p>
-    </li>
-    <li class="act act--sealed">
-      <p class="act__no">제<span>2</span>막</p>
-      <p class="act__hidden">비공개</p>
-    </li>
-    <li class="act act--sealed">
-      <p class="act__no">제<span>3</span>막</p>
-      <p class="act__hidden">비공개</p>
-    </li>
-    <li class="act act--sealed">
-      <p class="act__no">제<span>4</span>막</p>
-      <p class="act__hidden">비공개</p>
-    </li>
-  </ol>
-</section>
-
-<!-- ─────────── 사양 ─────────── -->
-<section class="section section--system" id="system">
-  <header class="section__head">
-    <p class="section__latin">Programma</p>
-    <h2 class="section__title">사양</h2>
-  </header>
-
-  <dl class="spec">
-    <div class="spec__row"><dt>장르</dt><dd>전기 비주얼노벨 / 성배전쟁 앙코르</dd></div>
-    <div class="spec__row"><dt>플랫폼</dt><dd>Windows / macOS (Ren'Py)</dd></div>
-    <div class="spec__row"><dt>분량</dt><dd>4막 / 그 외 비공개</dd></div>
-    <div class="spec__row"><dt>가격</dt><dd>무료 배포</dd></div>
-    <div class="spec__row"><dt>공개</dt><dd>2027년 봄 예정</dd></div>
-    <div class="spec__row"><dt>제작</dt><dd>팬 서클 「제2막」</dd></div>
-  </dl>
-
-  <div class="newsletter">
-    <p class="newsletter__text">공개 시점에 알림을 받으려면 소식지에 주소를 남겨 두면 된다.</p>
-    <form class="newsletter__form" id="notifyForm" novalidate>
-      <label class="newsletter__label" for="notifyEmail">메일 주소</label>
-      <input class="newsletter__input" id="notifyEmail" name="email" type="email" placeholder="name@example.com" autocomplete="email" required>
-      <button class="btn btn--solid" type="submit">소식지 받기</button>
-      <p class="newsletter__msg" id="notifyMsg" role="status"></p>
-    </form>
-  </div>
-</section>
-</main>
-
-<footer class="footer">
-  <p class="footer__mark">Fate / Encore</p>
-  <p class="footer__fan">본 사이트는 TYPE-MOON 작품을 좋아하는 사람이 만든 <strong>비공식 팬 제작물</strong>이며, 저작권자 및 관련 회사와 아무런 관계가 없습니다. 등장하는 영령·등장인물·각본은 전부 창작이거나 퍼블릭 도메인 인물을 바탕으로 합니다.</p>
-  <p class="footer__meta">© 2026 팬 서클 「제2막」</p>
-</footer>
+</div>
 
 <!-- ─────────── 스테이터스 ─────────── -->
 <div class="profile" id="profile" hidden>
@@ -359,26 +383,6 @@
       </div>
     </div>
   </div>
-</div>
-
-<!-- ─────────── 대화창 ─────────── -->
-<div class="vn" id="vn">
-  <div class="vn__log" id="vnLog" hidden>
-    <p class="vn__log-head">지난 대사</p>
-    <ol class="vn__log-list" id="vnLogList"></ol>
-  </div>
-
-  <div class="vn__box">
-    <p class="vn__plate" id="vnName">오스카 조로아스터</p>
-    <p class="vn__text" id="vnText"></p>
-    <div class="vn__controls">
-      <button class="vn__btn" type="button" id="btnAuto" aria-pressed="false">AUTO</button>
-      <button class="vn__btn" type="button" id="btnSkip">SKIP</button>
-      <button class="vn__btn" type="button" id="btnLog" aria-expanded="false" aria-controls="vnLog">LOG</button>
-      <button class="vn__btn vn__btn--close" type="button" id="btnHide" title="대화창 접기">▾</button>
-    </div>
-  </div>
-  <button class="vn__reopen" type="button" id="btnShow" hidden>대화창 열기</button>
 </div>
 
 <script src="assets/js/cast.js" defer></script>
