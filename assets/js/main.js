@@ -17,6 +17,8 @@
      스테이터스·스킬 같은 설정은 cast.js 에서 진명으로 찾아온다. */
   const svg = inner =>
     `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">${inner}</svg>`;
+  // 영주 그림 — 장식이라 대체 글은 비운다 (이름은 카드와 프로필에 따로 적혀 있다)
+  const seal = src => `<img class="seal" src="${src}" alt="" loading="lazy" decoding="async">`;
   const GLYPH_SEALED =
     '<svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg>';
 
@@ -28,17 +30,19 @@
     { cls: 'LANCER' },
     { cls: 'RIDER' },
     { cls: 'CASTER', name: '오스카 조로아스터', master: '마키오카 모쿠렌',
+      masterGlyph: seal('assets/img/seal-mokuren.png'),
       line: '어서 와. 먼 길을 걸어온 사람에게는 그만한 기적이 필요한 법이지.',
       glyph: svg('<path d="M20 52 L44 20"/><circle cx="46" cy="16" r="5"/><path d="M14 30 l6 -6 6 6 -6 6 z"/><path d="M40 46 l4 -4 4 4 -4 4 z"/>') },
     { cls: 'ASSASSIN', name: '로드', master: '릴리안 루스텔리아',
       line: '움직여도 괜찮아. 나는 살아 있는 너를 그리고 싶으니.',
       glyph: svg('<path d="M32 14 q-14 10 -14 22 a14 14 0 0 0 28 0 q0 -12 -14 -22"/><path d="M26 40 q6 6 12 0"/>') },
     { cls: 'BERSERKER', name: '카르타필루스', master: '오즈 누벨',
+      masterGlyph: seal('assets/img/seal-oz.png'), masterGlyphCredit: '@t66rjp_com',
       line: '나는 기도한다. 최후의 날이 오기까지를.',
       glyph: svg('<path d="M16 44 L16 26 l8 8 8 -14 8 14 8 -8 0 18 z"/><path d="M16 48 L48 48"/>') },
   ];
   const lines = ROSTER.filter(r => r.name);   // 공개된 서번트만
-  // 마스터 문양 — 령주를 본뜬 표식. 마스터마다 다르게 하려면 ROSTER 에 masterGlyph 를 적는다
+  // 마스터 문양 — 영주 그림이 없는 마스터는 령주를 본뜬 기본 표식. 그림은 ROSTER 의 masterGlyph
   const GLYPH_MASTER = svg('<path d="M32 9 C25 19 25 27 32 33 C39 27 39 19 32 9 Z"/><path d="M13 29 C21 35 27 41 32 55 C37 41 43 35 51 29"/><path d="M21 24 q-7 11 4 19"/><path d="M43 24 q7 11 -4 19"/>');
   const masterGlyph = r => r.masterGlyph || GLYPH_MASTER;
 
@@ -446,6 +450,7 @@
     setMode('servant');
 
     $('#pfGlyph').innerHTML    = item.glyph;
+    $('#pfCredit').hidden = true;
     $('#pfClass').textContent  = item.cls;
     $('#pfName').textContent   = item.name;
     $('#pfMeta').innerHTML =
@@ -492,6 +497,8 @@
     setMode('master');
 
     $('#pfGlyph').innerHTML    = masterGlyph(item);
+    $('#pfCredit').hidden = !item.masterGlyphCredit;
+    $('#pfCredit').textContent = item.masterGlyphCredit ? `영주 디자인 ${item.masterGlyphCredit}` : '';
     $('#pfClass').textContent  = `${item.cls} · MASTER`;
     $('#pfName').textContent   = item.master;
     $('#pfMeta').innerHTML =

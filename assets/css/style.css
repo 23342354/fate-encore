@@ -493,6 +493,9 @@ button.card:active{transform:scale(.97)}
 }
 .card__glyph{width:46%;margin-bottom:24%;color:rgba(var(--glow),.85)}
 .card__glyph svg{width:100%;height:auto;display:block}
+/* 영주 그림 — 가로세로 비율이 제각각이라 정사각 틀 안에 맞춘다 */
+.seal{display:block;width:100%;aspect-ratio:1;object-fit:contain}
+.card__glyph:has(.seal){width:58%;margin-bottom:22%}
 .card__class{
   position:absolute;top:.5rem;left:.5rem;padding:.1rem .5rem;
   font-family:var(--display);font-size:.66rem;letter-spacing:.2em;line-height:1.6;
@@ -821,6 +824,9 @@ button.chapter:active{transform:scale(.985)}
   box-shadow:inset 0 0 0 5px rgba(255,255,255,.6),inset 0 0 2rem rgba(95,128,104,.18);
 }
 .profile__arch--master .profile__glyph{color:rgba(54,99,121,.7)}
+.profile__glyph:has(.seal){width:62%}
+.profile__credit{margin:.55rem 0 0;font-size:.74rem;line-height:1.5;color:var(--text-dim);text-align:center}
+.credit__by{font-size:.85rem;color:var(--text-dim)}
 
 /* 서번트 ↔ 마스터 이동 링크 */
 .pf-link{

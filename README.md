@@ -9,7 +9,8 @@
 ```
 index.html              게임 화면 전체 (타이틀 · 로비 · 각 메뉴 화면)
 assets/css/style.css    전체 스타일
-assets/img/logo.png     제호 로고 (배경이 투명한 PNG)
+assets/img/logo.png     제호 로고 (배경이 투명한 PNG) — @utakimid
+assets/img/seal-*.png   마스터 영주 그림
 assets/audio/bgm.mp3    배경음악 — One Last Wish Once More For All That Never Was / @5minutejamms
 assets/js/masters.js    마스터 설정 — 마스터 프로필을 고칠 곳
 assets/js/cast.js       캐릭터 설정 — 설정을 고칠 곳은 여기다
@@ -124,7 +125,9 @@ assets/js/main.js       참전 명단 · 화면 전환 · 로비 대사 · 소�
 | `bio` | 소개 문단 배열 |
 | `lore` | 설정 탭. `cast.js` 의 `lore` 와 같은 꼴 |
 
-비워 둔 항목은 "—" 로 나온다. 마스터 문양은 넷 다 같은 령주 표식이다. 마스터마다 다르게 하려면 `ROSTER` 의 그 줄에 `masterGlyph: svg('…')` 를 적는다.
+비워 둔 항목은 "—" 로 나온다.
+
+영주 그림은 `ROSTER` 의 `masterGlyph: seal('assets/img/파일.png')` 로 넣는다. 지금은 마키오카 모쿠렌(`seal-mokuren.png`)과 오즈 누벨(`seal-oz.png`)만 들어가 있고, 나머지 둘은 기본 령주 표식이다. 그림을 다른 사람이 그렸으면 같은 줄에 `masterGlyphCredit: '@아이디'` 를 적는다. 프로필의 영주 아래에 "영주 디자인 @아이디" 가 붙는다. 배경이 투명한 PNG 를 쓴다.
 
 ### 프로필 조작
 
@@ -143,6 +146,7 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 - 세이버 · 랜서 · 라이더는 서번트와 마스터 모두 미공개 상태다.
 - 오스카 조로아스터 · 카르타필루스는 설정 탭이 비어 있다.
 - 마스터 넷은 이름과 짝만 있다. 나머지 설정은 `masters.js` 에 전부 빈칸이다.
+- 이치노세 류가 · 릴리안 루스텔리아는 영주 그림이 없어 기본 표식이다.
 - 카르타필루스의 보구 『EGO』는 본문이 불명으로만 적혀 있다.
 - 스토리의 네 막이 모두 잠겨 있다. `index.html` 의 `.chapter--locked` 를 서곡처럼 `<button class="chapter">` 로 바꾸면 열린 막이 된다.
 - 소식지 입력란은 받는 곳이 없다. `assets/js/main.js` 의 소식지 처리 부분에 전송 코드를 넣으면 된다.
@@ -153,7 +157,15 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 
 © 2026 팬 서클 「제2막」
 
-## 음악
+## 크레딧
 
-- BGM: One Last Wish Once More For All That Never Was — @5minutejamms
-- 파일은 `assets/audio/bgm.mp3` 다. 같은 이름으로 덮어쓰면 곡이 바뀐다. 곡을 바꾸면 `index.html` 의 출처 표기 세 곳(타이틀 하단, 정보 > 음악, 정보 > 안내)도 같이 고친다
+| 항목 | 출처 |
+| --- | --- |
+| 로고 | @utakimid |
+| BGM — One Last Wish Once More For All That Never Was | @5minutejamms |
+| 오즈 누벨 영주 | @t66rjp_com |
+| 마키오카 모쿠렌 영주 | 자작 |
+
+사이트 안에서는 타이틀 하단, 정보 > 크레딧, 정보 > 안내에 표기된다. 오즈 누벨 영주는 마스터 프로필에도 붙는다. 출처를 바꾸거나 더하면 `index.html` 의 세 군데를 같이 고친다.
+
+- 배경음악 파일은 `assets/audio/bgm.mp3` 다. 같은 이름으로 덮어쓰면 곡이 바뀐다.
