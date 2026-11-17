@@ -112,6 +112,7 @@
   const btnBgm = $('#btnBgm');
   const BGM_VOLUME = 0.45;
   let bgmOn = true;
+  let bgmTarget = BGM_VOLUME;   // 서곡은 장면마다 음량을 바꾼다
   let fadeTimer = null;
   try { bgmOn = window.localStorage.getItem('fe-bgm') !== 'off'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
 
@@ -137,8 +138,15 @@
     if (!bgmOn) return;
     bgm.volume = 0;
     const p = bgm.play();
-    if (p && p.then) p.then(() => fadeTo(BGM_VOLUME)).catch(() => {});
-    else fadeTo(BGM_VOLUME);
+    if (p && p.then) p.then(() => fadeTo(bgmTarget)).catch(() => {});
+    else fadeTo(bgmTarget);
+  }
+  // 음량을 v 로 천천히 옮긴다. 0 이면 소리만 줄이고 멈추지는 않는다
+  function bgmTo(v) {
+    bgmTarget = v;
+    if (!bgmOn || !started) return;
+    if (bgm.paused && v > 0) { playBgm(); return; }
+    fadeTo(v);
   }
   function stopBgm() { fadeTo(0, () => bgm.pause()); }
 
@@ -360,23 +368,341 @@
   $('#fxClose').addEventListener('click', closeFx);
   fx.addEventListener('click', () => { if (fxTimer) showResult(); });   // 연출 건너뛰기
 
-  /* ── 7. 서곡 읽기 ───────────────────────────────────── */
-  const reader = $('#reader');
-  let rdFocus = null;
-  function openReader() {
-    rdFocus = document.activeElement;
-    reader.hidden = false;
-    $('.reader__panel').scrollTop = 0;
-    $('#rdClose').focus();
+  /* ── 7. 서곡 — 스토리 재생 ──────────────────────────
+     스크립트는 prologue.js. 위에서부터 한 줄씩 실행한다.
+     배경·연출을 기다리는 동안에는 눌러도 넘어가지 않는다. */
+  const SCRIPT = window.PROLOGUE || [];
+  const ASSETS = Object.assign({ bg: {}, sfx: {}, cg: {} }, window.PROLOGUE_ASSETS || {});
+  const vnp      = $('#vnp');
+  const vnpPage  = $('#vnpPage');
+  const vnpFx    = $('#vnpFx');
+  const vnpPlace = $('#vnpPlace');
+  const vnpLetter = $('#vnpLetter');
+  const vnpCg    = $('#vnpCg');
+  const vnpTitle = $('#vnpTitle');
+  const vnpLog   = $('#vnpLog');
+  const vnpAutoB = $('#vnpAuto');
+  const vnpSkipB = $('#vnpSkip');
+  const vnpLogB  = $('#vnpLogBtn');
+  const bgLayers = [$('#vnpBgA'), $('#vnpBgB')];
+  const TYPE_MS = 34;
+
+  let at = -1;              // 지금 실행 중인 줄
+  let holding = false;      // 연출을 기다리는 중
+  let ready = false;        // 지금 보이는 것을 다 보여 주었는가
+  let vTyper = null, vTyped = null;
+  let vWait = null, vAuto = null;
+  let autoOn2 = false, skipOn = false;
+  let bgFront = 0;
+  let vnpFocus = null;
+  const vLog = [];
+
+  // ── 임시 배경 ── 그림이 들어오면 ASSETS.bg 가 대신한다
+  // 같은 모양이 매번 나오게 고정된 난수를 쓴다
+  function rng(seed) {
+    return () => {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
   }
-  function closeReader() {
-    reader.hidden = true;
-    if (rdFocus && rdFocus.focus) rdFocus.focus();
+  // 기와지붕 마을 실루엣
+  function townSVG(seed, lit) {
+    const r = rng(seed);
+    let houses = '', wins = '';
+    for (let x = -30; x < 1630;) {
+      const w = 90 + r() * 90, h = 60 + r() * 70, base = 790 + r() * 30;
+      const top = base - h, eave = 14 + r() * 10, peak = 26 + r() * 26;
+      houses += `<rect x="${x.toFixed(0)}" y="${top.toFixed(0)}" width="${w.toFixed(0)}" height="${(900 - top).toFixed(0)}"/>`;
+      houses += r() < .55
+        ? `<path d="M${(x - eave).toFixed(0)} ${top.toFixed(0)} L${(x + w / 2).toFixed(0)} ${(top - peak).toFixed(0)} L${(x + w + eave).toFixed(0)} ${top.toFixed(0)}Z"/>`
+        : `<path d="M${(x - eave).toFixed(0)} ${top.toFixed(0)} L${(x + w * .22).toFixed(0)} ${(top - peak * .8).toFixed(0)} L${(x + w * .78).toFixed(0)} ${(top - peak * .8).toFixed(0)} L${(x + w + eave).toFixed(0)} ${top.toFixed(0)}Z"/>`;
+      const n = r() < .5 ? 1 : 2;
+      for (let k = 0; k < n; k++) {
+        if (r() > lit) continue;
+        const wx = x + 14 + r() * (w - 44), wy = top + 16 + r() * (h - 44);
+        wins += `<rect class="art__win" style="--d:${(1.5 + r() * 9).toFixed(1)}s" x="${wx.toFixed(0)}" y="${wy.toFixed(0)}" width="${(16 + r() * 10).toFixed(0)}" height="${(14 + r() * 8).toFixed(0)}"/>`;
+      }
+      x += w + 6 + r() * 26;
+    }
+    return `<svg class="art__town" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice">
+      <path class="art__ridge art__ridge--far" d="M0 520 C200 440 360 470 520 430 C700 380 860 450 1040 410 C1240 360 1400 430 1600 400 L1600 900 L0 900Z"/>
+      <path class="art__ridge" d="M0 610 C240 550 420 600 640 570 C860 540 1060 600 1300 565 C1440 545 1520 570 1600 560 V900 H0Z"/>
+      <g class="art__houses">${houses}</g><g class="art__wins">${wins}</g></svg>`;
   }
-  $('#bannerPrologue').addEventListener('click', openReader);
-  $('#chapterPrologue').addEventListener('click', openReader);
-  $('#rdClose').addEventListener('click', closeReader);
-  $('#rdScrim').addEventListener('click', closeReader);
+  const envelopeHTML = (big) => `<div class="art__env${big ? ' art__env--big' : ''}">
+      <span class="art__env-flap"></span>
+      ${big ? '<span class="art__env-name">마스터 귀하</span><span class="art__env-sheet"></span>' : ''}
+    </div>`;
+  const ROOM = () => `<div class="art__roomwin"></div><div class="art__beam"></div><div class="art__table"></div>${envelopeHTML(false)}`;
+  const ART = {
+    black:    () => '',
+    ukiha:    () => `<div class="art__sky"></div>${townSVG(7, .75)}<div class="art__dusk"></div>`,
+    room:     ROOM,
+    envelope: () => `<div class="art__desk"></div>${envelopeHTML(true)}`,
+    montage:  () => `<div class="art__pan">${townSVG(19, .9)}</div>`,
+    void:     () => '',
+    alley:    () => `<div class="art__wall art__wall--l"></div><div class="art__wall art__wall--r"></div>
+                     <div class="art__lamp"></div><div class="art__glass"><span></span></div><div class="art__road"></div>`,
+    windows:  () => {
+      let w = ''; const r = rng(31);
+      for (let i = 0; i < 24; i++) w += `<span class="art__pane${i === 15 ? ' is-dark' : ''}" style="--d:${(r() * 4).toFixed(1)}s"></span>`;
+      return `<div class="art__facade">${w}</div><div class="art__focus"></div>`;
+    },
+    pov:      () => ROOM() + `<div class="art__mark">${GLYPH_MASTER}</div>`,
+  };
+
+  function setBg(key) {
+    const next = bgLayers[1 - bgFront], prev = bgLayers[bgFront];
+    const src = ASSETS.bg[key];
+    next.className = `vnp__bg is-${key}`;
+    next.style.backgroundImage = src ? `url("${src}")` : '';
+    next.innerHTML = src ? '' : (ART[key] ? ART[key]() : '');
+    next.classList.add('is-front');
+    prev.classList.remove('is-front');
+    bgFront = 1 - bgFront;
+    vnpFx.innerHTML = '';
+    vnp.dataset.scene = key;
+  }
+
+  // ── 연출 ──
+  function sealMask(src) {
+    return `<span class="fx-seal fx-seal--img" style="-webkit-mask-image:url('${src}');mask-image:url('${src}')"></span>`;
+  }
+  const FX = {
+    light:    () => '<span class="fx-light"></span>',
+    window:   () => '<span class="fx-window"><i></i></span>',
+    open:     () => { const e = $('.art__env', vnp); e && e.classList.add('is-open'); return null; },
+    confetti: () => '<span class="fx-confetti"></span>',
+    seals:    () => `<div class="fx-seals">
+                      <span class="fx-seal fx-seal--svg">${GLYPH_MASTER}</span>
+                      ${sealMask('assets/img/seal-oz.png')}
+                      ${sealMask('assets/img/seal-mokuren.png')}
+                    </div>`,
+    glass:    () => { const g = $('.art__glass', vnp); g && g.classList.add('is-seen'); return null; },
+    sealdraw: () => `<div class="fx-mark">${GLYPH_MASTER.replace(/<path /g, '<path pathLength="1" ')}</div>`,
+    sealfull: () => { const m = $('.fx-mark', vnp); m && m.classList.add('is-full'); return null; },
+  };
+  function runFx(name) {
+    const f = FX[name];
+    if (!f) return;
+    const html = f();
+    if (html) vnpFx.insertAdjacentHTML('beforeend', html);
+  }
+
+  function playSfx(key) {
+    const src = ASSETS.sfx[key];
+    if (!src || !bgmOn) return;
+    try { const a = new Audio(src); a.volume = .7; a.play().catch(() => {}); } catch (e) { /* 무시 */ }
+  }
+
+  // ── 글 ──
+  function clearPage() {
+    vnpPage.innerHTML = '';
+    vnpPage.classList.remove('is-on');
+  }
+  function hideCards() {
+    vnpLetter.hidden = true;
+    vnpCg.hidden = true;
+    vnpTitle.hidden = true;
+  }
+  function pushVLog(text, kind) {
+    vLog.push({ text, kind });
+    $('#vnpLogList').innerHTML = vLog.map(l =>
+      `<li class="${l.kind ? 'is-' + l.kind : ''}">${rich(l.text)}</li>`).join('');
+  }
+  function finishVType() {
+    if (vTyper) { window.clearInterval(vTyper); vTyper = null; }
+    if (vTyped) { vTyped.el.innerHTML = rich(vTyped.text); vTyped.el.classList.add('is-done'); vTyped = null; }
+    markReady();
+  }
+  function typeInto(el, text) {
+    if (reduce || skipOn) { el.innerHTML = rich(text); el.classList.add('is-done'); markReady(); return; }
+    vTyped = { el, text };
+    let i = 0;
+    vTyper = window.setInterval(() => {
+      i++;
+      el.textContent = text.slice(0, i);
+      if (i >= text.length) finishVType();
+    }, TYPE_MS);
+  }
+  function addParagraph(text, kind) {
+    hideCards();
+    vnpPage.classList.add('is-on');
+    $$('.is-done', vnpPage).forEach(p => p.classList.remove('is-last'));
+    const p = document.createElement('p');
+    p.className = 'vnp__p is-last' + (kind ? ' vnp__p--' + kind : '');
+    // 화면이 넘칠 것 같으면 지우고 새로 시작
+    p.innerHTML = rich(text);
+    vnpPage.appendChild(p);
+    if (vnpPage.scrollHeight > vnpPage.clientHeight + 2 && vnpPage.children.length > 1) {
+      vnpPage.innerHTML = '';
+      vnpPage.appendChild(p);
+    }
+    p.textContent = '';
+    pushVLog(text, kind);
+    typeInto(p, text);
+  }
+
+  // ── 진행 ──
+  function markReady() {
+    ready = true;
+    window.clearTimeout(vAuto);
+    if (skipOn) vAuto = window.setTimeout(next, 140);
+    else if (autoOn2) {
+      const len = vTyped ? vTyped.text.length : (vnpPage.lastElementChild ? vnpPage.lastElementChild.textContent.length : 20);
+      vAuto = window.setTimeout(next, 1400 + len * 40);
+    }
+  }
+  function hold(ms) {
+    holding = true;
+    vnp.classList.add('is-holding');
+    vWait = window.setTimeout(() => {
+      holding = false;
+      vnp.classList.remove('is-holding');
+      next();
+    }, skipOn || reduce ? Math.min(ms, 120) : ms);
+  }
+
+  function next() {
+    window.clearTimeout(vAuto);
+    ready = false;
+    for (;;) {
+      at++;
+      const s = SCRIPT[at];
+      if (!s || s.end) { finishPrologue(); return; }
+
+      if (s.bg)    { clearPage(); hideCards(); vnpPlace.classList.remove('is-on'); setBg(s.bg); continue; }
+      if (s.clear) { clearPage(); hideCards(); vnpPlace.classList.remove('is-on'); continue; }
+      if (s.fx)    { runFx(s.fx); continue; }
+      if (s.sfx)   { playSfx(s.sfx); continue; }
+      if (s.bgm != null) { bgmTo(s.bgm); continue; }
+      if (s.place) {
+        vnpPlace.innerHTML = rich(s.place);
+        vnpPlace.classList.add('is-on');
+        pushVLog(s.place, 'place');
+        continue;
+      }
+      if (s.wait)  { hold(s.wait); return; }
+
+      if (s.narr)   { addParagraph(s.narr); return; }
+      if (s.notice) { addParagraph(s.notice, 'notice'); return; }
+      if (s.letter) {
+        clearPage(); hideCards();
+        $('#vnpLetterText').innerHTML = rich(s.letter);
+        vnpLetter.classList.toggle('is-hand', !!s.hand);
+        vnpLetter.hidden = false;
+        pushVLog(s.letter, 'letter');
+        markReady();
+        return;
+      }
+      if (s.cg) {
+        clearPage(); hideCards();
+        const src = ASSETS.cg[s.cg];
+        vnpCg.classList.toggle('has-img', !!src);
+        vnpCg.style.backgroundImage = src ? `url("${src}")` : '';
+        $('#vnpCgText').textContent = src ? '' : s.text;
+        vnpCg.hidden = false;
+        pushVLog(s.text, 'cg');
+        markReady();
+        return;
+      }
+      if (s.title) {
+        clearPage(); hideCards();
+        vnpTitle.hidden = false;
+        markReady();
+        return;
+      }
+    }
+  }
+
+  function vnpAdvance() {
+    if (holding) return;
+    if (vTyper) { finishVType(); return; }
+    if (ready) next();
+  }
+
+  function setAuto2(on) {
+    autoOn2 = on;
+    vnpAutoB.setAttribute('aria-pressed', String(on));
+    if (on && skipOn) setSkip(false);
+    window.clearTimeout(vAuto);
+    if (on && ready) markReady();
+  }
+  function setSkip(on) {
+    skipOn = on;
+    vnpSkipB.setAttribute('aria-pressed', String(on));
+    if (on && autoOn2) setAuto2(false);
+    window.clearTimeout(vAuto);
+    if (on) { if (vTyper) finishVType(); else if (ready) markReady(); }
+  }
+  function toggleVLog(open = vnpLog.hidden) {
+    vnpLog.hidden = !open;
+    vnpLogB.setAttribute('aria-expanded', String(open));
+    if (open) { setAuto2(false); setSkip(false); vnpLog.scrollTop = vnpLog.scrollHeight; }
+  }
+
+  function resetPlayer() {
+    window.clearTimeout(vWait); window.clearTimeout(vAuto);
+    if (vTyper) { window.clearInterval(vTyper); vTyper = null; }
+    vTyped = null; holding = false; ready = false; at = -1;
+    setAuto2(false); setSkip(false);
+    vLog.length = 0; $('#vnpLogList').innerHTML = '';
+    toggleVLog(false);
+    clearPage(); hideCards();
+    vnpPlace.classList.remove('is-on');
+    bgLayers.forEach(l => { l.className = 'vnp__bg'; l.innerHTML = ''; l.style.backgroundImage = ''; });
+    vnpFx.innerHTML = '';
+    vnp.classList.remove('is-holding', 'is-leaving');
+  }
+
+  function openPrologue() {
+    vnpFocus = document.activeElement;
+    resetPlayer();
+    stopTyping();               // 로비 대사 타이핑은 멈춰 둔다
+    vnp.hidden = false;
+    vnp.focus({ preventScroll: true });
+    bgmTo(0);                   // 스크립트가 침묵으로 시작한다
+    next();
+  }
+  function closePrologue() {
+    resetPlayer();
+    vnp.hidden = true;
+    bgmTo(BGM_VOLUME);
+    if (vnpFocus && vnpFocus.focus) vnpFocus.focus();
+  }
+
+  // 서곡을 끝까지 본 적이 있는지 — 스토리 목록에 표시
+  function paintClear() {
+    let seen = false;
+    try { seen = window.localStorage.getItem('fe-prologue') === 'clear'; } catch (e) { /* 무시 */ }
+    $('#chapterPrologue').classList.toggle('is-clear', seen);
+    $('#chapterPrologueGo').textContent = seen ? '다시 보기' : '보기';
+  }
+  function finishPrologue() {
+    try { window.localStorage.setItem('fe-prologue', 'clear'); } catch (e) { /* 무시 */ }
+    paintClear();
+    vnp.classList.add('is-leaving');
+    window.setTimeout(() => {
+      closePrologue();
+      go('summon');             // "소환에 관한 페이지를 펼친다" → 첫 플레이
+    }, reduce ? 0 : 900);
+  }
+  paintClear();
+
+  vnp.addEventListener('click', e => {
+    if (e.target.closest('.vnp__bar, .vnp__log')) return;
+    vnpAdvance();
+  });
+  // 막대 버튼을 누른 뒤에도 스페이스·엔터가 이야기를 넘기도록 초점을 되돌린다
+  const refocus = () => vnp.focus({ preventScroll: true });
+  vnpAutoB.addEventListener('click', () => { setAuto2(!autoOn2); refocus(); });
+  vnpSkipB.addEventListener('click', () => { setSkip(!skipOn); refocus(); });
+  vnpLogB.addEventListener('click', () => { toggleVLog(); if (vnpLog.hidden) refocus(); });
+  $('#vnpClose').addEventListener('click', closePrologue);
+  $('#bannerPrologue').addEventListener('click', openPrologue);
+  $('#chapterPrologue').addEventListener('click', openPrologue);
 
   /* ── 8. 프로필 ──────────────────────────────────────── */
   const pf      = $('#profile');
@@ -556,7 +882,17 @@
 
   /* ── 9. 키보드 ──────────────────────────────────────── */
   document.addEventListener('keydown', e => {
-    // 위에 뜬 창부터 닫는다: 프로필 → 서곡 → 소환 연출
+    // 서곡 재생 중 — 넘기기 · 로그 · 나가기
+    if (!vnp.hidden) {
+      if (e.key === 'Escape') { if (!vnpLog.hidden) { toggleVLog(false); vnp.focus({ preventScroll: true }); } else closePrologue(); return; }
+      if (!vnpLog.hidden) return;
+      if (e.target.closest && e.target.closest('.vnp__bar')) return;   // 버튼 위에서는 버튼이 받는다
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault(); vnpAdvance();
+      }
+      return;
+    }
+    // 위에 뜬 창부터 닫는다: 프로필 → 소환 연출
     if (!pf.hidden) {
       if (e.key === 'Escape') { closeProfile(); return; }
       const inTabs = e.target.closest && e.target.closest('.profile__tabs');
@@ -572,8 +908,7 @@
       return;
     }
     if (e.key !== 'Escape') return;
-    if (!reader.hidden) closeReader();
-    else if (!fx.hidden) closeFx();
+    if (!fx.hidden) closeFx();
   });
 
   /* ── 10. 소식지 ──────────────────────────────────────── */

@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23366379'/%3E%3Cpath d='M16 5l3 8h8l-6.5 5 2.5 9-7-5.5-7 5.5 2.5-9L5 13h8z' fill='%23FAFAF7'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
@@ -175,7 +175,7 @@
         <header class="screen__head">
           <h2 class="screen__title">스토리</h2>
           <p class="screen__latin">Story</p>
-          <p class="screen__note">서곡과 네 개의 막. 막의 내용은 아직 공개되지 않았다.</p>
+          <p class="screen__note">서곡과 네 개의 막. 서곡은 지금 볼 수 있고, 네 막은 아직 공개되지 않았다.</p>
         </header>
         <ol class="chapters">
           <li>
@@ -185,7 +185,7 @@
                 <span class="chapter__title">서곡</span>
                 <span class="chapter__sub">제6차 성배전쟁 — 우키하 성배전쟁</span>
               </span>
-              <span class="chapter__go">읽기</span>
+              <span class="chapter__go" id="chapterPrologueGo">보기</span>
             </button>
           </li>
           <li>
@@ -319,33 +319,33 @@
   </div>
 </div>
 
-<!-- ─────────── 서곡 읽기 ─────────── -->
-<div class="reader" id="reader" hidden>
-  <div class="profile__scrim" id="rdScrim"></div>
-  <div class="reader__panel" role="dialog" aria-modal="true" aria-labelledby="rdTitle">
-    <button class="profile__close" type="button" id="rdClose" aria-label="닫기">✕</button>
-    <p class="reader__latin">Ouverture</p>
-    <h2 class="reader__title" id="rdTitle">서곡</h2>
-    <p class="reader__war">제6차 성배전쟁 — 우키하 성배전쟁</p>
-
-    <p class="reader__lead">후쿠오카현 우키하. 산자락 아래로 저녁빛이 내려앉고, 오래된 집들의 창문에 하나둘 불이 켜지는 작은 도시. 그곳에서 어느 겨울, 6차 성배 전쟁이 시작된다.</p>
-
-    <p>이들을 찾아온 것은 발신인 없는 초대장이다. 초대장의 내용은 간결하다.</p>
-
-    <blockquote class="invitation">
-      <p>당신에게는 아직, 끝내지 못한 소원이 있습니다.</p>
-    </blockquote>
-
-    <p>앞선 다섯 차례의 의식을 계승한 제6차 성배전쟁. 새로운 개최지로 선택된 우키하에서 일곱 명의 마스터와 일곱 기의 서번트가 만능의 원망기를 두고 경쟁한다. 승자에게 허락되는 소원은 하나. 패자의 소망은 그와 함께 퇴장한다.</p>
-
-    <p>누군가는 잃어버린 사람을 되찾기 위해, 누군가는 돌이킬 수 없는 선택을 고치기 위해 초대에 응한다. 아직 소원에 이름조차 붙이지 못한 이에게도 영주는 새겨진다. 저마다 다른 시대를 살아온 영령들이 그 부름에 답하고, 고요했던 도시의 밤에 오래된 신화가 모습을 드러낸다.</p>
-
-    <p>낮의 우키하는 평온하다. 상점은 정해진 시간에 문을 열고, 사람들은 저녁거리를 사 들고 집으로 돌아간다. 전쟁에 참가한 이들조차 그 익숙한 일상 속에서는 잠시 경계를 늦춘다. 그러나 해가 기울면, 도시에는 설명할 수 없는 풍경이 섞여든다. 분명 처음 온 골목에서 오래전의 약속이 떠오른다. 불 꺼진 창문 너머로 그리운 사람의 옆모습이 스친다. 잠에서 깨어난 뒤에도 손끝에는 꿈속에서 붙잡았던 온기가 남아 있다. 우연이라 여기기에는 지나치게 다정하고, 기적이라 믿기에는 어딘가 석연치 않다.</p>
-
-    <p>마스터들은 서로의 진명을 감추고, 동맹과 배신을 저울질하며 성배의 행방을 좇는다.</p>
-
-    <p class="reader__sign">— 발신인 없는 초대장에 동봉된 안내에서</p>
+<!-- ─────────── 서곡 (스토리 재생) ─────────── -->
+<div class="vnp" id="vnp" role="dialog" aria-modal="true" aria-label="서곡" tabindex="-1" hidden>
+  <div class="vnp__stage" aria-hidden="true">
+    <div class="vnp__bg" id="vnpBgA"></div>
+    <div class="vnp__bg" id="vnpBgB"></div>
+    <div class="vnp__fx" id="vnpFx"></div>
   </div>
+  <p class="vnp__place" id="vnpPlace" aria-live="polite"></p>
+  <div class="vnp__page" id="vnpPage" aria-live="polite"></div>
+  <div class="vnp__letter" id="vnpLetter" hidden><p id="vnpLetterText"></p></div>
+  <div class="vnp__cg" id="vnpCg" hidden><p id="vnpCgText"></p></div>
+  <div class="vnp__title" id="vnpTitle" hidden>
+    <img class="vnp__logo" src="assets/img/logo.png" width="1034" height="677" alt="Fate / Encore">
+    <p class="vnp__war">제6차 성배전쟁 — 우키하 성배전쟁</p>
+    <p class="vnp__copy">이루지 못한 소원에, 다시 한번 박수를.</p>
+  </div>
+  <div class="vnp__bar">
+    <button class="vnp__btn" type="button" id="vnpAuto" aria-pressed="false">AUTO</button>
+    <button class="vnp__btn" type="button" id="vnpSkip" aria-pressed="false">SKIP</button>
+    <button class="vnp__btn" type="button" id="vnpLogBtn" aria-expanded="false" aria-controls="vnpLog">LOG</button>
+    <button class="vnp__btn vnp__btn--x" type="button" id="vnpClose" aria-label="서곡 나가기">✕</button>
+  </div>
+  <div class="vnp__log" id="vnpLog" hidden>
+    <p class="vnp__log-head">지난 문장</p>
+    <ol class="vnp__log-list" id="vnpLogList"></ol>
+  </div>
+  <p class="vnp__hint" id="vnpHint">화면을 누르면 다음으로 넘어간다</p>
 </div>
 
 <!-- ─────────── 스테이터스 ─────────── -->
@@ -409,6 +409,7 @@
 
 <script src="assets/js/cast.js" defer></script>
 <script src="assets/js/masters.js" defer></script>
+<script src="assets/js/prologue.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 </body>
 </html>
