@@ -504,15 +504,35 @@
     ukiha: () => ASSETS.bg.ukihaNight ? `<div class="art__night" style="background-image:url('${ASSETS.bg.ukihaNight}')"></div>` : '',
     // 흐리게 당긴 탁자 위에 큰 봉투 — 봉투가 열리고 색종이가 떨어지는 연출이 그대로 쓰인다
     envelope: () => envelopeHTML(true),
-    // 안내문 뒤로 우키하 거리가 교차한다 (밤 → 노을 → 다시 방)
-    montage: () => [ASSETS.bg.ukihaNight, ASSETS.bg.ukiha].filter(Boolean)
-      .map((src, i) => `<div class="art__cross" style="background-image:url('${src}');--i:${i}"></div>`).join(''),
+    // 안내문 뒤로 우키하 곳곳이 차례로 교차한다 — 넘기는 건 montageTick
+    montage: () => MONT.map(src => `<div class="art__cross" style="background-image:url('${src}')"></div>`).join(''),
+    // 골목 — 유리창에 비치는 형상 (fx: glass)
+    alley: () => `<div class="art__reflect"><svg class="art__ghost" viewBox="0 0 100 160" aria-hidden="true">
+        <path d="M57 8C73 8 83 21 82 37c0 7-2 12-4 16l3 7c-2 2-5 2-7 3 0 4-1 6-4 7-2 4 0 8 3 10 13 4 25 15 27 36v44H0v-44c2-19 15-31 30-35 6-2 8-7 8-12-6-4-10-11-11-19-4-1-6-4-4-8 2-14 12-34 34-34z"/>
+      </svg></div>`,
+    // 창문들 — 불 켜진 창 사이의 어두운 창 하나로 시선이 모인다 (그림 기준 위치)
+    windows: () => '<div class="art__box43"><span class="art__darkwin" style="left:49.6%;top:44.8%"></span></div>',
     // 당신의 시점 — 탁자 앞, 영주가 새겨진 손등
     pov: () => `<div class="art__mark">${GLYPH_MASTER}</div>`,
   };
+  const MONT = (ASSETS.montage && ASSETS.montage.length) ? ASSETS.montage
+    : [ASSETS.bg.ukihaNight, ASSETS.bg.ukiha].filter(Boolean);
   // 그림이 있는 장면은 서곡을 열 때 미리 받아 둔다
   function preloadBg() {
-    Object.values(ASSETS.bg).filter(Boolean).forEach(src => { const i = new Image(); i.src = src; });
+    Object.values(ASSETS.bg).concat(MONT).filter(Boolean).forEach(src => { const i = new Image(); i.src = src; });
+  }
+
+  // 몽타주 — 방에서 시작해 우키하 곳곳을 5.5초마다 넘긴다.
+  // 안내문 장면이 두 번 나오므로, 두 번째에는 보던 곳부터 이어 간다
+  const MONT_FIRST = 2600, MONT_EVERY = 5500;
+  let montAt = -1, montTimer = null;
+  function montageStop() { window.clearTimeout(montTimer); montTimer = null; }
+  function montageTick(layer) {
+    const cards = $$('.art__cross', layer);
+    if (!cards.length) return;
+    montAt = (montAt + 1) % cards.length;
+    cards.forEach((c, i) => c.classList.toggle('is-on', i === montAt));
+    montTimer = window.setTimeout(() => montageTick(layer), MONT_EVERY);
   }
 
   function setBg(key) {
@@ -532,6 +552,11 @@
       window.setTimeout(() => out.remove(), reduce ? 0 : 1500);
     }
     vnp.dataset.scene = key;
+    montageStop();
+    if (key === 'montage' && !reduce && MONT.length) {
+      if (montAt >= 0) { montAt--; montageTick(next); }          // 두 번째 — 보던 곳 다음부터 바로
+      else montTimer = window.setTimeout(() => montageTick(next), MONT_FIRST);
+    }
   }
 
   // ── 연출 ──
@@ -572,7 +597,11 @@
                       ${sealMask('assets/img/seal-oz.png')}
                       ${sealMask('assets/img/seal-mokuren.png')}
                     </div>`,
-    glass:    () => { const g = $('.art__glass', vnp); g && g.classList.add('is-seen'); return null; },
+    glass:    () => {
+      const g = $('.vnp__bg.is-front .art__glass, .vnp__bg.is-front .art__reflect', vnp);
+      g && g.classList.add('is-seen');
+      return null;
+    },
     sealdraw: () => `<div class="fx-dim"></div><div class="fx-mark">${GLYPH_MASTER.replace(/<path /g, '<path pathLength="1" ')}</div>`,
     sealfull: () => { const m = $('.fx-mark', vnp); m && m.classList.add('is-full'); return null; },
   };
@@ -736,6 +765,7 @@
     vnpPlace.classList.remove('is-on');
     bgLayers.forEach(l => { l.className = 'vnp__bg'; l.innerHTML = ''; l.style.backgroundImage = ''; });
     vnpFx.innerHTML = '';
+    montageStop(); montAt = -1;
     vnp.classList.remove('is-holding', 'is-leaving');
   }
 

@@ -43,10 +43,25 @@ window.PROLOGUE_ASSETS = {
     montage:    'assets/img/story/room-letter.jpg',   // 안내문 — 열린 봉투와 꺼낸 초대장. 우키하 거리가 교차한다
     roomLetter: 'assets/img/story/room-letter.jpg',   // 다시, 초대장이 놓인 방
     void:     '',   // 붉은 문양이 떠오르는 어둠
-    alley:    '',   // 해가 진 뒤의 골목
-    windows:  '',   // 불 켜진 창문들, 어두운 창문 하나
+    alley:      'assets/img/story/ukiha/02-backstreet.jpg', // 해가 진 뒤의 골목
+    windows:    'assets/img/story/ukiha/08-red-tower.jpg',  // 불 켜진 창문들 사이 어두운 창문 하나 (6층 가운데)
     pov:        'assets/img/story/room-letter.jpg',   // 당신의 시점 — 탁자 위 초대장. 영주는 코드로 얹는다
   },
+  // 안내문 뒤로 교차하는 우키하 곳곳 — 위에서부터 차례로, 끝나면 처음부터
+  montage: [
+    'assets/img/story/ukiha-street.jpg',
+    'assets/img/story/ukiha/01-corner-shop.jpg',
+    'assets/img/story/ukiha/02-backstreet.jpg',
+    'assets/img/story/ukiha/03-corner-block.jpg',
+    'assets/img/story/ukiha/04-avenue.jpg',
+    'assets/img/story/ukiha/05-shopping-st.jpg',
+    'assets/img/story/ukiha/06-arcade-st.jpg',
+    'assets/img/story/ukiha/07-crossing.jpg',
+    'assets/img/story/ukiha/08-red-tower.jpg',
+    'assets/img/story/ukiha/09-offices.jpg',
+    'assets/img/story/ukiha/10-stone-office.jpg',
+    'assets/img/story/ukiha/11-highrise.jpg',
+  ],
   sfx: {
     wind:      '',  // 멀리서 들리는 겨울바람
     envelope:  '',  // 봉투를 여는 소리

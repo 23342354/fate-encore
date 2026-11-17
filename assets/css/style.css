@@ -924,12 +924,53 @@ button.chapter:active{transform:scale(.985)}
 }
 .art__env.is-open .art__env-seal{opacity:0;transform:translate(-50%,-30%) scale(.8)}
 
-/* 안내문 — 방과 우키하 거리가 번갈아 교차한다 */
+/* 안내문 — 방에서 시작해 우키하 곳곳이 차례로 교차한다 (main.js 의 montageTick) */
 .art__cross{
-  position:absolute;inset:0;background:center/cover no-repeat;opacity:0;
-  animation:cross 20s ease-in-out infinite;animation-delay:calc(4s + var(--i) * 7s);
+  position:absolute;inset:0;background:center/cover no-repeat;
+  opacity:0;transform:scale(1.05);
+  transition:opacity 1.8s ease-in-out,transform 7s ease-out;
 }
-@keyframes cross{0%{opacity:0}10%{opacity:1}32%{opacity:1}42%{opacity:0}100%{opacity:0}}
+.art__cross.is-on{opacity:1;transform:scale(1)}
+
+/* 골목 — 불 꺼진 유리창에 비친 것처럼, 화면 전체가 유리 너머로 흐려지고 형상이 스친다 */
+.art__reflect{position:absolute;inset:0;pointer-events:none;opacity:0}
+.art__reflect::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(104deg,transparent 28%,rgba(190,210,230,.10) 40%,rgba(190,210,230,.02) 47%,transparent 55%),
+    linear-gradient(104deg,transparent 58%,rgba(190,210,230,.06) 63%,transparent 68%),
+    rgba(6,12,20,.42);
+  backdrop-filter:blur(1.5px);
+}
+.art__ghost{
+  position:absolute;left:47%;top:30%;height:52%;width:auto;aspect-ratio:100/160;transform:translateX(-50%);
+  fill:rgba(210,226,242,.34);
+  filter:blur(4px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0,#000 45%,transparent 92%);
+  mask-image:linear-gradient(180deg,#000 0,#000 45%,transparent 92%);
+  opacity:0;mix-blend-mode:screen;
+}
+.art__reflect.is-seen .art__ghost{animation:ghostSoft 3.2s ease forwards}
+@keyframes ghostSoft{0%{opacity:0}30%{opacity:.75}40%{opacity:.6}52%{opacity:.75}62%{opacity:0}100%{opacity:0}}
+.art__reflect.is-seen{animation:reflect 3.4s ease forwards}
+@keyframes reflect{0%{opacity:0}18%{opacity:1}72%{opacity:1}100%{opacity:0}}
+
+/* 창문들 — 그림 크기의 틀(4:3)을 깔고, 어두운 창 하나에 시선을 모은다 */
+.art__box43{
+  position:absolute;left:50%;top:50%;
+  width:max(100vw,133.334vh);height:max(100vh,75vw);transform:translate(-50%,-50%);
+}
+.art__box43::after{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 49.6% 44.8%,transparent 0 6%,rgba(0,0,0,.3) 12%,rgba(0,0,0,.66) 28%);
+  animation:focus 3.4s ease 1.4s forwards;
+}
+.art__darkwin{
+  position:absolute;width:4.6%;height:6.2%;transform:translate(-50%,-50%);
+  box-shadow:0 0 0 1px rgba(190,210,230,0),0 0 1.4rem rgba(120,150,190,0);
+  animation:darkwin 2.4s ease 3.4s forwards;
+}
+@keyframes darkwin{to{box-shadow:0 0 0 1px rgba(190,210,230,.4),0 0 1.6rem rgba(120,150,190,.35)}}
 
 /* 시점 — 화면 아래 끝, 손등에 새겨진 영주가 빛만 걸친다 */
 .vnp__bg.has-img .art__mark{
@@ -1252,6 +1293,7 @@ button.chapter:active{transform:scale(.985)}
   .art__dusk{opacity:.88}
   .art__win{opacity:.92}
   .art__cross{display:none}
+  .art__box43::after{opacity:1}
   .fx-photo__img--dark{-webkit-mask-image:none;mask-image:none}
 }
 
