@@ -699,9 +699,9 @@ button.chapter:active{transform:scale(.985)}
 
 /* ─────────── 정보 ─────────── */
 .info{max-width:54rem;margin:0 auto;display:grid;gap:1rem}
+.info__col{display:grid;gap:1rem;align-content:start}
 @media (min-width:60rem){
   .info{grid-template-columns:1fr 1fr;align-items:start}
-  .info .panel:first-child{grid-row:span 3}
 }
 .panel{
   padding:1.1rem 1.3rem 1.2rem;

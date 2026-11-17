@@ -210,7 +210,7 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 
 ---
 
-© 2026 팬 서클 「제2막」
+© 2026 Wuthering Heights
 
 ## 크레딧
 
