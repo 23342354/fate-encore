@@ -64,6 +64,7 @@
   --sans:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   --display:"Italiana",'IbmPlexSans',sans-serif;
   --pixel:"DotGothic16",'IbmPlexSans',monospace;   /* 창 제목줄 · 파일 이름 */
+  --serif:"Instrument Serif",'Nanum Myeongjo',serif; /* 신분증 제목 */
 
   /* 리듬 */
   --measure:34rem;
@@ -686,27 +687,26 @@ button.cwin--master:active{box-shadow:3px 3px 0 var(--ink)}
 
 /* ── 마스터 신분증 카드 ── */
 .idc{
-  margin-top:1.15rem;            /* 폴더 탭 자리 */
-  border-radius:0 1.1rem 1.1rem 1.1rem;overflow:visible;
+  border-radius:1.1rem;overflow:hidden;
   background:#fff;box-shadow:6px 6px 0 var(--ink);
 }
 button.idc:hover{box-shadow:8px 8px 0 var(--ink)}
 button.idc:active{box-shadow:3px 3px 0 var(--ink)}
-.idc__tab{
-  position:absolute;left:-1.5px;top:-1.2rem;height:1.2rem;padding:0 1rem 0 .8rem;
-  display:flex;align-items:center;
-  font-family:var(--pixel);font-size:.66rem;letter-spacing:.14em;color:#fff;
-  background:var(--accent);border:1.5px solid var(--ink);border-bottom:0;
-  border-radius:.7rem .7rem 0 0;
+
+.idc__band{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.3rem 1.1rem .26rem;
+  font-family:var(--pixel);font-size:.72rem;line-height:1.3;letter-spacing:.18em;color:#fff;
+  background:var(--accent);border-bottom:1.5px solid var(--ink);
 }
-.idc__band{display:block;height:1.05rem;background:var(--accent);border-bottom:1.5px solid var(--ink);border-radius:0 1rem 0 0}
 .idc__body{display:grid;grid-template-columns:7.6rem minmax(0,1fr);gap:1.2rem;padding:1.05rem 1.1rem .4rem 1.1rem}
 .idc .cwin__art{aspect-ratio:1/1.2}
 .idc .cwin__no{background:var(--accent);right:-.75rem;bottom:auto;top:46%}
-.idc__info{display:flex;flex-direction:column;min-width:0}
+.idc__info{display:flex;flex-direction:column;min-width:0;container-type:inline-size}
 .idc__title{
-  font-family:'Nanum Pen Script',var(--display);font-size:1.75rem;line-height:1;
-  letter-spacing:-.01em;color:var(--ink);transform:rotate(-2deg);transform-origin:left;
+  font-family:var(--serif);font-style:italic;font-weight:400;line-height:1.05;
+  font-size:min(1.75rem,9.6cqi);   /* 칸 너비에 맞춰 줄어든다 — 한 줄 */
+  letter-spacing:-.01em;color:var(--ink);white-space:nowrap;
 }
 .idc__sub{margin:.15rem 0 .55rem;font-size:.82rem;color:var(--text-dim);padding-bottom:.45rem;border-bottom:1.5px solid var(--ink)}
 .idc__fields{display:grid;gap:.05rem}
@@ -722,7 +722,7 @@ button.idc:active{box-shadow:3px 3px 0 var(--ink)}
 .idc__code .barcode{height:1.7rem}
 .idc__square{width:1.6rem;height:1.6rem;background:var(--accent)}
 .idc.cwin--sealed{box-shadow:6px 6px 0 #B9C4C7}
-.idc.cwin--sealed .idc__band,.idc.cwin--sealed .idc__tab,.idc.cwin--sealed .idc__square{background:#8E9AA0}
+.idc.cwin--sealed .idc__band,.idc.cwin--sealed .idc__square{background:#8E9AA0}
 .idc.cwin--sealed .cwin__no{background:#8E9AA0}
 .idc.cwin--sealed .idc__title{color:#7B878D}
 .idc__stamp{
@@ -731,28 +731,33 @@ button.idc:active{box-shadow:3px 3px 0 var(--ink)}
   color:rgba(150,40,40,.72);border:2.5px solid rgba(150,40,40,.62);border-radius:.25rem;
   transform:rotate(-12deg);pointer-events:none;
 }
-#masterList{gap:2.4rem 1.5rem}
+#masterList{gap:1.8rem 1.5rem}
 
 /* 프로필 창 — 마스터일 때 왼쪽 칸도 신분증 */
 .profile[data-mode="master"] .pwin__card{
-  border:1.5px solid var(--ink);border-radius:0 1rem 1rem 1rem;
-  padding:1.6rem .9rem .9rem;overflow:hidden;background:#fff;
+  border:1.5px solid var(--ink);border-radius:1rem;
+  padding:2.3rem .9rem .9rem;overflow:hidden;background:#fff;
 }
 .profile[data-mode="master"] .pwin__card::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:.85rem;background:var(--accent);border-bottom:1.5px solid var(--ink);
+  content:"MASTER";position:absolute;left:0;right:0;top:0;
+  padding:.3rem .9rem .26rem;
+  font-family:var(--pixel);font-size:.72rem;line-height:1.3;letter-spacing:.18em;color:#fff;
+  background:var(--accent);border-bottom:1.5px solid var(--ink);
 }
 .profile[data-mode="master"] .pwin__kicker{
-  font-family:'Nanum Pen Script',var(--display);font-size:1.6rem;line-height:1;color:var(--ink);transform:rotate(-2deg);transform-origin:left;
+  font-family:var(--serif);font-style:italic;line-height:1.05;color:var(--ink);
+  font-size:min(1.6rem,10.4cqi);white-space:nowrap;
 }
+.profile[data-mode="master"] .pwin__card{container-type:inline-size}
 .profile[data-mode="master"] .pwin__pic .cwin__block{display:none}
 .profile[data-mode="master"] .pwin__pic .cwin__no{background:var(--accent);top:46%;bottom:auto}
 
 @media (max-width:43.99rem){
   .idc__body{grid-template-columns:6.4rem minmax(0,1fr);gap:1rem;padding:.95rem .95rem .3rem}
-  .idc__title{font-size:1.55rem}
+  .profile[data-mode="master"] .pwin__card{container-type:inline-size}
+  .profile[data-mode="master"] .pwin__kicker{font-size:min(1.35rem,6.6cqi)}
   .idc__foot{padding:.3rem .95rem .85rem}
-  .profile[data-mode="master"] .pwin__card{padding:1.4rem .8rem .8rem;position:relative}
-  .profile[data-mode="master"] .pwin__card::before{height:.75rem}
+  .profile[data-mode="master"] .pwin__card{padding:2.2rem .8rem 1.1rem;position:relative;margin-bottom:.4rem}
 }
 
 @media (max-width:43.99rem){
@@ -1687,10 +1692,12 @@ button.chapter:active{transform:scale(.985)}
 @media (max-width:40rem){
   .pwin{box-shadow:6px 6px 0 var(--accent)}
   .profile[data-mode="master"] .pwin{box-shadow:6px 6px 0 var(--ink)}
-  .pwin__body{grid-template-columns:1fr;gap:1.2rem;padding:1.1rem 1rem 1.3rem 1.2rem}
-  .pwin__card{position:static;display:grid;grid-template-columns:7.2rem minmax(0,1fr);grid-template-rows:auto 1fr auto;column-gap:1.1rem;row-gap:.3rem}
+  .pwin__body{display:block;padding:1.1rem 1rem 1.3rem 1.2rem}
+  .pwin__body > .pwin__card{margin-bottom:1.2rem}
+  .pwin__card{position:static;display:grid;grid-template-columns:7.2rem minmax(0,1fr);grid-template-rows:auto auto auto;align-content:start;column-gap:1.1rem;row-gap:.3rem}
   .pwin__kicker{grid-column:2;grid-row:1;align-self:end}
-  .pwin__pic{grid-column:1;grid-row:1 / 4;margin:.5rem 0 0 .5rem}
+  .pwin__pic{grid-column:1;grid-row:1 / 4;margin:.5rem 0 0 .5rem;align-self:start}
+  .pwin__code{align-self:end}
   .pwin__code{grid-column:2;grid-row:3}
   .profile__credit{grid-column:2;grid-row:2;align-self:start}
   .pwin__fileno{display:none}

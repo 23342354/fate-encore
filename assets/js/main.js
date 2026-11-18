@@ -367,8 +367,7 @@
     const tag = sealed ? 'div' : 'button';
     const attrs = sealed ? '' : ` type="button" data-master="${i}" aria-label="${esc(r.master)} 프로필 열기"`;
     return `<${tag} class="cwin cwin--master idc${sealed ? ' cwin--sealed' : ''}"${attrs}>
-      <span class="idc__tab" aria-hidden="true">MASTER</span>
-      <span class="idc__band" aria-hidden="true"></span>
+      <span class="idc__band" aria-hidden="true"><span>MASTER</span><span>No.${no}</span></span>
       <span class="idc__body">
         <span class="cwin__pic">
           <span class="cwin__art${sealed ? ' cwin__art--sealed' : ''}">${sealed ? `<span class="frost"></span>${GLYPH_SEALED}` : masterGlyph(r)}</span>
