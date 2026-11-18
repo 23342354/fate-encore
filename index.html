@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23366379'/%3E%3Cpath d='M16 5l3 8h8l-6.5 5 2.5 9-7-5.5-7 5.5 2.5-9L5 13h8z' fill='%23FAFAF7'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=DotGothic16&family=Nanum+Myeongjo:wght@400;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="assets/css/style.css">
@@ -144,12 +144,22 @@
           <p class="screen__latin">Dramatis Personae</p>
           <p class="screen__note">일곱 쌍 가운데 넷이 공개되었다. 카드를 누르면 프로필이 열린다.</p>
         </header>
-        <div class="seg" role="group" aria-label="보기 전환">
-          <button class="seg__btn" type="button" id="segServant" aria-pressed="true">서번트</button>
-          <button class="seg__btn" type="button" id="segMaster" aria-pressed="false">마스터</button>
+        <div class="castbar">
+          <span class="castbar__app" aria-hidden="true"><b>[+]</b> Cast.exe</span>
+          <div class="castbar__menu" role="group" aria-label="보기 전환">
+            <button class="castbar__btn" type="button" id="segServant" aria-pressed="true">서번트</button>
+            <button class="castbar__btn" type="button" id="segMaster" aria-pressed="false">마스터</button>
+          </div>
+          <span class="castbar__count" id="castCount" aria-hidden="true">07 object(s)</span>
         </div>
-        <ul class="cards" id="cardList"></ul>
-        <ul class="cards" id="masterList" hidden></ul>
+        <div class="desk">
+          <span class="desk__tag desk__tag--a" aria-hidden="true">Holy Grail War No.6</span>
+          <span class="desk__tag desk__tag--b" aria-hidden="true">Ukiha, Fukuoka.</span>
+          <span class="desk__block desk__block--a" aria-hidden="true"></span>
+          <span class="desk__block desk__block--b" aria-hidden="true"></span>
+          <ul class="wins" id="cardList"></ul>
+          <ul class="wins" id="masterList" hidden></ul>
+        </div>
       </section>
 
       <!-- 소환 -->
@@ -353,24 +363,21 @@
   <p class="vnp__hint" id="vnpHint">화면을 누르면 다음으로 넘어간다</p>
 </div>
 
-<!-- ─────────── 스테이터스 ─────────── -->
+<!-- ─────────── 프로필 창 ─────────── -->
 <div class="profile" id="profile" hidden>
   <div class="profile__scrim" id="pfScrim"></div>
-  <div class="profile__panel" role="dialog" aria-modal="true" aria-labelledby="pfName">
-    <button class="profile__close" type="button" id="pfClose" aria-label="닫기">✕</button>
+  <div class="profile__panel pwin" role="dialog" aria-modal="true" aria-labelledby="pfName">
 
-    <div class="profile__portrait">
-      <span class="profile__arch" id="pfArch">
-        <span class="profile__glyph" id="pfGlyph" aria-hidden="true"></span>
+    <div class="win__bar pwin__bar">
+      <span class="win__file"><span class="pwin__icon" aria-hidden="true">[+]</span> <span id="pfWinTitle">Profile.exe</span></span>
+      <span class="pwin__ctl">
+        <span class="win__ctl" aria-hidden="true"><i></i><i></i></span>
+        <button class="pwin__x" type="button" id="pfClose" aria-label="닫기"></button>
       </span>
-      <p class="profile__credit" id="pfCredit" hidden></p>
     </div>
 
-    <div class="profile__body">
-      <p class="profile__class" id="pfClass"></p>
-      <h3 class="profile__name" id="pfName"></h3>
-
-      <div class="profile__tabs" role="tablist" aria-label="스테이터스 항목">
+    <div class="pwin__menu">
+      <div class="profile__tabs" role="tablist" aria-label="프로필 항목">
         <button class="profile__tab" type="button" role="tab" id="tabStatus"
                 aria-controls="paneStatus" aria-selected="true">스테이터스</button>
         <button class="profile__tab" type="button" role="tab" id="tabLore"
@@ -380,34 +387,57 @@
         <button class="profile__tab" type="button" role="tab" id="tabNp"
                 aria-controls="paneNp" aria-selected="false" tabindex="-1">보구</button>
       </div>
+      <span class="pwin__fileno" id="pfFileNo" aria-hidden="true"></span>
+    </div>
 
-      <div class="profile__pane" id="paneStatus" role="tabpanel" aria-labelledby="tabStatus" tabindex="0">
-        <dl class="profile__meta" id="pfMeta"></dl>
-        <ul class="profile__stats" id="pfStats"></ul>
-        <dl class="profile__meta profile__meta--np">
-          <div><dt>소개</dt><dd class="profile__bio" id="pfBio"></dd></div>
-        </dl>
-        <blockquote class="profile__quote" id="pfQuoteBox"><p id="pfQuote"></p></blockquote>
+    <div class="pwin__body" id="pfBody">
+      <div class="profile__portrait pwin__card">
+        <span class="pwin__kicker" id="pfKicker">Saint Graph</span>
+        <span class="pwin__pic">
+          <span class="cwin__block"></span>
+          <span class="profile__arch" id="pfArch">
+            <span class="profile__glyph" id="pfGlyph" aria-hidden="true"></span>
+          </span>
+          <span class="cwin__no" id="pfNo"></span>
+        </span>
+        <span class="pwin__code" id="pfCode"></span>
+        <p class="profile__credit" id="pfCredit" hidden></p>
       </div>
 
-      <div class="profile__pane" id="paneLore" role="tabpanel" aria-labelledby="tabLore" tabindex="0" hidden>
-        <div class="lore" id="pfLore"></div>
-      </div>
+      <div class="profile__body">
+        <p class="profile__class" id="pfClass"></p>
+        <h3 class="profile__name" id="pfName"></h3>
 
-      <div class="profile__pane" id="paneSkill" role="tabpanel" aria-labelledby="tabSkill" tabindex="0" hidden>
-        <ul class="skills" id="pfSkills"></ul>
-      </div>
+        <div class="profile__pane" id="paneStatus" role="tabpanel" aria-labelledby="tabStatus" tabindex="0">
+          <dl class="profile__meta" id="pfMeta"></dl>
+          <ul class="profile__stats" id="pfStats"></ul>
+          <dl class="profile__meta profile__meta--np">
+            <div><dt>소개</dt><dd class="profile__bio" id="pfBio"></dd></div>
+          </dl>
+          <blockquote class="profile__quote" id="pfQuoteBox"><p id="pfQuote"></p></blockquote>
+        </div>
 
-      <div class="profile__pane" id="paneNp" role="tabpanel" aria-labelledby="tabNp" tabindex="0" hidden>
-        <dl class="profile__meta" id="pfNpMeta"></dl>
-        <div class="profile__prose" id="pfNpText"></div>
-      </div>
+        <div class="profile__pane" id="paneLore" role="tabpanel" aria-labelledby="tabLore" tabindex="0" hidden>
+          <div class="lore" id="pfLore"></div>
+        </div>
 
-      <div class="profile__nav">
-        <button class="profile__step" type="button" id="pfPrev">← 이전</button>
-        <span class="profile__count" id="pfCount"></span>
-        <button class="profile__step" type="button" id="pfNext">다음 →</button>
+        <div class="profile__pane" id="paneSkill" role="tabpanel" aria-labelledby="tabSkill" tabindex="0" hidden>
+          <ul class="skills" id="pfSkills"></ul>
+        </div>
+
+        <div class="profile__pane" id="paneNp" role="tabpanel" aria-labelledby="tabNp" tabindex="0" hidden>
+          <dl class="profile__meta" id="pfNpMeta"></dl>
+          <div class="profile__prose" id="pfNpText"></div>
+        </div>
       </div>
+    </div>
+
+    <!-- 재생 바 — 이전 / 다음 -->
+    <div class="profile__nav pwin__player">
+      <button class="profile__step" type="button" id="pfPrev" aria-label="이전"></button>
+      <span class="pwin__track"><span id="pfTrack"></span></span>
+      <button class="profile__step profile__step--next" type="button" id="pfNext" aria-label="다음"></button>
+      <span class="profile__count" id="pfCount"></span>
     </div>
   </div>
 </div>

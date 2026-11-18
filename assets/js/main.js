@@ -18,7 +18,7 @@
   const svg = inner =>
     `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">${inner}</svg>`;
   // 영주 그림 — 장식이라 대체 글은 비운다 (이름은 카드와 프로필에 따로 적혀 있다)
-  const seal = src => `<img class="seal" src="${src}" alt="" loading="lazy" decoding="async">`;
+  const seal = src => `<img class="seal" src="${src}" alt="" decoding="async">`;
   const GLYPH_SEALED =
     '<svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg>';
 
@@ -338,26 +338,127 @@
       </span>
     </button>`;
   }
-  function masterCardHTML(r) {
-    if (!r.name) {
-      return `<div class="card card--master card--sealed">
-        <span class="card__art">
-          <span class="card__class">${r.cls}</span>
-          <span class="card__glyph" aria-hidden="true">${GLYPH_SEALED}</span>
-          <span class="card__plate"><span class="card__name">마스터 미공개</span><span class="card__master">SERVANT 미공개</span></span>
+  /* 캐스트 — 옛날 컴퓨터 창처럼 생긴 신분증 카드
+     제목줄(No.05 — CASTER.exe) · 초상 칸 · 이름과 항목 · 바코드 · 상태줄 */
+  const pad2 = n => String(n).padStart(2, '0');
+  const noOf = r => pad2(ROSTER.indexOf(r) + 1);
+  // 이름으로 정해지는 바코드 — 같은 이름은 늘 같은 줄무늬
+  function barcodeSVG(seed) {
+    let h = 2166136261;
+    for (const c of seed) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+    const r = rng(h >>> 0);
+    let x = 0, bars = '';
+    while (x < 98) {
+      const w = r() < .55 ? 1 : (r() < .7 ? 2 : 3);
+      if (r() < .66) bars += `<rect x="${x.toFixed(1)}" width="${(w * .8).toFixed(1)}" height="20"/>`;
+      x += w * .8 + (r() < .5 ? .8 : 1.4);
+    }
+    return `<svg class="barcode" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">${bars}</svg>`;
+  }
+  const winCtl = '<span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span>';
+  const redact = w => `<span class="redact" style="width:${w}em" aria-hidden="true"></span>`;
+
+  /* 마스터 — 신분증 카드
+     청록 띠와 폴더 탭 · 사진 칸 · 손글씨 제목 · Name · 발급 정보 · 바코드 */
+  function idCardHTML(r) {
+    const no = noOf(r);
+    const sealed = !r.name;
+    const i = lines.indexOf(r);
+    const tag = sealed ? 'div' : 'button';
+    const attrs = sealed ? '' : ` type="button" data-master="${i}" aria-label="${esc(r.master)} 프로필 열기"`;
+    return `<${tag} class="cwin cwin--master idc${sealed ? ' cwin--sealed' : ''}"${attrs}>
+      <span class="idc__tab" aria-hidden="true">MASTER</span>
+      <span class="idc__band" aria-hidden="true"></span>
+      <span class="idc__body">
+        <span class="cwin__pic">
+          <span class="cwin__art${sealed ? ' cwin__art--sealed' : ''}">${sealed ? `<span class="frost"></span>${GLYPH_SEALED}` : masterGlyph(r)}</span>
+          <span class="cwin__no">${no}</span>
         </span>
+        <span class="idc__info">
+          <span class="idc__title">Identification Card</span>
+          <span class="idc__sub">Holy Grail War No.6</span>
+          <span class="idc__fields">
+            <span class="idc__label">Name</span>
+            <span class="cwin__name">${sealed ? `${redact(4.2)}${redact(2.2)}<span class="sr">마스터 미공개</span>` : esc(r.master)}</span>
+            <span class="idc__meta">[servant] ${sealed ? `${r.cls} · ${redact(3.4)}<span class="sr">미공개</span>` : `${r.cls} · ${esc(r.name)}`}</span>
+            <span class="idc__meta">[location] Ukiha, Fukuoka</span>
+          </span>
+        </span>
+      </span>
+      <span class="idc__foot">
+        <span class="idc__issue"><small>[issue date]</small>${sealed ? '— / — / —' : '11/2026'}</span>
+        <span class="idc__code">${barcodeSVG((sealed ? 'void' : '') + (r.master || r.cls))}</span>
+        <span class="idc__square" aria-hidden="true"></span>
+      </span>
+      ${sealed ? '<span class="idc__stamp" aria-hidden="true">미발급</span>' : ''}
+    </${tag}>`;
+  }
+
+  function winHTML(r, side) {
+    const no = noOf(r);
+    const master = side === 'master';
+    if (!r.name) {
+      return `<div class="cwin cwin--sealed${master ? ' cwin--master' : ''}">
+        <span class="win__bar"><span class="win__file">No.${no} — ${master ? 'MASTER' : r.cls}.exe</span>${winCtl}</span>
+        <span class="cwin__body">
+          <span class="cwin__pic"><span class="cwin__block"></span>
+            <span class="cwin__art cwin__art--sealed"><span class="frost"></span><span class="frost frost--b"></span>${GLYPH_SEALED}</span>
+            <span class="cwin__no">${no}</span></span>
+          <span class="cwin__id">
+            <span class="cwin__kicker">Access Denied</span>
+            <span class="cwin__name">${redact(4.6)}${redact(2.4)}<span class="sr">${master ? '마스터 미공개' : '진명 미공개'}</span></span>
+            <span class="cwin__rows">
+              <span class="cwin__row"><b>Class :</b>${r.cls}</span>
+              <span class="cwin__row"><b>${master ? 'Servant :' : 'Master :'}</b>${redact(3.6)}<span class="sr">미공개</span></span>
+            </span>
+            <span class="cwin__code">${barcodeSVG('sealed' + r.cls)}<small>UKH-6-${no}${master ? '-M' : ''} / SEALED</small></span>
+          </span>
+        </span>
+        <span class="win__status"><span>${master ? '영주 ?' : '보구 ?'}</span><span>Status : Sealed</span></span>
       </div>`;
     }
-    return `<button class="card card--master" type="button" data-master="${lines.indexOf(r)}" aria-label="${esc(r.master)} 프로필 열기">
-      <span class="card__art">
-        <span class="card__class">${r.cls}</span>
-        <span class="card__glyph" aria-hidden="true">${masterGlyph(r)}</span>
-        <span class="card__plate"><span class="card__name">${esc(r.master)}</span><span class="card__master">SERVANT ${esc(r.name)}</span></span>
+    const i = lines.indexOf(r);
+    if (master) {
+      return `<button class="cwin cwin--master" type="button" data-master="${i}" aria-label="${esc(r.master)} 프로필 열기">
+        <span class="win__bar"><span class="win__file">No.${no} — MASTER.exe</span>${winCtl}</span>
+        <span class="cwin__body">
+          <span class="cwin__pic"><span class="cwin__block"></span>
+            <span class="cwin__art">${masterGlyph(r)}</span><span class="cwin__no">${no}</span></span>
+          <span class="cwin__id">
+            <span class="cwin__kicker">Identification Card</span>
+            <span class="cwin__name">${esc(r.master)}</span>
+            <span class="cwin__rows">
+              <span class="cwin__row"><b>Class :</b>${r.cls}</span>
+              <span class="cwin__row"><b>Servant :</b>${esc(r.name)}</span>
+            </span>
+            <span class="cwin__code">${barcodeSVG(r.master)}<small>UKH-6-${no}-M</small></span>
+          </span>
+        </span>
+        <span class="win__status"><span>영주 3획</span><span>Status : Contracted</span></span>
+      </button>`;
+    }
+    const rank = ((CAST[r.name] || {}).stats || {}).np;
+    return `<button class="cwin" type="button" data-idx="${i}" aria-label="${esc(r.cls)} ${esc(r.name)} 프로필 열기">
+      <span class="win__bar"><span class="win__file">No.${no} — ${r.cls}.exe</span>${winCtl}</span>
+      <span class="cwin__body">
+        <span class="cwin__pic"><span class="cwin__block"></span>
+          <span class="cwin__art">${r.glyph}</span><span class="cwin__no">${no}</span></span>
+        <span class="cwin__id">
+          <span class="cwin__kicker">Saint Graph</span>
+          <span class="cwin__name">${esc(r.name)}</span>
+          <span class="cwin__rows">
+            <span class="cwin__row"><b>Class :</b>${r.cls}</span>
+            <span class="cwin__row"><b>Master :</b>${esc(r.master)}</span>
+          </span>
+          <span class="cwin__code">${barcodeSVG(r.name)}<small>UKH-6-${no}</small></span>
+        </span>
       </span>
+      <span class="win__status"><span>보구 ${esc(rank || '—')}</span><span>Status : Summoned</span></span>
     </button>`;
   }
-  $('#cardList').innerHTML   = ROSTER.map(r => `<li>${cardHTML(r)}</li>`).join('');
-  $('#masterList').innerHTML = ROSTER.map(r => `<li>${masterCardHTML(r)}</li>`).join('');
+  $('#cardList').innerHTML   = ROSTER.map(r => `<li>${winHTML(r, 'servant')}</li>`).join('');
+  $('#masterList').innerHTML = ROSTER.map(r => `<li>${idCardHTML(r)}</li>`).join('');
+  $('#castCount').textContent = `${pad2(ROSTER.length)} object(s)`;
 
   // 서번트 / 마스터 보기 전환
   const segS = $('#segServant'), segM = $('#segMaster');
@@ -373,7 +474,7 @@
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
 
   document.addEventListener('click', e => {
-    const card = e.target.closest('button.card');
+    const card = e.target.closest('button.card, button.cwin');
     if (!card) return;
     if (card.dataset.master != null) openProfile(Number(card.dataset.master), 'master');
     else openProfile(Number(card.dataset.idx));
@@ -895,6 +996,23 @@
       : '<p class="is-empty">—</p>';
   }
 
+  // 랭크 → 칸 수 (E 1 · D 2 · C 3 · B 4 · A 5 · EX 6). +/- 는 글자로만
+  const RANK_LV = { E: 1, D: 2, C: 3, B: 4, A: 5, EX: 6 };
+  const rankLevel = r => RANK_LV[String(r || '').replace(/[+\-]/g, '').trim().toUpperCase()] || 0;
+  const meter = lv => `<span class="meter" aria-hidden="true">${
+    Array.from({ length: 6 }, (_, k) => `<i${k < lv ? ' class="on"' : ''}></i>`).join('')}</span>`;
+
+  // 창 제목줄 · 신분증 칸 · 재생 바
+  function setChrome(item, m) {
+    const no = noOf(item);
+    $('#pfWinTitle').textContent = `No.${no} — ${m ? 'MASTER' : item.cls}.exe`;
+    $('#pfFileNo').textContent = `File ${no}`;
+    $('#pfKicker').textContent = m ? 'Identification Card' : 'Saint Graph';
+    $('#pfNo').textContent = no;
+    $('#pfCode').innerHTML = barcodeSVG(m ? item.master : item.name) + `<small>UKH-6-${no}${m ? '-M' : ''}</small>`;
+    $('#pfTrack').textContent = `File ${no} · ${m ? item.master : item.name}`;
+  }
+
   function setMode(mode) {
     pfMode = mode;
     const m = mode === 'master';
@@ -903,6 +1021,7 @@
     $('#tabNp').hidden = m;
     $('#pfStats').hidden = m;
     $('#pfArch').classList.toggle('profile__arch--master', m);
+    pf.dataset.mode = mode;
   }
 
   function fillServant(index) {
@@ -925,9 +1044,10 @@
     $('#pfBio').innerHTML      = prose(c.bio);
 
     $('#pfStats').innerHTML = STATS.map(([label, key]) =>
-      `<li><span class="profile__stat-label">${label}</span>` +
+      `<li><span class="profile__stat-label">${label}</span>` + meter(rankLevel(s[key])) +
       `<span class="profile__stat-rank">${esc(dash(s[key]))}</span></li>`
     ).join('');
+    setChrome(item, false);
 
     // 이명·종별은 적어 둔 캐릭터에게만 줄이 생긴다
     $('#pfNpMeta').innerHTML = [
@@ -975,6 +1095,7 @@
     $('#pfQuote').textContent = line ? `「${line}」` : '';
     $('#pfBio').innerHTML  = prose(m.bio);
     $('#pfLore').innerHTML = loreHTML(m.lore);
+    setChrome(item, true);
   }
 
   function fillProfile(index, mode = pfMode) {
@@ -983,7 +1104,7 @@
     mode === 'master' ? fillMaster(index) : fillServant(index);
     $('#pfCount').textContent = `${index + 1} / ${lines.length}`;
     showTab(0);
-    pfPanel.scrollTop = 0;
+    $('#pfBody').scrollTop = 0;
   }
 
   function openProfile(index, mode = 'servant') {
