@@ -219,6 +219,13 @@
     try { window.localStorage.setItem(INTRO_KEY, 'played'); } catch (e) { /* 무시 */ }
   }
 
+  // 하단 메뉴 높이를 재서 CSS 에 알려 준다 — 페이지 아래 여백이 이 값을 쓴다
+  const dockEl = $('.dock');
+  function measureDock() {
+    if (dockEl.offsetHeight) document.documentElement.style.setProperty('--dock-h', dockEl.offsetHeight + 'px');
+  }
+  window.addEventListener('resize', measureDock);
+
   function start() {
     if (started) return;
     started = true;
@@ -227,6 +234,7 @@
     playBgm();      // 타이틀을 누른 그 순간이라야 브라우저가 소리를 허락한다
     title.classList.add('is-gone');
     game.hidden = false;
+    measureDock();
     // 한 박자 뒤에 켜야 페이드가 걸린다
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => game.classList.add('is-on')));
     go(location.hash.slice(1), false);
