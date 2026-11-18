@@ -440,6 +440,7 @@
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
   $('#tileCount').textContent = lines.length;
   $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
+  $('.toc.roster').dataset.count = `${lines.length}/${ROSTER.length}`;
   $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
     `<span class="roster__cell${r.name ? ' is-on' : ''}"><i aria-hidden="true"></i>${r.cls.slice(0, 3)}</span>`).join('');
 

@@ -2412,3 +2412,93 @@ button.chapter:active{transform:none;box-shadow:var(--paper-shadow)}
   .talk__date{display:flex;position:absolute;right:0;top:0;padding:.3rem .4rem}
   .talk__date > span{display:none}
 }
+
+/* PC 목차에서는 배너용 머리글 · 아이콘을 숨긴다 */
+.toc__en,.toc__icon{display:none}
+
+/* ═══════════ 폰 세로 — 게임 로비 구성 ═══════════
+   서번트가 화면을 채우고, UI 가 그 위에 뜬다.
+   오른쪽 위 둥근 버튼 · 오른쪽 아래 큰 배너 두 장 · 왼쪽 아래 카세트와 대사 쪽지 */
+@media (max-width:59.99rem) and (orientation:portrait){
+  .screen--home{display:block;padding:0}
+  .screen--home .lmenu,.screen--home .diary{display:contents}
+  .diary::before,.diary::after,.diary__head{display:none}
+
+  /* 서번트 — 세로로 긴 사진 */
+  .stage{position:absolute;inset:0;display:block}
+  .stage__type{top:.2rem;font-size:clamp(4rem,26vw,7.5rem);-webkit-text-stroke-width:1.4px}
+  .stand{
+    position:absolute;left:50%;top:.9rem;transform:translateX(-50%);
+    width:calc(100% - 2*var(--pad) - 1.2rem);height:calc(100% - var(--dock-h,5.6rem) - 2.2rem);
+    max-width:none;aspect-ratio:auto;
+  }
+  .arch{border-radius:44% 44% 4px 4px / 22% 22% 4px 4px}
+  .arch__glyph{width:34%;margin-bottom:22%}
+  .stand::after{display:none}
+  .stand__no{left:-.6rem;top:22%;bottom:auto}
+
+  /* 오른쪽 위 — 둥근 버튼 */
+  .rail{left:auto;right:calc(var(--pad) - .1rem);top:1.6rem;gap:.55rem;z-index:4}
+  .rail__btn{width:2.7rem;height:2.7rem}
+  .rail__btn svg{width:1.25rem;height:1.25rem}
+  .toc.roster{
+    position:absolute;z-index:4;right:calc(var(--pad) - .1rem);top:calc(1.6rem + 2*2.7rem + 2*.55rem);
+    display:grid;place-items:center;width:2.7rem;height:2.7rem;padding:0;border:1px solid rgba(8,9,11,.55);border-radius:50%;
+    background:var(--note);box-shadow:var(--paper-shadow);color:var(--pen);
+  }
+  .toc.roster > :not(.toc__icon){display:none}
+  .toc.roster .toc__icon{display:block;width:1.3rem;height:1.3rem}
+  .toc.roster::after{   /* 공개 수 꼬리표 */
+    content:attr(data-count);position:absolute;right:-.35rem;bottom:-.3rem;padding:0 .25rem;
+    font-family:var(--serif);font-style:italic;font-size:.7rem;color:#fff;background:var(--accent);border-radius:.2rem;
+  }
+
+  /* 오른쪽 아래 — 큰 배너 두 장 */
+  .toc.toc--story,.toc.tile--summon{
+    position:absolute;z-index:4;right:var(--pad);width:min(46%,12.5rem);
+    display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.3rem;
+    padding:.55rem .7rem .5rem .9rem;border:0;border-radius:.2rem;
+    background:var(--note);box-shadow:var(--paper-shadow);
+  }
+  .toc.toc--story{bottom:calc(var(--dock-h,5.6rem) + 4.6rem)}
+  .toc.tile--summon{bottom:calc(var(--dock-h,5.6rem) + .7rem)}
+  .toc.toc--story::before,.toc.tile--summon::before{
+    content:"";display:block;position:absolute;z-index:1;left:-.5rem;top:50%;width:1.6rem;height:.9rem;transform:translateY(-50%) rotate(-80deg);
+    background:var(--tape);clip-path:polygon(0 10%,10% 0,20% 10%,80% 10%,90% 0,100% 10%,100% 90%,90% 100%,80% 90%,20% 90%,10% 100%,0 90%);
+  }
+  .toc.tile--summon::before{background:var(--tape-sage)}
+  .toc--story .toc__no,.tile--summon .toc__no,.toc--story .toc__body small,.tile--summon .toc__body small{display:none}
+  .toc__en{display:block;font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1;color:var(--accent)}
+  .toc--story .toc__body b,.tile--summon .toc__body b{font-size:1.3rem;line-height:1.25}
+  .toc--story .toc__go,.tile--summon .toc__go{font-size:1.4rem}
+  .toc.toc--story .toc__badge{position:absolute;right:.4rem;top:-.55rem;font-size:.66rem;padding:0 .3rem;background:var(--note)}
+  .tile--summon .toc__body b::after{content:" ✦";font-size:.85rem;color:var(--accent)}
+
+  /* 왼쪽 아래 — 카세트 */
+  .lmenu .player{position:absolute;z-index:4;left:var(--pad);bottom:calc(var(--dock-h,5.6rem) + 1rem);width:min(9.6rem,calc(100% - 2*var(--pad) - min(46%,12.5rem) - 1rem));transform:rotate(-2deg)}
+
+  /* 왼쪽 — 대사 쪽지 (카세트 위) */
+  .talk{
+    position:absolute;z-index:4;left:var(--pad);bottom:calc(var(--dock-h,5.6rem) + 8.6rem);
+    width:calc(100% - 2*var(--pad) - 3.4rem);max-width:21rem;margin:0;
+  }
+  .talk::after{left:1.3rem}
+  .talk__date{position:absolute;right:.35rem;top:.35rem;padding:0;display:flex}
+  .talk__date > span{display:none}
+  .talk__date .fbtn{padding:.2rem .55rem;font-size:.7rem}
+  .standinfo{padding:.5rem 4rem .3rem 1.8rem;border-bottom:1px dashed rgba(31,59,76,.3)}
+  .standinfo__class{display:inline;font-size:.78rem}
+  .standinfo__master{display:inline-flex;align-items:baseline;gap:.25rem;margin-left:.45rem;font-size:.72rem;white-space:nowrap}
+  .standinfo__master .standinfo__label{font-size:.6rem;letter-spacing:.08em;opacity:.6}
+  .standinfo__name{display:block;font-size:1rem;margin-top:.1rem}
+  .speech__text{padding:.35rem .7rem .55rem 1.8rem;min-height:calc(2 * 1.5rem + .9rem);font-size:.88rem;line-height:1.5rem}
+}
+/* 세로가 아주 짧은 폰 — 대사 쪽지를 줄이고 배너를 붙인다 */
+@media (max-width:59.99rem) and (max-height:42rem) and (orientation:portrait){
+  .toc.toc--story{bottom:calc(var(--dock-h,5.6rem) + 4rem)}
+  .toc.toc--story,.toc.tile--summon{padding:.4rem .6rem .35rem .8rem}
+  .toc--story .toc__body b,.tile--summon .toc__body b{font-size:1.1rem}
+  .talk{bottom:calc(var(--dock-h,5.6rem) + 7.7rem)}
+  .speech__text{min-height:calc(2 * 1.4rem + .8rem);line-height:1.4rem;font-size:.8rem}
+  .standinfo__class{display:none}
+}
