@@ -263,6 +263,7 @@
   function go(name, push = true) {
     if (!SCREENS.includes(name)) name = 'home';
     screens.forEach(s => { s.hidden = s.dataset.screen !== name; });
+    document.documentElement.dataset.screen = name;   // 로비에서는 상단 바 · 하단 메뉴 모양이 바뀐다
     dockBtns.forEach(b => {
       if (b.dataset.go === name) b.setAttribute('aria-current', 'page');
       else b.removeAttribute('aria-current');
@@ -273,7 +274,10 @@
   }
   document.addEventListener('click', e => {
     const el = e.target.closest('[data-go]');
-    if (el) go(el.dataset.go);
+    if (!el) return;
+    go(el.dataset.go);
+    // 로비의 서번트 / 마스터 칸 — 캐스트 화면의 해당 탭을 연다
+    if (el.dataset.seg) $(el.dataset.seg === 'master' ? '#segMaster' : '#segServant').click();
   });
   window.addEventListener('popstate', () => { if (started) go(location.hash.slice(1), false); });
 
@@ -454,7 +458,6 @@
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
   $('#tileCount').textContent = lines.length;
   $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
-  $('.toc.roster').dataset.count = `${lines.length}/${ROSTER.length}`;
   $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
     `<span class="roster__cell${r.name ? ' is-on' : ''}"><i aria-hidden="true"></i>${r.cls.slice(0, 3)}</span>`).join('');
 
