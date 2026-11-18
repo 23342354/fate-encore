@@ -25,6 +25,7 @@
   const ROSTER = [
     { cls: 'SABER' },
     { cls: 'ARCHER', name: '도로시', master: '이치노세 류가',
+      masterGlyph: seal('assets/img/seal-ryuga.png'),
       line: '저를 기다린 사람은 없었어도 제가 기다린 사람들은 있었으니까요.',
       glyph: svg('<path d="M18 12 q22 20 0 40"/><path d="M18 12 L18 52"/><path d="M22 32 L50 32"/><path d="M44 26 l6 6 -6 6"/>') },
     { cls: 'LANCER' },
@@ -34,6 +35,7 @@
       line: '어서 와. 먼 길을 걸어온 사람에게는 그만한 기적이 필요한 법이지.',
       glyph: svg('<path d="M20 52 L44 20"/><circle cx="46" cy="16" r="5"/><path d="M14 30 l6 -6 6 6 -6 6 z"/><path d="M40 46 l4 -4 4 4 -4 4 z"/>') },
     { cls: 'ASSASSIN', name: '로드', master: '릴리안 루스텔리아',
+      masterGlyph: seal('assets/img/seal-lilian.png'),
       line: '움직여도 괜찮아. 나는 살아 있는 너를 그리고 싶으니.',
       glyph: svg('<path d="M32 14 q-14 10 -14 22 a14 14 0 0 0 28 0 q0 -12 -14 -22"/><path d="M26 40 q6 6 12 0"/>') },
     { cls: 'BERSERKER', name: '카르타필루스', master: '오즈 누벨',
@@ -663,11 +665,10 @@
     window:   () => '<span class="fx-window"><i></i></span>',
     open:     () => { const e = $('.art__env', vnp); e && e.classList.add('is-open'); return null; },
     confetti: () => '<span class="fx-confetti"></span>',
-    seals:    () => `<div class="fx-seals">
-                      <span class="fx-seal fx-seal--svg">${GLYPH_MASTER}</span>
-                      ${sealMask('assets/img/seal-oz.png')}
-                      ${sealMask('assets/img/seal-mokuren.png')}
-                    </div>`,
+    // 어둠 속에서 붉은 문양이 하나씩 — 공개된 마스터 넷의 영주
+    seals:    () => `<div class="fx-seals">${
+      ['seal-ryuga', 'seal-mokuren', 'seal-lilian', 'seal-oz'].map(n => sealMask(`assets/img/${n}.png`)).join('')
+    }</div>`,
     glass:    () => {
       const g = $('.vnp__bg.is-front .art__glass, .vnp__bg.is-front .art__reflect', vnp);
       g && g.classList.add('is-seen');
