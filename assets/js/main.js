@@ -162,9 +162,13 @@
   let fadeTimer = null;
   try { bgmOn = window.localStorage.getItem('fe-bgm') !== 'off'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
 
+  const playerBtn = $('#playerBtn');
   function paintBgm() {
-    btnBgm.setAttribute('aria-pressed', String(bgmOn));
-    btnBgm.setAttribute('aria-label', bgmOn ? '배경음악 끄기' : '배경음악 켜기');
+    [btnBgm, playerBtn].forEach(b => {
+      b.setAttribute('aria-pressed', String(bgmOn));
+      b.setAttribute('aria-label', bgmOn ? '배경음악 끄기' : '배경음악 켜기');
+    });
+    document.documentElement.classList.toggle('bgm-off', !bgmOn);
   }
   function fadeTo(target, done) {
     window.clearInterval(fadeTimer);
@@ -196,6 +200,7 @@
   }
   function stopBgm() { fadeTo(0, () => bgm.pause()); }
 
+  playerBtn.addEventListener('click', () => btnBgm.click());
   btnBgm.addEventListener('click', () => {
     bgmOn = !bgmOn;
     try { window.localStorage.setItem('fe-bgm', bgmOn ? 'on' : 'off'); } catch (e) { /* 무시 */ }
@@ -298,6 +303,7 @@
     const changed = index !== current;
     current = index;
     $('#standGlyph').innerHTML    = item.glyph;
+    $('#standNo').textContent     = noOf(item);
     $('#standClass').textContent  = item.cls;
     $('#standName').textContent   = item.name;
     $('#standMaster').textContent = item.master;
@@ -318,6 +324,15 @@
   arch.addEventListener('click', advance);
   $('#standProfile').addEventListener('click', () => openProfile(current));
   $('#standMaster').addEventListener('click', () => openProfile(current, 'master'));
+  // 왼쪽 가장자리 — 장식 숨기기 · 다음 서번트
+  const homeEl = $('#s-home');
+  $('#lobbyHide').addEventListener('click', e => {
+    const bare = !homeEl.classList.contains('is-bare');
+    homeEl.classList.toggle('is-bare', bare);
+    e.currentTarget.setAttribute('aria-pressed', String(bare));
+    e.currentTarget.setAttribute('aria-label', bare ? '화면 장식 보이기' : '화면 장식 숨기기');
+  });
+  $('#lobbySwap').addEventListener('click', () => { if (typer) finishLine(); feature((current + 1) % lines.length); });
 
   /* ── 5. 서번트 카드 ─────────────────────────────────── */
   function cardHTML(r) {
@@ -421,6 +436,7 @@
   segS.addEventListener('click', () => showSide('servant'));
   segM.addEventListener('click', () => showSide('master'));
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
+  $('#tileCount').textContent = lines.length;
 
   document.addEventListener('click', e => {
     const card = e.target.closest('button.card, button.cwin');
@@ -864,6 +880,8 @@
     try { seen = window.localStorage.getItem('fe-prologue') === 'clear'; } catch (e) { /* 무시 */ }
     $('#chapterPrologue').classList.toggle('is-clear', seen);
     $('#chapterPrologueGo').textContent = seen ? '다시 보기' : '보기';
+    $('#storyBadge').textContent = seen ? 'CLEAR' : 'NEW';
+    $('#storyBadge').classList.toggle('is-clear', seen);
   }
   function finishPrologue() {
     try { window.localStorage.setItem('fe-prologue', 'clear'); } catch (e) { /* 무시 */ }

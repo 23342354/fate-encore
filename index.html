@@ -101,40 +101,73 @@
 
     <main class="screens">
 
-      <!-- 홈 -->
+      <!-- 홈 (로비) -->
       <section class="screen screen--home" id="s-home" data-screen="home" aria-label="홈">
-        <div class="banners">
-          <button class="banner" type="button" id="bannerPrologue">
-            <span class="banner__tag">Prologue</span>
-            <span class="banner__title">서곡 공개</span>
-            <span class="banner__sub">발신인 없는 초대장이 도착했다</span>
+
+        <!-- 왼쪽 가장자리 — 보기 전환 -->
+        <div class="rail">
+          <button class="rail__btn" type="button" id="lobbyHide" aria-pressed="false" aria-label="화면 장식 숨기기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
-          <button class="banner banner--alt" type="button" data-go="summon">
-            <span class="banner__tag">Pick Up</span>
-            <span class="banner__title">제6차 성배전쟁 소환</span>
-            <span class="banner__sub">서번트 4기가 부름에 응한다</span>
+          <button class="rail__btn" type="button" id="lobbySwap" aria-label="다음 서번트">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg>
           </button>
         </div>
 
-        <div class="stand">
-          <button class="arch" type="button" id="standArch" aria-label="다음 서번트의 한마디 듣기">
-            <span class="arch__glyph" id="standGlyph" aria-hidden="true"></span>
+        <!-- 무대 — 서번트 · 대사 창 · 이름표 -->
+        <div class="stage">
+          <div class="stand">
+            <button class="arch" type="button" id="standArch" aria-label="다음 서번트의 한마디 듣기">
+              <span class="arch__glyph" id="standGlyph" aria-hidden="true"></span>
+            </button>
+            <span class="stand__no" id="standNo" aria-hidden="true">05</span>
+          </div>
+
+          <button class="speech" type="button" id="speech" aria-label="다음 대사">
+            <span class="win__bar speech__bar"><span class="win__file"><span class="speech__icon" aria-hidden="true">[+]</span> <span id="speechName">오스카 조로아스터</span></span><span class="speech__tag" aria-hidden="true">TALK</span></span>
+            <span class="speech__text" id="speechText" aria-live="polite"></span>
           </button>
+
+          <div class="standinfo">
+            <p class="standinfo__text">
+              <span class="standinfo__class" id="standClass">CASTER</span>
+              <span class="standinfo__name" id="standName">오스카 조로아스터</span>
+              <span class="standinfo__master"><span class="standinfo__label">MASTER</span><button class="pf-link" type="button" id="standMaster">마키오카 모쿠렌</button></span>
+            </p>
+            <button class="gbtn gbtn--sm" type="button" id="standProfile"><span>프로필</span></button>
+          </div>
         </div>
 
-        <div class="standinfo">
-          <p class="standinfo__text">
-            <span class="standinfo__class" id="standClass">CASTER</span>
-            <span class="standinfo__name" id="standName">오스카 조로아스터</span>
-            <span class="standinfo__master"><span class="standinfo__label">MASTER</span><button class="pf-link" type="button" id="standMaster">마키오카 모쿠렌</button></span>
-          </p>
-          <button class="gbtn gbtn--light gbtn--sm" type="button" id="standProfile"><span>프로필</span></button>
+        <!-- 오른쪽 — 메뉴 -->
+        <div class="lmenu">
+          <p class="lmenu__label" aria-hidden="true">MENU</p>
+          <button class="tile tile--story" type="button" id="bannerPrologue">
+            <span class="tile__kicker">STORY MODE</span>
+            <span class="tile__title">스토리</span>
+            <span class="tile__now">
+              <span class="tile__chip" aria-hidden="true">序</span>
+              <span class="tile__nowtext"><b>서곡</b><small>발신인 없는 초대장</small></span>
+              <span class="tile__play" aria-hidden="true"></span>
+            </span>
+            <span class="tile__badge" id="storyBadge">NEW</span>
+          </button>
+          <div class="lmenu__row">
+            <div class="player" role="group" aria-label="배경음악">
+              <span class="win__bar player__bar"><span class="win__file">Now Playing.mp3</span><span class="player__eq" aria-hidden="true"><i></i><i></i><i></i></span></span>
+              <span class="player__body">
+                <button class="player__btn" type="button" id="playerBtn" aria-pressed="true" aria-label="배경음악 끄기"></button>
+                <span class="player__track"><b>One Last Wish Once More For All That Never Was</b><small>@5minutejamms</small></span>
+              </span>
+            </div>
+            <button class="tile tile--summon" type="button" data-go="summon">
+              <span class="tile__vert" aria-hidden="true">PICK UP</span>
+              <span class="tile__title">소환</span>
+              <span class="tile__count"><b id="tileCount">4</b>/7</span>
+            </button>
+          </div>
         </div>
 
-        <button class="speech" type="button" id="speech" aria-label="다음 대사">
-          <span class="speech__name"><span id="speechName">오스카 조로아스터</span></span>
-          <span class="speech__text" id="speechText" aria-live="polite"></span>
-        </button>
+        <p class="lobby__foot" aria-hidden="true">/// Fate / Encore — 비공식 팬 제작물 · 제6차 성배전쟁</p>
       </section>
 
       <!-- 캐스트 -->
