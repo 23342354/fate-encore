@@ -306,6 +306,7 @@
     if (src) img.src = src; else img.removeAttribute('src');
     img.hidden = !src;
     $(boxSel).classList.toggle('has-art', !!src);
+    $(boxSel).parentElement.classList.toggle('has-art', !!src);
   }
   const faceImg = (r, cls) => `<img class="${cls}" src="${r.face}" alt="" decoding="async">`;
 
