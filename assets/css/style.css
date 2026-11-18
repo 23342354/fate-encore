@@ -2502,3 +2502,21 @@ button.chapter:active{transform:none;box-shadow:var(--paper-shadow)}
   .speech__text{min-height:calc(2 * 1.4rem + .8rem);line-height:1.4rem;font-size:.8rem}
   .standinfo__class{display:none}
 }
+
+/* ── 서번트 그림 ── 로비 아치는 전신, 프로필은 상반신, 카드는 얼굴 */
+.arch__art,.profile__art,.cwin__face,.card__face{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;
+}
+.arch__art[hidden],.profile__art[hidden]{display:none}
+.arch__art{object-position:50% 0;transition:transform .6s cubic-bezier(.3,1.2,.5,1)}
+.arch:hover .arch__art{transform:scale(1.02)}
+.arch.has-art .arch__glyph,.profile__arch.has-art .profile__glyph{display:none}
+.arch.has-art{background:
+  radial-gradient(circle,rgba(31,59,76,.1) .9px,transparent 1.1px) 0 0/6px 6px,
+  radial-gradient(ellipse 80% 55% at 50% 30%,#FFFFFF,transparent 75%),
+  linear-gradient(180deg,#E9EFEF,#C9D6D9)}
+.profile__art{object-position:50% 0}
+.cwin__face{object-position:50% 15%}
+.card__face{object-position:50% 10%;z-index:0}
+.card__art:has(.card__face){background:linear-gradient(180deg,#E9EFEF,#C9D6D9)}
+.card__art:has(.card__face) .card__plate,.card__art:has(.card__face) .card__class,.card__art:has(.card__face) .card__rank{z-index:1}

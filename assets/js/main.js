@@ -25,6 +25,9 @@
   const ROSTER = [
     { cls: 'SABER' },
     { cls: 'ARCHER', name: '도로시', master: '이치노세 류가',
+      art: 'assets/img/servant-dorothy.webp',        // 로비 아치 — 전신
+      bust: 'assets/img/servant-dorothy-bust.webp',  // 프로필 — 상반신
+      face: 'assets/img/servant-dorothy-face.webp',  // 캐스트 · 소환 카드 — 얼굴
       masterGlyph: seal('assets/img/seal-ryuga.png'),
       line: '저를 기다린 사람은 없었어도 제가 기다린 사람들은 있었으니까요.',
       glyph: svg('<path d="M18 12 q22 20 0 40"/><path d="M18 12 L18 52"/><path d="M22 32 L50 32"/><path d="M44 26 l6 6 -6 6"/>') },
@@ -297,12 +300,22 @@
     if (!speechText.classList.contains('is-done')) typer = t;
   }
 
+  // 그림이 있는 서번트는 그림을, 없으면 문양을 보여 준다
+  function setArt(imgSel, boxSel, src) {
+    const img = $(imgSel);
+    if (src) img.src = src; else img.removeAttribute('src');
+    img.hidden = !src;
+    $(boxSel).classList.toggle('has-art', !!src);
+  }
+  const faceImg = (r, cls) => `<img class="${cls}" src="${r.face}" alt="" decoding="async">`;
+
   function feature(index) {
     const item = lines[index];
     if (!item) return;
     const changed = index !== current;
     current = index;
     $('#standGlyph').innerHTML    = item.glyph;
+    setArt('#standArt', '#standArch', item.art);
     $('#standNo').textContent     = noOf(item);
     $('#standType').textContent   = item.cls;
     $('#talkNo').textContent      = noOf(item);
@@ -352,7 +365,7 @@
       <span class="card__art">
         <span class="card__class">${r.cls}</span>
         ${rank ? `<span class="card__rank"><small>보구</small>${esc(rank)}</span>` : ''}
-        <span class="card__glyph" aria-hidden="true">${r.glyph}</span>
+        ${r.face ? faceImg(r, 'card__face') : `<span class="card__glyph" aria-hidden="true">${r.glyph}</span>`}
         <span class="card__plate"><span class="card__name">${esc(r.name)}</span><span class="card__master">MASTER ${esc(r.master)}</span></span>
       </span>
     </button>`;
@@ -395,7 +408,7 @@
       : `<span class="win__bar"><span class="win__file">No.${no} — ${r.cls}</span><span class="note__rings" aria-hidden="true"></span></span>`;
     const art = sealed
       ? `<span class="cwin__art cwin__art--sealed"><span class="frost"></span><span class="frost frost--b"></span>${GLYPH_SEALED}</span>`
-      : `<span class="cwin__art">${master ? masterGlyph(r) : r.glyph}</span>`;
+      : `<span class="cwin__art">${master ? masterGlyph(r) : (r.face ? faceImg(r, 'cwin__face') : r.glyph)}</span>`;
     const name = sealed
       ? `${redact(4.4)}${redact(2.3)}<span class="sr">${master ? '마스터 미공개' : '진명 미공개'}</span>`
       : esc(who);
@@ -1003,6 +1016,7 @@
     setMode('servant');
 
     $('#pfGlyph').innerHTML    = item.glyph;
+    setArt('#pfArt', '#pfArch', item.bust);
     $('#pfCredit').hidden = true;
     $('#pfClass').textContent  = item.cls;
     $('#pfName').textContent   = item.name;
@@ -1051,6 +1065,7 @@
     setMode('master');
 
     $('#pfGlyph').innerHTML    = masterGlyph(item);
+    setArt('#pfArt', '#pfArch', null);
     $('#pfCredit').hidden = !item.masterGlyphCredit;
     $('#pfCredit').textContent = item.masterGlyphCredit ? `영주 디자인 ${item.masterGlyphCredit}` : '';
     $('#pfClass').textContent  = `${item.cls} · MASTER`;

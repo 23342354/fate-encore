@@ -11,6 +11,7 @@ index.html              게임 화면 전체 (타이틀 · 로비 · 각 메뉴 
 assets/css/style.css    전체 스타일
 assets/img/logo.png     제호 로고 (배경이 투명한 PNG) — @utakimid
 assets/img/seal-*.png   마스터 영주 그림
+assets/img/servant-*    서번트 그림 (전신 · 상반신 · 얼굴)
 assets/audio/bgm.mp3    배경음악 — One Last Wish Once More For All That Never Was / @5minutejamms
 assets/js/prologue.js   서곡 스크립트 · 배경/효과음/일러스트 넣는 곳
 assets/js/masters.js    마스터 설정 — 마스터 프로필을 고칠 곳
@@ -184,6 +185,8 @@ bg: {
 비워 둔 항목은 "—" 로 나온다.
 
 영주 그림은 `ROSTER` 의 `masterGlyph: seal('assets/img/파일.png')` 로 넣는다. 네 마스터 모두 들어가 있다 — 이치노세 류가(`seal-ryuga.png`), 마키오카 모쿠렌(`seal-mokuren.png`), 릴리안 루스텔리아(`seal-lilian.png`), 오즈 누벨(`seal-oz.png`). 서곡의 붉은 문양 장면에도 이 넷이 빨갛게 떠오른다. 그림을 다른 사람이 그렸으면 같은 줄에 `masterGlyphCredit: '@아이디'` 를 적는다. 프로필의 영주 아래에 "영주 디자인 @아이디" 가 붙는다. 배경이 투명한 PNG 를 쓴다.
+
+서번트 그림은 `ROSTER` 에 세 장을 적는다. `art` 는 로비 아치에 나오는 전신, `bust` 는 프로필 사진 칸의 상반신, `face` 는 캐스트 카드와 소환 결과 카드의 얼굴 컷이다. 지금은 도로시만 들어가 있다(`servant-dorothy*.webp`). 그림이 없는 서번트는 원래 문양이 그대로 나온다. 배경이 투명한 그림이 가장 잘 어울린다.
 
 ### 프로필 조작
 
