@@ -701,7 +701,7 @@ button.idc:active{box-shadow:3px 3px 0 var(--ink)}
 }
 .idc__body{display:grid;grid-template-columns:7.6rem minmax(0,1fr);gap:1.2rem;padding:1.05rem 1.1rem .4rem 1.1rem}
 .idc .cwin__art{aspect-ratio:1/1.2}
-.idc .cwin__no{background:var(--accent);right:-.75rem;bottom:auto;top:46%}
+.idc .cwin__no{background:var(--accent);right:-.7rem;bottom:-.6rem;top:auto}
 .idc__info{display:flex;flex-direction:column;min-width:0;container-type:inline-size}
 .idc__title{
   font-family:var(--serif);font-style:italic;font-weight:400;line-height:1.05;
@@ -750,7 +750,7 @@ button.idc:active{box-shadow:3px 3px 0 var(--ink)}
 }
 .profile[data-mode="master"] .pwin__card{container-type:inline-size}
 .profile[data-mode="master"] .pwin__pic .cwin__block{display:none}
-.profile[data-mode="master"] .pwin__pic .cwin__no{background:var(--accent);top:46%;bottom:auto}
+.profile[data-mode="master"] .pwin__pic .cwin__no{background:var(--accent);top:auto;bottom:-.7rem}
 
 @media (max-width:43.99rem){
   .idc__body{grid-template-columns:6.4rem minmax(0,1fr);gap:1rem;padding:.95rem .95rem .3rem}
