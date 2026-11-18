@@ -505,29 +505,82 @@ a{color:var(--accent-strong)}
 .tile__count{position:relative;font-family:var(--pixel);font-size:.78rem;color:var(--ink)}
 .tile__count b{font-weight:400;font-size:1.1rem}
 
-/* 음악 창 */
-.player{display:flex;flex-direction:column;min-width:0;background:#fff;border:1.5px solid var(--ink);box-shadow:5px 5px 0 var(--ink)}
-.player__bar{height:1.7rem;padding:0 .55rem 0 .7rem;box-sizing:border-box;font-size:.74rem}
-.player__eq{display:flex;align-items:flex-end;gap:2px;height:.8rem}
-.player__eq i{width:3px;background:var(--sky);animation:eq 1s ease-in-out infinite}
+/* 음악 — 카세트테이프. 브금이 나오는 동안 릴이 돈다 */
+.player{position:relative;min-width:0}
+.cas__shell{
+  position:relative;display:grid;grid-template-rows:auto auto auto;gap:.35rem;
+  padding:.5rem .7rem 0;height:100%;box-sizing:border-box;
+  background:linear-gradient(180deg,#F7F8F6,#E4E9E8);
+  border:1.5px solid var(--ink);border-radius:.55rem;box-shadow:5px 5px 0 var(--ink);
+}
+.cas__screw{position:absolute;width:.42rem;height:.42rem;border-radius:50%;background:#B5C0C3;box-shadow:inset 0 0 0 1px var(--ink)}
+.cas__screw::after{content:"";position:absolute;left:15%;right:15%;top:50%;height:1px;background:var(--ink);transform:rotate(-30deg)}
+.cas__screw--tl{left:.22rem;top:.22rem}.cas__screw--tr{right:.22rem;top:.22rem}
+.cas__screw--bl{left:.22rem;bottom:.22rem}.cas__screw--br{right:.22rem;bottom:.22rem}
+.cas__label{
+  display:grid;min-width:0;background:#FBF8EE;border:1.5px solid var(--ink);border-radius:.25rem;overflow:hidden;
+}
+.cas__band{
+  display:flex;align-items:center;gap:.6rem;padding:.12rem .5rem;
+  font-family:var(--pixel);font-size:.6rem;letter-spacing:.16em;color:#fff;background:var(--accent);
+}
+.cas__band span:nth-child(2){flex:1;opacity:.85}
+.cas__lines{display:grid;padding:.25rem .5rem .3rem;line-height:1.3;min-width:0;
+  background:repeating-linear-gradient(180deg,transparent 0 .95rem,rgba(54,99,121,.18) .95rem calc(.95rem + 1px))}
+.cas__lines b{font-family:var(--serif);font-style:italic;font-weight:400;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.cas__lines small{font-size:.62rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cas__window{
+  position:relative;justify-self:center;width:72%;height:2rem;
+  display:flex;align-items:center;justify-content:space-between;padding:0 .35rem;box-sizing:border-box;
+  background:#1A2228;border:1.5px solid var(--ink);border-radius:1rem;
+}
+.cas__tape{position:absolute;left:24%;right:24%;top:50%;height:.55rem;transform:translateY(-50%);background:linear-gradient(90deg,#4A3B30,#2E241D);border-radius:.2rem}
+.cas__reel{
+  position:relative;z-index:1;width:1.45rem;height:1.45rem;border-radius:50%;
+  background:#F7F8F6;border:1.5px solid var(--ink);box-sizing:border-box;
+  animation:reel 2.4s linear infinite;
+}
+.cas__reel i{position:absolute;left:50%;top:50%;width:.2rem;height:.5rem;margin:-.25rem 0 0 -.1rem;background:var(--ink);border-radius:1px}
+.cas__reel i:nth-child(1){transform:rotate(0) translateY(-.32rem)}
+.cas__reel i:nth-child(2){transform:rotate(120deg) translateY(-.32rem)}
+.cas__reel i:nth-child(3){transform:rotate(240deg) translateY(-.32rem)}
+@keyframes reel{to{transform:rotate(360deg)}}
+.bgm-off .cas__reel{animation-play-state:paused}
+.cas__foot{
+  justify-self:center;width:62%;height:.85rem;margin-top:.05rem;
+  display:flex;justify-content:center;align-items:center;gap:1.4rem;
+  background:#CBD4D6;border:1.5px solid var(--ink);border-bottom:0;
+  clip-path:polygon(9% 0,91% 0,100% 100%,0 100%);
+}
+.cas__foot i{width:.32rem;height:.32rem;border-radius:50%;background:var(--ink)}
+.player__eq{display:flex;align-items:flex-end;gap:2px;height:.6rem}
+.player__eq i{width:2px;background:#fff;animation:eq 1s ease-in-out infinite}
 .player__eq i:nth-child(2){animation-delay:-.4s}
 .player__eq i:nth-child(3){animation-delay:-.7s}
 @keyframes eq{0%,100%{height:30%}50%{height:100%}}
 .bgm-off .player__eq i{animation:none;height:30%;opacity:.5}
-.player__body{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.6rem;padding:.5rem .6rem;flex:1}
+/* 재생 버튼 — 카세트 오른쪽 아래에 걸친다 */
 .player__btn{
-  position:relative;width:2.2rem;height:2.2rem;padding:0;cursor:pointer;border-radius:50%;
-  background:var(--ink);border:0;
+  position:absolute;z-index:2;right:-.55rem;bottom:-.55rem;
+  width:2.3rem;height:2.3rem;padding:0;cursor:pointer;border-radius:50%;
+  background:var(--ink);border:2px solid #fff;box-shadow:0 0 0 1.5px var(--ink);
 }
-.player__btn::before,.player__btn::after{content:"";position:absolute;top:50%;width:.22rem;height:.8rem;background:#fff;transform:translateY(-50%)}
-.player__btn::before{left:38%}
-.player__btn::after{right:38%}
-.player__btn[aria-pressed="false"]::before{left:42%;width:0;height:0;background:none;border:.4rem solid transparent;border-left:.62rem solid #fff;border-right:0}
+.player__btn::before,.player__btn::after{content:"";position:absolute;top:50%;width:.22rem;height:.75rem;background:#fff;transform:translateY(-50%)}
+.player__btn::before{left:36%}
+.player__btn::after{right:36%}
+.player__btn[aria-pressed="false"]::before{left:40%;width:0;height:0;background:none;border:.4rem solid transparent;border-left:.62rem solid #fff;border-right:0}
 .player__btn[aria-pressed="false"]::after{display:none}
 .player__btn:hover{background:var(--accent)}
-.player__track{display:grid;min-width:0;line-height:1.3}
-.player__track b{font-size:.78rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player__track small{font-size:.68rem;color:var(--text-dim)}
+@media (prefers-reduced-motion:reduce){.cas__reel{animation:none}}
+/* 폰 세로 — 라벨 옆에 창을 붙인 납작한 카세트 */
+@media (max-width:59.99rem) and (orientation:portrait){
+  .cas__shell{grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto;align-items:center;gap:.5rem;padding:.4rem .55rem}
+  .cas__lines small,.cas__foot,.cas__band span:nth-child(2){display:none}
+  .cas__band{justify-content:space-between}
+  .cas__window{width:5.2rem;height:1.7rem;padding:0 .25rem}
+  .cas__reel{width:1.2rem;height:1.2rem}
+  .cas__lines b{font-size:.88rem}
+}
 
 .lobby__foot{display:none}
 
@@ -553,9 +606,11 @@ a{color:var(--accent-strong)}
   .tile__now small{display:none}
   .tile__chip,.tile__play{width:1.6rem;height:1.6rem}
   .tile__badge{position:static;justify-self:end;grid-column:1 / -1;display:none}
-  .player__bar{display:none}
-  .player__body{padding:.35rem .5rem}
-  .player__btn{width:1.9rem;height:1.9rem}
+  .cas__band span:nth-child(2){display:none}
+  .cas__shell{padding:.3rem .5rem}
+  .cas__window{width:4.4rem;height:1.45rem}
+  .cas__reel{width:1rem;height:1rem}
+  .player__btn{width:2rem;height:2rem}
   .tile--summon{padding:.4rem .55rem}
   .tile__vert{display:none}
 }
@@ -605,8 +660,11 @@ a{color:var(--accent-strong)}
   .tile--story{padding:.5rem .7rem}
   .tile--story .tile__title{font-size:1.1rem}
   .tile__now{margin-top:.25rem;padding:.25rem}
-  .player__bar{display:none}
-  .player__body{padding:.35rem .45rem}
+  .cas__lines small,.cas__foot,.cas__band span:nth-child(2){display:none}
+  .cas__shell{gap:.2rem;padding:.3rem .5rem .35rem}
+  .cas__window{height:1.4rem}
+  .cas__reel{width:1rem;height:1rem}
+  .player__btn{width:1.9rem;height:1.9rem}
   .lmenu__row{grid-template-columns:minmax(0,1fr) 4.8rem}
 }
 

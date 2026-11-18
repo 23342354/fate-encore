@@ -152,12 +152,23 @@
             <span class="tile__badge" id="storyBadge">NEW</span>
           </button>
           <div class="lmenu__row">
-            <div class="player" role="group" aria-label="배경음악">
-              <span class="win__bar player__bar"><span class="win__file">Now Playing.mp3</span><span class="player__eq" aria-hidden="true"><i></i><i></i><i></i></span></span>
-              <span class="player__body">
-                <button class="player__btn" type="button" id="playerBtn" aria-pressed="true" aria-label="배경음악 끄기"></button>
-                <span class="player__track"><b>One Last Wish Once More For All That Never Was</b><small>@5minutejamms</small></span>
+            <div class="player cas" role="group" aria-label="배경음악">
+              <span class="cas__shell" aria-hidden="true">
+                <span class="cas__screw cas__screw--tl"></span><span class="cas__screw cas__screw--tr"></span>
+                <span class="cas__screw cas__screw--bl"></span><span class="cas__screw cas__screw--br"></span>
+                <span class="cas__label">
+                  <span class="cas__band"><span>SIDE A</span><span>Now Playing</span><span class="player__eq"><i></i><i></i><i></i></span></span>
+                  <span class="cas__lines"><b>One Last Wish Once More For All That Never Was</b><small>@5minutejamms · Fate / Encore OST</small></span>
+                </span>
+                <span class="cas__window">
+                  <i class="cas__reel"><i></i><i></i><i></i></i>
+                  <span class="cas__tape"></span>
+                  <i class="cas__reel"><i></i><i></i><i></i></i>
+                </span>
+                <span class="cas__foot"><i></i><i></i></span>
               </span>
+              <span class="sr">One Last Wish Once More For All That Never Was — @5minutejamms</span>
+              <button class="player__btn" type="button" id="playerBtn" aria-pressed="true" aria-label="배경음악 끄기"></button>
             </div>
             <button class="tile tile--summon" type="button" data-go="summon">
               <span class="tile__vert" aria-hidden="true">PICK UP</span>
