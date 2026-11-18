@@ -114,8 +114,9 @@
           </button>
         </div>
 
-        <!-- 무대 — 서번트 · 대사 창 · 이름표 -->
+        <!-- 무대 — 큰 클래스 글자 · 서번트 · 대화 창 -->
         <div class="stage">
+          <span class="stage__type" id="standType" aria-hidden="true">CASTER</span>
           <div class="stand">
             <button class="arch" type="button" id="standArch" aria-label="다음 서번트의 한마디 듣기">
               <span class="arch__glyph" id="standGlyph" aria-hidden="true"></span>
@@ -123,18 +124,20 @@
             <span class="stand__no" id="standNo" aria-hidden="true">05</span>
           </div>
 
-          <button class="speech" type="button" id="speech" aria-label="다음 대사">
-            <span class="win__bar speech__bar"><span class="win__file"><span class="speech__icon" aria-hidden="true">[+]</span> <span id="speechName">오스카 조로아스터</span></span><span class="speech__tag" aria-hidden="true">TALK</span></span>
-            <span class="speech__text" id="speechText" aria-live="polite"></span>
-          </button>
-
-          <div class="standinfo">
-            <p class="standinfo__text">
-              <span class="standinfo__class" id="standClass">CASTER</span>
-              <span class="standinfo__name" id="standName">오스카 조로아스터</span>
-              <span class="standinfo__master"><span class="standinfo__label">MASTER</span><button class="pf-link" type="button" id="standMaster">마키오카 모쿠렌</button></span>
-            </p>
-            <button class="gbtn gbtn--sm" type="button" id="standProfile"><span>프로필</span></button>
+          <div class="talk">
+            <span class="win__bar talk__bar"><span class="win__file"><span class="speech__icon" aria-hidden="true">[+]</span> Message.log</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></span>
+            <div class="standinfo">
+              <p class="standinfo__text">
+                <span class="standinfo__class" id="standClass">CASTER</span>
+                <span class="standinfo__name" id="standName">오스카 조로아스터</span>
+                <span class="standinfo__master"><span class="standinfo__label">MASTER</span><button class="pf-link" type="button" id="standMaster">마키오카 모쿠렌</button></span>
+              </p>
+              <button class="fbtn" type="button" id="standProfile">프로필</button>
+            </div>
+            <button class="speech" type="button" id="speech" aria-label="다음 대사">
+              <span class="sr" id="speechName">오스카 조로아스터</span>
+              <span class="speech__text" id="speechText" aria-live="polite"></span>
+            </button>
           </div>
         </div>
 
@@ -176,6 +179,10 @@
               <span class="tile__count"><b id="tileCount">4</b>/7</span>
             </button>
           </div>
+          <button class="roster" type="button" data-go="cast" aria-label="참전 현황 — 캐스트 화면 열기">
+            <span class="win__bar roster__bar"><span class="win__file">War Status</span><span class="roster__count" id="rosterCount">4 / 7</span></span>
+            <span class="roster__grid" id="rosterGrid"></span>
+          </button>
         </div>
 
         <p class="lobby__foot" aria-hidden="true">/// Fate / Encore — 비공식 팬 제작물 · 제6차 성배전쟁</p>

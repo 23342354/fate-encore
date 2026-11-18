@@ -304,6 +304,7 @@
     current = index;
     $('#standGlyph').innerHTML    = item.glyph;
     $('#standNo').textContent     = noOf(item);
+    $('#standType').textContent   = item.cls;
     $('#standClass').textContent  = item.cls;
     $('#standName').textContent   = item.name;
     $('#standMaster').textContent = item.master;
@@ -437,6 +438,9 @@
   segM.addEventListener('click', () => showSide('master'));
   $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
   $('#tileCount').textContent = lines.length;
+  $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
+  $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
+    `<span class="roster__cell${r.name ? ' is-on' : ''}"><b>${pad2(k + 1)}</b>${r.cls.slice(0, 3)}</span>`).join('');
 
   document.addEventListener('click', e => {
     const card = e.target.closest('button.card, button.cwin');
