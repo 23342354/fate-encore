@@ -125,7 +125,7 @@
           </div>
 
           <div class="talk">
-            <span class="win__bar talk__bar"><span class="win__file"><span class="speech__icon" aria-hidden="true">[+]</span> Message.log</span><span class="win__ctl" aria-hidden="true"><i></i><i></i><i></i></span></span>
+            <span class="talk__date" aria-hidden="true"><i>Dialogue</i><span>No.<span id="talkNo">05</span></span></span>
             <div class="standinfo">
               <p class="standinfo__text">
                 <span class="standinfo__class" id="standClass">CASTER</span>
@@ -141,21 +141,29 @@
           </div>
         </div>
 
-        <!-- 오른쪽 — 메뉴 -->
+        <!-- 오른쪽 — 메뉴: 다이어리 목차 -->
         <div class="lmenu">
-          <p class="lmenu__label" aria-hidden="true">MENU</p>
-          <button class="tile tile--story" type="button" id="bannerPrologue">
-            <span class="tile__kicker">STORY MODE</span>
-            <span class="tile__title">스토리</span>
-            <span class="tile__now">
-              <span class="tile__chip" aria-hidden="true">序</span>
-              <span class="tile__nowtext"><b>서곡</b><small>발신인 없는 초대장</small></span>
-              <span class="tile__play" aria-hidden="true"></span>
-            </span>
-            <span class="tile__badge" id="storyBadge">NEW</span>
-          </button>
-          <div class="lmenu__row">
-            <div class="player cas" role="group" aria-label="배경음악">
+          <div class="diary">
+            <p class="diary__head"><i>Contents</i><span>제6차 성배전쟁</span></p>
+            <button class="toc toc--story" type="button" id="bannerPrologue">
+              <span class="toc__no">01</span>
+              <span class="toc__body"><b>스토리</b><small>서곡 — 발신인 없는 초대장</small></span>
+              <span class="toc__badge" id="storyBadge">NEW</span>
+              <span class="toc__go" aria-hidden="true">→</span>
+            </button>
+            <button class="toc tile--summon" type="button" data-go="summon">
+              <span class="toc__no">02</span>
+              <span class="toc__body"><b>소환</b><small>Pick Up · 공개 <span id="tileCount">4</span>기</small></span>
+              <span class="toc__go" aria-hidden="true">→</span>
+            </button>
+            <button class="toc roster" type="button" data-go="cast" aria-label="참전 기록 — 캐스트 화면 열기">
+              <span class="toc__no">03</span>
+              <span class="toc__body"><b>참전 기록</b><small><span id="rosterCount">4 / 7</span> 확인</small></span>
+              <span class="toc__go" aria-hidden="true">→</span>
+              <span class="roster__grid" id="rosterGrid"></span>
+            </button>
+          </div>
+          <div class="player cas" role="group" aria-label="배경음악">
               <span class="cas__shell" aria-hidden="true">
                 <span class="cas__screw cas__screw--tl"></span><span class="cas__screw cas__screw--tr"></span>
                 <span class="cas__screw cas__screw--bl"></span><span class="cas__screw cas__screw--br"></span>
@@ -173,16 +181,6 @@
               <span class="sr">One Last Wish Once More For All That Never Was — @5minutejamms</span>
               <button class="player__btn" type="button" id="playerBtn" aria-pressed="true" aria-label="배경음악 끄기"></button>
             </div>
-            <button class="tile tile--summon" type="button" data-go="summon">
-              <span class="tile__vert" aria-hidden="true">PICK UP</span>
-              <span class="tile__title">소환</span>
-              <span class="tile__count"><b id="tileCount">4</b>/7</span>
-            </button>
-          </div>
-          <button class="roster" type="button" data-go="cast" aria-label="참전 현황 — 캐스트 화면 열기">
-            <span class="win__bar roster__bar"><span class="win__file">War Status</span><span class="roster__count" id="rosterCount">4 / 7</span></span>
-            <span class="roster__grid" id="rosterGrid"></span>
-          </button>
         </div>
 
         <p class="lobby__foot" aria-hidden="true">/// Fate / Encore — 비공식 팬 제작물 · 제6차 성배전쟁</p>

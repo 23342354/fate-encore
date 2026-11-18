@@ -305,6 +305,7 @@
     $('#standGlyph').innerHTML    = item.glyph;
     $('#standNo').textContent     = noOf(item);
     $('#standType').textContent   = item.cls;
+    $('#talkNo').textContent      = noOf(item);
     $('#standClass').textContent  = item.cls;
     $('#standName').textContent   = item.name;
     $('#standMaster').textContent = item.master;
@@ -391,7 +392,7 @@
     const rank = ((CAST[r.name] || {}).stats || {}).np;
     const bar = master
       ? `<span class="win__bar"><span class="win__file">MASTER</span><span class="win__no">No.${no}</span></span>`
-      : `<span class="win__bar"><span class="win__file">No.${no} — ${r.cls}.exe</span>${winCtl}</span>`;
+      : `<span class="win__bar"><span class="win__file">No.${no} — ${r.cls}</span><span class="note__rings" aria-hidden="true"></span></span>`;
     const art = sealed
       ? `<span class="cwin__art cwin__art--sealed"><span class="frost"></span><span class="frost frost--b"></span>${GLYPH_SEALED}</span>`
       : `<span class="cwin__art">${master ? masterGlyph(r) : r.glyph}</span>`;
@@ -402,7 +403,7 @@
     const status = master
       ? [sealed ? '발급 — / —' : '발급 11/2026', `Status : ${sealed ? 'Void' : 'Contracted'}`]
       : [`보구 ${sealed ? '?' : esc(rank || '—')}`, `Status : ${sealed ? 'Sealed' : 'Summoned'}`];
-    return `<${tag} class="cwin${master ? ' cwin--master' : ''}${sealed ? ' cwin--sealed' : ''}"${attrs}>
+    return `<${tag} class="cwin${master ? ' cwin--master' : ' cwin--note'}${sealed ? ' cwin--sealed' : ''}"${attrs}>
       ${bar}
       <span class="cwin__body">
         <span class="cwin__pic"><span class="cwin__block"></span>${art}<span class="cwin__no">${no}</span></span>
@@ -418,7 +419,7 @@
         </span>
       </span>
       <span class="win__status"><span>${status[0]}</span><span>${status[1]}</span></span>
-      ${sealed && master ? '<span class="idc__stamp" aria-hidden="true">미발급</span>' : ''}
+      ${sealed ? `<span class="idc__stamp" aria-hidden="true">${master ? '미발급' : '미공개'}</span>` : ''}
     </${tag}>`;
   }
   $('#cardList').innerHTML   = ROSTER.map(r => `<li>${winHTML(r, 'servant')}</li>`).join('');
@@ -440,7 +441,7 @@
   $('#tileCount').textContent = lines.length;
   $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
   $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
-    `<span class="roster__cell${r.name ? ' is-on' : ''}"><b>${pad2(k + 1)}</b>${r.cls.slice(0, 3)}</span>`).join('');
+    `<span class="roster__cell${r.name ? ' is-on' : ''}"><i aria-hidden="true"></i>${r.cls.slice(0, 3)}</span>`).join('');
 
   document.addEventListener('click', e => {
     const card = e.target.closest('button.card, button.cwin');
@@ -975,12 +976,12 @@
   // 창 제목줄 · 신분증 칸 · 재생 바
   function setChrome(item, m) {
     const no = noOf(item);
-    $('#pfWinTitle').textContent = `No.${no} — ${m ? 'MASTER' : item.cls}.exe`;
-    $('#pfFileNo').textContent = `File ${no}`;
+    $('#pfWinTitle').textContent = `No.${no} — ${m ? 'MASTER' : item.cls}`;
+    $('#pfFileNo').textContent = `p.${no}`;
     $('#pfKicker').textContent = m ? 'Identification Card' : 'Saint Graph';
     $('#pfNo').textContent = no;
     $('#pfCode').innerHTML = barcodeSVG(m ? item.master : item.name) + `<small>UKH-6-${no}${m ? '-M' : ''}</small>`;
-    $('#pfTrack').textContent = `File ${no} · ${m ? item.master : item.name}`;
+    $('#pfTrack').textContent = `p.${no} · ${m ? item.master : item.name}`;
   }
 
   function setMode(mode) {
