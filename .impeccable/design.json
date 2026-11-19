@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T00:00:00Z",
+  "title": "Design System: Fate / Encore",
+  "extensions": {
+    "colorMeta": {
+      "cobalt": { "role": "primary", "displayName": "Star Chart Cobalt", "canonical": "#2350AE", "tonalRamp": ["#0C1640", "#0E215C", "#142F72", "#1D3F92", "#2350AE", "#4E7FE6", "#9DB8FF", "#DCE4F6"] },
+      "cobalt-deep": { "role": "primary", "displayName": "Midnight Ink Cobalt", "canonical": "#142F72", "tonalRamp": ["#081236", "#0B1A4A", "#0E215C", "#142F72", "#1E3C80", "#2B5BC0", "#8FAEEA", "#DCE4F6"] },
+      "cobalt-soft": { "role": "primary", "displayName": "Lit Cobalt", "canonical": "#4E7FE6" },
+      "cobalt-bright": { "role": "primary", "displayName": "Lit Cobalt (bright)", "canonical": "#5A88EC" },
+      "print-cobalt": { "role": "primary", "displayName": "Letterpress Cobalt", "canonical": "#1D3F92" },
+      "voice-cobalt": { "role": "primary", "displayName": "Voice Cobalt", "canonical": "#1E3C80" },
+      "gold-leaf": { "role": "secondary", "displayName": "Gold Leaf", "canonical": "#C9A75E", "tonalRamp": ["#4A3A18", "#6E5626", "#94753A", "#B89A55", "#C9A75E", "#D8C58E", "#EED9A0", "#F7EED6"] },
+      "gold-pale": { "role": "secondary", "displayName": "Pale Gilt", "canonical": "#D8C58E" },
+      "gold-aged": { "role": "secondary", "displayName": "Aged Gilt", "canonical": "#B89A55" },
+      "star-glow": { "role": "tertiary", "displayName": "Starlight", "canonical": "#9DB8FF" },
+      "star-glow-alt": { "role": "tertiary", "displayName": "Starlight (alt)", "canonical": "#8FB0FF" },
+      "danger": { "role": "tertiary", "displayName": "Signal Red", "canonical": "#E0302A" },
+      "cream-paper": { "role": "neutral", "displayName": "Cream Paper", "canonical": "#EFE8D8", "tonalRamp": ["#3A3428", "#5F5745", "#8C8370", "#BDB49E", "#E2DBC9", "#E6DFCE", "#EFE8D8", "#F3EEE3"] },
+      "cream-paper-light": { "role": "neutral", "displayName": "Cream Paper (light)", "canonical": "#F3EEE3" },
+      "cream-paper-shade": { "role": "neutral", "displayName": "Cream Paper (shade)", "canonical": "#E6DFCE" },
+      "note-paper": { "role": "neutral", "displayName": "Note Paper", "canonical": "#F2EDE1" },
+      "surface": { "role": "neutral", "displayName": "Note Paper (surface)", "canonical": "#EFEADF" },
+      "surface-shade": { "role": "neutral", "displayName": "Note Paper (shade)", "canonical": "#E2DBC9" },
+      "text": { "role": "neutral", "displayName": "Night Ink Text", "canonical": "#1E2438" },
+      "text-dim": { "role": "neutral", "displayName": "Faded Ink", "canonical": "#5E6683" },
+      "ink": { "role": "neutral", "displayName": "Pitch Ink", "canonical": "#08090B" },
+      "night": { "role": "neutral", "displayName": "Deep Night", "canonical": "#081236", "tonalRamp": ["#03050F", "#070A18", "#080C1E", "#081236", "#0B1A4A", "#0E215C", "#16307E", "#1E3C80"] },
+      "night-deep": { "role": "neutral", "displayName": "Deep Night (deepest)", "canonical": "#070A18" },
+      "night-raised": { "role": "neutral", "displayName": "Deep Night (raised)", "canonical": "#0B1A4A" },
+      "silver-on-night": { "role": "neutral", "displayName": "Silver on Night", "canonical": "#E9EEFA" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "라틴 장식 대문자 — 입장권 제목, 제호." },
+      "headline": { "displayName": "Headline", "purpose": "한글 화면 제목. 앞에 코발트 별, 아래 이중선." },
+      "latin": { "displayName": "Latin", "purpose": "제목 옆 라틴 이탤릭 부제, 코발트." },
+      "body": { "displayName": "Body", "purpose": "프로필·설정 본문과 UI 기본 글꼴. 최대 굵기 600." },
+      "prose": { "displayName": "Prose", "purpose": "서곡과 긴 산문." },
+      "label": { "displayName": "Label", "purpose": "넓은 자간의 영문 꼬리표·칸 이름." },
+      "pixel": { "displayName": "Pixel", "purpose": "창 제목줄·파일 이름." }
+    },
+    "shadows": [
+      { "name": "paper-lift", "value": "0 1px 0 rgba(8,9,11,.05), 0 .7rem 1.4rem -.7rem rgba(10,16,44,.32)", "purpose": "낮 화면 종이 부품이 바탕에서 살짝 뜬 정도. 눌리면 사라진다." },
+      { "name": "photo-border", "value": "0 0 0 .55rem #FDFCF8, 0 0 0 calc(.55rem + 1px) rgba(8,9,11,.18), 0 1px 0 rgba(8,9,11,.05), 0 .7rem 1.4rem -.7rem rgba(10,16,44,.32)", "purpose": "사진처럼 흰 테두리를 두른 초상." },
+      { "name": "night-glass", "value": "inset 0 0 0 3px rgba(8,13,38,.45), inset 0 0 0 4px rgba(222,230,250,.2), 0 0 1.6rem -.4rem rgba(58,104,232,.5), 0 .6rem 1.4rem -.6rem rgba(0,0,0,.7)", "purpose": "로비 메뉴 판의 은빛 이중선과 코발트 후광." },
+      { "name": "night-glass-hover", "value": "inset 0 0 0 3px rgba(8,13,38,.45), inset 0 0 0 4px rgba(222,230,250,.3), 0 0 2.2rem -.2rem rgba(58,104,232,.75), 0 .6rem 1.4rem -.6rem rgba(0,0,0,.7)", "purpose": "로비 메뉴 판 호버." },
+      { "name": "star-halo", "value": "drop-shadow(0 0 .45rem rgba(58,104,232,.75)) drop-shadow(0 1px 2px rgba(0,0,0,.8))", "purpose": "밤 위의 아이콘과 별 (filter)." }
+    ],
+    "motion": [
+      { "name": "ease-settle", "value": "cubic-bezier(.2,.8,.3,1)", "purpose": "화면·서번트 교체, 연출 등장." },
+      { "name": "ease-spring", "value": "cubic-bezier(.3,1.4,.5,1)", "purpose": "입장권 그루터기가 반쯤 들리는 탄성." },
+      { "name": "ease-dock", "value": "cubic-bezier(0.24, 1.34, 0.38, 1)", "purpose": "독 아이콘 확대 420ms." },
+      { "name": "ease-tip", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "독 말풍선 이동·폭 160ms." },
+      { "name": "twinkle", "value": "3.6–5.2s ease-in-out infinite", "purpose": "로비 별 반짝임. reduced-motion에서 정지." },
+      { "name": "orbit", "value": "30s linear infinite", "purpose": "소환 메달의 금빛 점선 궤도. reduced-motion에서 정지." }
+    ],
+    "breakpoints": [
+      { "name": "phone-portrait", "value": "max-width: 59.99rem and orientation: portrait" },
+      { "name": "landscape-lobby", "value": "min-width: 60rem and min-height: 34rem, or min-width: 40rem and max-height: 34rem landscape" },
+      { "name": "short-landscape", "value": "max-height: 30rem and orientation: landscape" },
+      { "name": "short-desktop", "value": "min-width: 60rem and max-height: 50rem" },
+      { "name": "touch", "value": "pointer: coarse" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Paper Tab Button",
+      "kind": "button",
+      "refersTo": "button-tab",
+      "description": "기본 행동 버튼. 짙은 코발트 종이 탭, 누르면 1px 내려앉는다.",
+      "html": "<button class=\"ds-btn-tab\">프로필 보기</button>",
+      "css": ".ds-btn-tab{font-family:var(--main,'IBM Plex Sans KR',sans-serif);font-weight:600;font-size:1rem;letter-spacing:.03em;padding:.6rem 1.2rem;border:1px solid var(--color-primary-strong,#142F72);border-radius:.35rem;background:var(--color-primary-strong,#142F72);color:#fff;box-shadow:0 1px 0 rgba(8,9,11,.05),0 .7rem 1.4rem -.7rem rgba(10,16,44,.32);cursor:pointer;transition:transform .1s ease,box-shadow .1s ease}.ds-btn-tab:hover{background:#0E215C}.ds-btn-tab:active{transform:translateY(1px);box-shadow:none}.ds-btn-tab:focus-visible{outline:2px solid var(--color-primary-strong,#142F72);outline-offset:3px}"
+    },
+    {
+      "name": "Paper Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "보조 행동. 노트 종이에 코발트 테두리, 호버하면 코발트로 채워진다.",
+      "html": "<button class=\"ds-btn-ghost\">다시 보기</button>",
+      "css": ".ds-btn-ghost{font-family:var(--main,'IBM Plex Sans KR',sans-serif);font-weight:600;font-size:1rem;padding:.6rem 1.2rem;border:1px solid var(--color-primary-strong,#142F72);border-radius:.35rem;background:#F2EDE1;color:var(--color-primary-strong,#142F72);cursor:pointer;transition:background .15s ease,color .15s ease}.ds-btn-ghost:hover{background:var(--color-primary-strong,#142F72);color:#fff}.ds-btn-ghost:active{transform:translateY(1px)}.ds-btn-ghost:focus-visible{outline:2px solid var(--color-primary-strong,#142F72);outline-offset:3px}"
+    },
+    {
+      "name": "HUD Chip",
+      "kind": "chip",
+      "refersTo": "hud-chip",
+      "description": "상단 자원 칩(BGM · 영주 · 참전). 종이 라벨.",
+      "html": "<button class=\"ds-chip\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><path d=\"M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z\"/></svg><span class=\"ds-chip__label\">참전</span><b>4 / 7</b></button>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .65rem;font-family:var(--main,'IBM Plex Sans KR',sans-serif);font-size:.82rem;color:#1E2438;background:#F2EDE1;border:1px solid rgba(8,9,11,.55);border-radius:.35rem;box-shadow:0 1px 0 rgba(8,9,11,.05),0 .7rem 1.4rem -.7rem rgba(10,16,44,.32);cursor:pointer}.ds-chip svg{color:#2350AE}.ds-chip__label{color:#5E6683;font-size:.75rem}.ds-chip b{font-weight:600}.ds-chip:hover{background:#E6DFCE}.ds-chip:focus-visible{outline:2px solid #142F72;outline-offset:3px}"
+    },
+    {
+      "name": "Night Sky Dock",
+      "kind": "nav",
+      "refersTo": "dock-tip",
+      "description": "하단 화면 전환 띠. 남색 별가루 띠, 금테, 가운데 코발트 소환 메달, 현재 화면 아래 금빛 별.",
+      "html": "<nav class=\"ds-dock\"><button class=\"ds-dock__btn\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M3 11l9-7 9 7v9H3z\"/></svg><span>홈</span></button><button class=\"ds-dock__btn is-on\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><rect x=\"4\" y=\"4\" width=\"11\" height=\"14\"/><rect x=\"9\" y=\"7\" width=\"11\" height=\"14\"/></svg><span>캐스트</span></button><button class=\"ds-dock__orb\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"#fff\"><path d=\"M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z\"/></svg></button><button class=\"ds-dock__btn\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><path d=\"M3 5h7a2 2 0 012 2v12a2 2 0 00-2-2H3zM21 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z\"/></svg><span>스토리</span></button><button class=\"ds-dock__btn\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v6M12 7.5v.5\"/></svg><span>정보</span></button></nav>",
+      "css": ".ds-dock{display:flex;align-items:center;justify-content:space-around;gap:.5rem;padding:.7rem 1.2rem .5rem;width:min(100%,30rem);background:radial-gradient(ellipse 30% 120% at 50% 0%,rgba(58,104,232,.45),transparent 70%),linear-gradient(180deg,#16307E,#0B1A4A 70%,#081236);border:1px solid rgba(201,167,94,.75);border-bottom:0;border-radius:1.1rem 1.1rem 0 0;box-shadow:0 -.5rem 1.4rem -.5rem rgba(10,16,44,.45),inset 0 1px 0 rgba(255,255,255,.12)}.ds-dock__btn{display:grid;justify-items:center;gap:.15rem;background:none;border:0;color:#E9EEFA;opacity:.66;font-family:var(--main,'IBM Plex Sans KR',sans-serif);font-size:.72rem;cursor:pointer;transition:opacity .22s ease,transform .42s cubic-bezier(.24,1.34,.38,1)}.ds-dock__btn:hover{opacity:1;transform:translateY(-3px) scale(1.15)}.ds-dock__btn.is-on{opacity:1;color:#fff;font-weight:600}.ds-dock__btn.is-on svg{filter:drop-shadow(0 0 .45rem rgba(140,175,255,.9))}.ds-dock__btn.is-on::after{content:\"\";width:.5rem;height:.5rem;background:#EED9A0;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 .25rem rgba(238,217,160,.9))}.ds-dock__btn:focus-visible{outline:1.5px solid #E9EEFA;outline-offset:3px;border-radius:10px}.ds-dock__orb{display:grid;place-items:center;width:3.4rem;height:3.4rem;margin-top:-1.4rem;border-radius:50%;border:2px solid #EFE8D8;background:radial-gradient(circle at 50% 40%,#5A88EC,#2350AE 45%,#0B1A4A 100%);box-shadow:0 0 0 1.5px rgba(201,167,94,.9),0 0 0 5px rgba(11,26,74,.85),0 0 0 6px rgba(201,167,94,.45),0 0 1.6rem rgba(58,104,232,.65);cursor:pointer}"
+    },
+    {
+      "name": "Servant Record Card",
+      "kind": "card",
+      "description": "캐스트 화면의 서번트 기록장. 줄 노트, 금박 테이프, 사진 칸, 미공개 도장.",
+      "html": "<article class=\"ds-record\"><span class=\"ds-record__tape\"></span><div class=\"ds-record__no\">No.02 — ARCHER</div><div class=\"ds-record__body\"><div class=\"ds-record__photo\"></div><div><i class=\"ds-record__en\">Saint Graph</i><b class=\"ds-record__name\">도로시</b><dl><dt>Class</dt><dd>ARCHER</dd><dt>Master</dt><dd>이치노세 류가</dd></dl></div></div><span class=\"ds-record__stamp\">미공개</span></article>",
+      "css": ".ds-record{position:relative;width:20rem;padding:1.4rem 1rem 1rem;background:repeating-linear-gradient(180deg,transparent 0 calc(1.75rem - 1px),rgba(35,80,174,.1) calc(1.75rem - 1px) 1.75rem),#F2EDE1;border-radius:.3rem;box-shadow:0 1px 0 rgba(8,9,11,.05),0 .7rem 1.4rem -.7rem rgba(10,16,44,.32);font-family:var(--main,'IBM Plex Sans KR',sans-serif);color:#1E2438;transition:transform .2s ease}.ds-record:hover{transform:translateY(-2px) rotate(-.4deg)}.ds-record__tape{position:absolute;top:-.55rem;left:50%;width:5.2rem;height:1.25rem;transform:translateX(-50%) rotate(-2deg);background:linear-gradient(100deg,#B8914A,#EED9A0 42%,#C29B52 62%,#E4CB8A);opacity:.92;clip-path:polygon(0 8%,4% 0,8% 10%,12% 0,16% 8%,20% 0,80% 0,84% 8%,88% 0,92% 10%,96% 0,100% 8%,100% 92%,96% 100%,92% 90%,88% 100%,84% 92%,80% 100%,20% 100%,16% 92%,12% 100%,8% 90%,4% 100%,0 92%)}.ds-record__no{font-family:'Instrument Serif',serif;font-size:.72rem;letter-spacing:.14em;color:#5E6683;border-bottom:1px solid rgba(35,80,174,.32);padding-bottom:.3rem;margin-bottom:.6rem}.ds-record__body{display:grid;grid-template-columns:5.5rem 1fr;gap:.8rem}.ds-record__photo{aspect-ratio:3/4;background:#fff;box-shadow:0 0 0 .3rem #FDFCF8,0 0 0 calc(.3rem + 1px) rgba(8,9,11,.18)}.ds-record__en{display:block;font-family:'Instrument Serif',serif;font-style:italic;color:#2350AE;font-size:.85rem}.ds-record__name{display:block;font-family:'Nanum Myeongjo',serif;font-weight:800;font-size:1.25rem;border-bottom:1.5px solid #142F72;margin-bottom:.4rem}.ds-record dl{display:grid;grid-template-columns:auto 1fr;gap:.1rem .6rem;margin:0;font-size:.78rem}.ds-record dt{color:#5E6683}.ds-record dd{margin:0}.ds-record__stamp{position:absolute;right:1rem;bottom:1rem;padding:.1rem .5rem;border:2px solid rgba(224,48,42,.65);color:rgba(224,48,42,.75);font-weight:600;font-size:.8rem;letter-spacing:.2em;transform:rotate(-8deg)}"
+    },
+    {
+      "name": "Letterpress Ticket",
+      "kind": "custom",
+      "refersTo": "ticket",
+      "description": "로비 스토리 입구. 크림지 활판 입장권, 호버 시 그루터기가 절취선에서 들린다.",
+      "html": "<button class=\"ds-ticket\"><span class=\"ds-ticket__body\"><small>The Story of</small><b>제6차 성배전쟁</b><span class=\"ds-ticket__cells\"><span>우키하</span><span>VI</span></span></span><span class=\"ds-ticket__stub\"><span class=\"ds-ticket__seal\"></span><b>입장</b></span></button>",
+      "css": ".ds-ticket{display:flex;width:20rem;aspect-ratio:2.5/1;padding:0;border:0;background:none;cursor:pointer;color:#1D3F92;filter:drop-shadow(0 .55rem .8rem rgba(0,0,0,.35));font-family:'Nanum Myeongjo',serif;text-align:left}.ds-ticket__body,.ds-ticket__stub{position:relative;background:linear-gradient(180deg,#F3EEE3,#E6DFCE)}.ds-ticket__body{flex:0 0 77%;display:grid;align-content:center;gap:.2rem;padding:0 1rem 0 1.4rem;box-shadow:inset 0 0 0 .5rem #F3EEE3,inset 0 0 0 calc(.5rem + 1.5px) rgba(29,63,146,.85);-webkit-mask:radial-gradient(circle .35rem at 0 50%,#0000 97%,#000) 0 0/100% .9rem repeat-y;mask:radial-gradient(circle .35rem at 0 50%,#0000 97%,#000) 0 0/100% .9rem repeat-y}.ds-ticket__body small{font-family:'Instrument Serif',serif;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase}.ds-ticket__body b{font-weight:800;font-size:1.15rem;border-bottom:1.5px solid rgba(29,63,146,.85);padding-bottom:.2rem}.ds-ticket__cells{display:flex;gap:.8rem;font-size:.75rem;font-weight:700}.ds-ticket__stub{flex:1;display:grid;justify-items:center;align-content:center;gap:.3rem;border-left:1.5px dashed rgba(29,63,146,.55);transform-origin:0 100%;transition:transform .45s cubic-bezier(.3,1.4,.5,1)}.ds-ticket__stub b{font-weight:800;letter-spacing:.2em;font-size:.95rem}.ds-ticket__seal{width:1.8rem;height:1.8rem;border-radius:50%;background:#1D3F92;box-shadow:inset 0 0 0 .2rem #1D3F92,inset 0 0 0 .28rem #EFE8D8;transition:transform .4s ease}.ds-ticket:hover .ds-ticket__stub,.ds-ticket:focus-visible .ds-ticket__stub{transform:translate(.3rem,-.1rem) rotate(9deg)}.ds-ticket:hover .ds-ticket__seal{transform:rotate(-12deg)}.ds-ticket:focus-visible{outline:2px solid #142F72;outline-offset:4px}@media (prefers-reduced-motion:reduce){.ds-ticket__stub{transition:none}.ds-ticket:hover .ds-ticket__stub{transform:none}}"
+    },
+    {
+      "name": "Lobby Night Panel",
+      "kind": "card",
+      "refersTo": "lobby-panel",
+      "description": "로비 오른쪽 메뉴 판. 남색 유리, 은빛 이중선, 코발트 후광.",
+      "html": "<button class=\"ds-night-panel\"><span class=\"ds-night-panel__no\">1</span><i>Servant</i><b>서번트</b><small>4/7</small></button>",
+      "css": ".ds-night-panel{position:relative;display:block;width:10rem;aspect-ratio:1.3/1;padding:0;cursor:pointer;text-align:left;color:#E9EEFA;background:radial-gradient(ellipse 60% 80% at 80% 30%,rgba(35,80,174,.45),transparent 70%),rgba(8,13,38,.85);border:1px solid rgba(222,230,250,.66);box-shadow:inset 0 0 0 3px rgba(8,13,38,.45),inset 0 0 0 4px rgba(222,230,250,.2),0 0 1.6rem -.4rem rgba(58,104,232,.5),0 .6rem 1.4rem -.6rem rgba(0,0,0,.7);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.ds-night-panel:hover{transform:translateY(-2px);border-color:#E9EEFA;box-shadow:inset 0 0 0 3px rgba(8,13,38,.45),inset 0 0 0 4px rgba(222,230,250,.3),0 0 2.2rem -.2rem rgba(58,104,232,.75),0 .6rem 1.4rem -.6rem rgba(0,0,0,.7)}.ds-night-panel:focus-visible{outline:1px dashed #E9EEFA;outline-offset:3px}.ds-night-panel__no{position:absolute;left:.55rem;top:.45rem;width:1.05rem;height:1.05rem;border:1px solid rgba(222,230,250,.66);border-radius:50%;display:grid;place-items:center;font-family:'Instrument Serif',serif;font-size:.66rem}.ds-night-panel i{position:absolute;left:1.95rem;top:.45rem;font-family:'Instrument Serif',serif;font-size:.75rem;color:rgba(218,226,246,.66)}.ds-night-panel b{position:absolute;left:.6rem;bottom:.45rem;font-family:'Nanum Myeongjo',serif;font-size:1.02rem;letter-spacing:.06em}.ds-night-panel small{position:absolute;right:.6rem;bottom:.55rem;font-family:'Instrument Serif',serif;font-size:.82rem;color:#9DB8FF}"
+    }
+  ],
+  "narrative": {
+    "northStar": "발신인 없는 초대장",
+    "overview": "모든 화면은 누군가 보낸, 손에 쥘 수 있는 종이 유물이다. 활판 인쇄된 입장권, 테이프로 붙인 기록장, 도장 찍힌 신분증, 금박 띠, 줄 노트. 낮의 화면(캐스트·소환·스토리·정보·프로필)은 결 있는 크림 종이 위에 코발트 잉크로 찍은 천문 노트이고, 로비는 그 초대장을 받아 든 밤, 남색으로 가라앉은 우키하 거리 위에 은빛 별과 코발트 빛이 뜬 하늘이다. 종이와 밤하늘, 이 두 면이 시스템의 전부다.\n\n화면은 모바일 게임 클라이언트처럼 움직인다. 스크롤하지 않고 하단의 밤하늘 독으로 화면을 통째로 바꾸며, 로비에서는 독이 숨고 양옆의 메뉴 판이 그 역할을 맡는다. 밀도는 중간(5/10)이고 구성의 대담함은 7, 움직임은 6이다. 장식은 많지만 모두 종이의 물성(결, 절취선, 우표 물결, 바느질 선, 테이프의 톱니)이나 천문(별, 달의 위상, 성도, 궤도 점선)에서 나온다.\n\n부품은 만지면 물리적으로 반응한다. 입장권 그루터기는 마우스를 올리면 절취선에서 반쯤 들리고 누르면 뜯겨 떨어진다. 버튼은 눌리면 1px 내려앉는다. 이전 테마의 검은 하드 오프셋 그림자와 청록·적갈 리버스 톤으로 되돌아가지 않는다.",
+    "keyCharacteristics": [
+      "두 면: 크림 종이 + 코발트 잉크(낮) / 남색 밤하늘 + 은빛·코발트 빛(로비·독)",
+      "금박은 테이프·실·테두리의 얇은 선으로만, 면으로 칠하지 않는다",
+      "한글 제목은 나눔명조 800, 라틴은 Instrument Serif 이탤릭과 Italiana 대문자",
+      "종이 유물 부품: 입장권, 기록장, 신분증, 도장, 테이프, 인덱스 탭",
+      "정직한 상태: 못 불러온 것은 문양이나 문구로 못 불러왔다고 보여 준다"
+    ],
+    "rules": [
+      { "name": "The Two Surfaces Rule", "body": "모든 면은 크림 종이이거나 밤하늘이다. 회색 카드, 흰 카드, 그 중간의 세 번째 바탕을 만들지 않는다.", "section": "colors" },
+      { "name": "The Gilt Thread Rule", "body": "금은 선이다. 테이프, 실, 테두리, 작은 별로만 쓰고 넓은 면을 금색으로 칠하지 않는다.", "section": "colors" },
+      { "name": "The Token Ladder Rule", "body": "실제 색 값은 `--p-*`(원색)에만 있고, 화면은 `--color-*`(역할)만 쓴다. 새 색이 필요하면 원색을 추가하고 역할을 이어 준다.", "section": "colors" },
+      { "name": "The 600 Ceiling Rule", "body": "IBM Plex Sans KR의 가장 굵은 자족은 600이다. 그보다 굵게 지정하지 않는다(가짜 볼드가 생긴다). 더 굵은 한글이 필요하면 나눔명조 800을 쓴다.", "section": "typography" },
+      { "name": "The Bilingual Label Rule", "body": "한글 이름 곁에는 라틴 세리프 꼬리표가 붙는다(캐스트 · Dramatis Personae, 소환 · Summon). 라틴은 장식이고 한글이 정보다.", "section": "typography" },
+      { "name": "The No Hard Offset Rule", "body": "검은 하드 오프셋 그림자(`3px 3px 0 var(--ink)` 류)는 예전 테마의 흔적이다. 새 부품에 쓰지 않는다. 종이는 부드럽게 뜨고, 밤은 빛난다.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** 새 면을 크림 종이(cream-paper + grain.svg) 아니면 밤하늘(night 계열 + stardust/nightsky.svg) 중 하나로 만든다.",
+      "**Do** 새 부품에 종이 가장자리 하나(테이프 톱니, 절취선, 우표 물결, 바느질 점선, 인덱스 탭)를 준다.",
+      "**Do** 낮 화면의 그림자는 Paper Lift, 밤의 깊이는 코발트 후광으로 낸다.",
+      "**Do** 화면 제목은 나눔명조 800 + 앞의 코발트 별 + 라틴 이탤릭 부제 + 아래 이중선으로 맞춘다.",
+      "**Do** 색은 `--color-*` 역할 이름으로만 쓰고, 새 값은 `--p-*` 원색으로 추가한다.",
+      "**Do** 움직임에는 `prefers-reduced-motion` 대안을 함께 둔다(별 반짝임, 궤도 회전, 그루터기 뜯기 모두 해당).",
+      "**Do** 터치 화면에서 누르는 자리를 44px 이상으로 하되, 보이는 모양은 그대로 두고 누르는 범위만 넓힌다.",
+      "**Do** 미공개·잠김·불러오기 실패를 도장, 점선 원, `—`, 원래 문양으로 정직하게 보여 준다."
+    ],
+    "donts": [
+      "**Don't** 검은 하드 오프셋 그림자(`3px 3px 0 var(--ink)` 류)를 새로 쓰지 않는다. 예전 테마로의 회귀다.",
+      "**Don't** 이전 리버스 톤(적갈 `#B04A33`, 세피아 노을 유리, 청록 `#366379`)으로 되돌리지 않는다.",
+      "**Don't** 금박을 넓은 면이나 버튼 바탕에 칠하지 않는다.",
+      "**Don't** IBM Plex Sans KR을 600보다 굵게 지정하지 않는다.",
+      "**Don't** 밤하늘 위에 코발트 잉크 글자를 올리지 않는다(대비 약 1.8:1). 밤 위의 글자는 은빛이다.",
+      "**Don't** 카세트와 마스터 신분증의 형태를 바꾸지 않는다.",
+      "**Don't** Signal Red를 장식에 쓰지 않는다. 오류 전용이다."
+    ]
+  }
+}
