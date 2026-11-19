@@ -2087,6 +2087,39 @@ html{scrollbar-width:thin;scrollbar-color:rgba(var(--line),.5) rgba(var(--surfac
 .hud__player{border:1px solid rgba(8,9,11,.55);border-radius:999px .35rem .35rem 999px;box-shadow:var(--paper-shadow);background:var(--note)}
 .chip{border:1px solid rgba(8,9,11,.55);border-radius:.35rem;box-shadow:var(--paper-shadow);background:var(--note)}
 
+/* 상단 HUD 다듬기 (낮 화면)
+   - 마스터 표식: 예전 청록 그라데이션 대신 독의 소환 메달과 같은 코발트 밀랍 도장 + 금테
+   - 영주 · 참전: 누를 수 없는 숫자라 한 장의 표로 묶고, 사이를 입장권 절취선으로 나눈다
+   - BGM: 유일하게 누르는 칩이라 켜짐은 코발트로 채운다 — 상태가 색으로 보인다
+   로비(html[data-screen="home"])의 밤 띠 규칙이 더 구체적이라 로비 모양은 그대로다. */
+.hud__player{background:url("../img/deco/grain.svg"),var(--note)}
+.hud__badge{
+  font-family:var(--serif);font-size:1.1rem;letter-spacing:.04em;
+  background:radial-gradient(circle at 50% 40%,var(--color-primary-bright),var(--color-primary) 48%,var(--color-night-raised) 100%);
+  border:1.5px solid var(--color-paper);
+  box-shadow:0 0 0 1px rgba(201,167,94,.9),0 .2rem .5rem -.1rem rgba(10,16,44,.4);
+}
+.hud__who b{font-family:'Nanum Myeongjo',var(--main);font-weight:800;letter-spacing:.02em}
+.chip b{font-variant-numeric:tabular-nums}
+/* 숫자 표 — 두 칩이 한 장 */
+.hud__res{gap:0;align-items:stretch}
+.chip--btn{margin-right:.45rem}
+html[data-screen="home"] .chip--btn{margin-right:0}
+.chip:not(.chip--btn){border-radius:0;background:url("../img/deco/grain.svg"),var(--note)}
+.chip--btn + .chip{border-radius:.35rem 0 0 .35rem}
+.chip:not(.chip--btn):last-child{border-radius:0 .35rem .35rem 0}
+.chip:not(.chip--btn) + .chip{border-left:1.5px dashed rgba(29,63,146,.45)}
+.chip:not(.chip--btn) svg{color:var(--color-accent-muted)}
+/* BGM 토글 */
+.chip--btn[aria-pressed="true"]{background:var(--color-primary-strong);border-color:var(--color-primary-strong);color:#fff}
+.chip--btn[aria-pressed="true"] svg,.chip--btn[aria-pressed="true"] .chip__label{color:inherit}
+.chip--btn[aria-pressed="true"]:hover{background:var(--color-primary-deep)}
+.chip--btn[aria-pressed="false"]:hover{background:var(--color-paper-shade)}
+.chip--btn:active{transform:translateY(1px);box-shadow:none}
+/* 오류 · 대기 중에는 종이로 되돌려 붉은 글씨가 읽히게 */
+html:not([data-screen="home"]).bgm-error #btnBgm,
+html:not([data-screen="home"]).bgm-wait #btnBgm{background:var(--note);border-color:rgba(8,9,11,.55);color:var(--color-text)}
+
 /* ── 하단 메뉴 — 다이어리 아래 끈 · 탭 ── */
 .dock::before{
   background:var(--note);border:1px solid rgba(8,9,11,.5);border-bottom:0;border-radius:.9rem .9rem 0 0;
