@@ -3129,3 +3129,47 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 }
 .dock__orb svg{filter:drop-shadow(0 0 .35rem rgba(200,220,255,.95))}
 @media (prefers-reduced-motion:reduce){.dock__orb::before{animation:none}}
+
+/* ── 폰 세로 로비 — 오른쪽 메뉴를 아이콘 단으로 줄이고 서번트를 가운데에 ── */
+.lb-mini{display:none}
+@media (max-width:59.99rem) and (orientation:portrait){
+  .lb-fig{left:50%;height:82%}
+  .lb-spark.s1{left:70%;top:52%}
+  .lb-menu{
+    top:.6rem;right:.35rem;bottom:auto;width:auto;
+    display:flex;flex-direction:column;align-items:center;gap:.55rem;
+  }
+  .lb-moons{display:none}
+  /* 판을 걷어내고 아이콘만 */
+  .lb-poster,.lb-ticket,.lb-sq,.lb-summon{
+    width:3rem;height:auto;aspect-ratio:auto;padding:.3rem 0;overflow:visible;
+    background:none;border:0;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none;
+    -webkit-mask:none;mask:none;transform:none;color:var(--rv-cream);
+    filter:drop-shadow(0 0 .45rem rgba(58,104,232,.75)) drop-shadow(0 1px 2px rgba(0,0,0,.8));
+  }
+  .lb .lb-ticket{color:var(--rv-cream);display:block}
+  .lb-poster:hover,.lb-ticket:hover,.lb-sq:hover,.lb-summon:hover{transform:translateY(-2px);background:none;box-shadow:none}
+  .lb-pair{display:contents}
+  .lb-poster > :not(.lb-mini):not(.lb-badge),.lb-ticket > :not(.lb-mini),
+  .lb-sq > :not(.lb-mini),.lb-summon > :not(.lb-mini),.lb-sq::after,.lb-ticket__stub::before{display:none}
+  .lb-mini{display:grid;justify-items:center;gap:.2rem}
+  .lb-mini svg{width:1.6rem;height:1.6rem}
+  .lb-mini b{font-family:var(--rv-ko);font-weight:700;font-size:.68rem;letter-spacing:.05em;line-height:1.2}
+  /* 서곡 NEW — 아이콘 옆 작은 빛점 */
+  .lb-badge{
+    top:.1rem;right:.35rem;bottom:auto;width:.5rem;height:.5rem;padding:0;border:0;border-radius:50%;
+    font-size:0;color:transparent;background:#8FB0FF;transform:none;box-shadow:0 0 .5rem #8FB0FF;
+  }
+  /* 소환 — 맨 아래 빛나는 메달 */
+  .lb-summon{margin-top:.25rem}
+  .lb-summon .lb-mini svg{
+    width:2.9rem;height:2.9rem;padding:.6rem;border-radius:50%;
+    background:radial-gradient(circle at 50% 40%,#5A88EC,var(--cobalt) 50%,#0B1A4A);
+    border:1.5px solid #EFE8D8;fill:#fff;stroke:none;
+    box-shadow:0 0 0 1px rgba(201,167,94,.9),0 0 1.2rem rgba(58,104,232,.8);
+  }
+  .lb-summon .lb-mini{gap:.3rem}
+}
+@media (max-width:59.99rem) and (orientation:portrait){
+  .lb .lb-mini b{position:static;font-size:.68rem;letter-spacing:.05em}
+}
