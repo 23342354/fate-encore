@@ -3285,3 +3285,97 @@ html[data-screen="home"] .chip b{white-space:nowrap}
   .lb-tk__top{display:none}
   .lb-summon__txt em{display:none}
 }
+
+/* ══ 하단 메뉴 — 돋보기 독 ════════════════════════════════
+   Bencho "Magnifying dock"(MIT, bencho.dev/licence)의 CSS 를 이 사이트의
+   밤하늘 띠에 맞춰 옮긴 것. 원본의 유리판(.gpane · 테두리 · 평면 비교) 규칙은
+   이 띠가 이미 자기 재질(남색 · 별가루 · 금테)을 가지고 있어 옮기지 않았다.
+
+   원본이 읽는 디자인 토큰은 새 전역 변수로 만들지 않고, 이 사이트에서
+   같은 일을 하는 값에 이어 독의 뿌리(.dock)에만 둔다 — 밖으로 새지 않게.
+     --ink        독 위의 잉크 = 밤 띠 위 은빛 (로비의 --rv-cream 과 같은 색)
+     --ink-rgb    그 세 숫자
+     --on-ink     은빛 위에 올 글자 = 코발트
+     --fill-on    말풍선 바탕 = 입장권 크림 종이
+     --fill-slab  말풍선 글자 = 짙은 코발트
+     --font-ui    본문 글꼴
+     --shadow-rgb 밤하늘 그림자 */
+.dock{
+  --ink:#E9EEFA;
+  --ink-rgb:233,238,250;
+  --on-ink:var(--cobalt-deep);
+  --fill-on:#EFE8D8;
+  --fill-slab:var(--cobalt-deep);
+  --font-ui:var(--main);
+  --shadow-rgb:3,5,16;
+  /* sideways is the dock's, up and down stays the page's — a
+     finger passing over this on the way down the wall is
+     scrolling, not picking. */
+  touch-action:pan-y;
+}
+/* no tile behind the icon: scaling a translucent rectangle over
+   glass is what made this look cheap. The glyph scales instead,
+   and SVG scales cleanly at any size. */
+.dock__btn{
+  position:relative;color:var(--ink);opacity:.48;
+  transition:opacity 220ms ease;
+}
+.dock__btn:hover{color:var(--ink)}
+.dock__btn[data-near="1"]{opacity:.72}
+.dock__btn[data-near="0"]{opacity:1}
+.dock__btn[aria-current="page"]{opacity:1;color:#fff}
+.dock__btn--summon{opacity:.9}
+.dock__btn:focus-visible{outline:1.5px solid var(--ink);outline-offset:3px;border-radius:10px}
+/* the magnification lives here, so the dot and the label keep
+   their own size and their own distance from the bar */
+.dock__glyph{
+  display:grid;place-items:center;
+  transform-origin:center bottom;
+  transition:transform 420ms cubic-bezier(0.24, 1.34, 0.38, 1);
+  will-change:transform;
+}
+/* the running dot, the only persistent mark in the dock —
+   여기서는 점 대신 금빛 별. 지금 있는 화면을 가리킨다. */
+.dock__btn::after,.dock__btn[aria-current="page"]::after{display:none}
+.dock__dot{
+  width:.6rem;height:.6rem;
+  background:var(--spark-gold) center/contain no-repeat;
+  filter:drop-shadow(0 0 .25rem rgba(238,217,160,.9));
+  opacity:0;transform:scale(0.4);
+  transition:opacity 220ms ease, transform 420ms cubic-bezier(0.24, 1.34, 0.38, 1);
+}
+.dock__btn[aria-current="page"] .dock__dot{opacity:1;transform:scale(1)}
+/* 마우스가 있는 화면에서는 이름 대신 떠다니는 말풍선 하나.
+   손가락 화면에서는 누르기 전엔 말풍선이 없으니 이름을 그대로 둔다. */
+@media (hover:hover) and (pointer:fine){
+  .dock__label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .dock__btn{padding-bottom:.45rem}
+}
+/* ONE tip for the whole dock (after transitions.dev's avatar
+   tooltip): a pill above the bar that slides to the icon under
+   the pointer and grows or shrinks to the word, both on the same
+   160ms curve, and fades in 120ms. The word is centred in a box
+   whose width animates, and the box clips it, so a longer word is
+   uncovered rather than squeezed.
+   — 원본은 검은 알약. 여기서는 입장권과 같은 크림 종이에 코발트 글씨, 금테. */
+.dock__tip{
+  position:absolute;left:0;top:-1.9rem;
+  height:28px;display:inline-flex;align-items:center;justify-content:center;
+  overflow:hidden;border-radius:999px;
+  background:url("../img/deco/grain.svg"),var(--fill-on);
+  color:var(--fill-slab);
+  box-shadow:0 0 0 1px rgba(201,167,94,.85),0 .4rem 1rem rgba(var(--shadow-rgb),.45);
+  font-family:'Nanum Myeongjo',var(--font-ui);font-weight:700;font-size:12px;line-height:28px;letter-spacing:.06em;
+  white-space:nowrap;opacity:0;pointer-events:none;z-index:4;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dock__tip > span{flex:none}
+.dock__tip:not([data-ready]){transition:opacity 160ms cubic-bezier(0.22, 1, 0.36, 1)}
+.dock__tip[data-on="true"]{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  .dock__glyph,.dock__dot,.dock__tip{transition:none}
+}
+.dock__btn--summon,.dock__btn--summon[data-near]{opacity:1}

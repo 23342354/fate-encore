@@ -291,6 +291,189 @@
   });
   window.addEventListener('popstate', () => { if (started) go(location.hash.slice(1), false); });
 
+  /* ── 3-1. 하단 메뉴 — 돋보기 독 ─────────────────────────
+     Bencho 의 "Magnifying dock"(MIT, bencho.dev/licence)을 이 사이트의
+     바닐라 JS 로 옮긴 것. React 와 lucide-react 는 쓰지 않는다 — 이 사이트는
+     빌드 없이 도는 정적 페이지라, 아이콘은 원래 쓰던 선 그림을 그대로 둔다.
+     원본의 주석은 왜 그 숫자인지를 말해 주므로 영어 그대로 옮겨 둔다. */
+
+  /* ══ dock, distance based magnification ═══════════════════
+     Scale falls off with distance from the cursor rather than
+     applying only to the hovered item, which is what stops it
+     reading as a row of buttons that happen to grow. */
+  const DOCK_OPT = {
+    /* what the glyph under the cursor grows to */
+    magnify: 1.32,
+    /* how many neighbours either side feel it. This is the knob
+       that decides whether the dock reads as a row of buttons
+       that happen to grow or as a sheet being pushed up from
+       underneath — at 0 it is the former, and no amount of
+       magnification rescues it. */
+    spread: 2,
+    /* how far the nearest glyph rises out of the bar */
+    lift: 8,
+  };
+  /* 가운데 소환 메달은 이미 크다 — 같은 비율로 키우면 띠를 덮으므로 절반만 */
+  const ORB_DAMP = 0.5;
+
+  let dockHover = null;
+  /* ── THE BAR READS THE POINTER, THE ITEMS DO NOT ─────────
+     Each item used to carry its own onMouseEnter, which fails
+     on a touch screen twice over. A mouse event is the smaller
+     half of it — the real problem is that a touch is captured
+     to whatever it started on, so sliding a finger along the
+     dock keeps sending every event to the first icon you
+     landed on and nothing else ever learns the finger arrived.
+
+     One handler on the bar, and the index comes from where the
+     pointer is: the nearest item centre to the pointer's x.
+     Measured rather than derived from the index, because the
+     items are not all the same width once one of them is
+     magnified — the geometry moves as you sweep, which is
+     exactly what makes a dock a dock, and an arithmetic guess
+     would lag it. */
+  let dockDown = false;
+  /* set when a finger has already chosen on lift, so the click
+     the browser sends afterwards — aimed at whichever item the
+     touch STARTED on, which is not the one it ended over — does
+     not undo the choice. A mouse never sets it. */
+  let dockChose = false;
+
+  function dockAt(clientX) {
+    if (!dockBtns.length) return null;
+    let best = 0, gap = Infinity;
+    dockBtns.forEach((el, i) => {
+      const b = el.getBoundingClientRect();
+      const d = Math.abs(clientX - (b.left + b.width / 2));
+      if (d < gap) { gap = d; best = i; }
+    });
+    return best;
+  }
+
+  function dockPaint() {
+    const { magnify, spread, lift } = DOCK_OPT;
+    dockBtns.forEach((btn, i) => {
+      const d = dockHover === null ? 99 : Math.abs(i - dockHover);
+      /* A raised cosine over the reach, rather than the three
+         hand-picked steps this used to carry. Those could not
+         be made adjustable without also picking every
+         intermediate value by hand, and a curve is what the
+         effect was always imitating: 1 under the cursor,
+         easing to 0 at the edge of the reach, and flat zero
+         past it. */
+      let f = d > spread ? 0 : (1 + Math.cos((Math.PI * d) / (spread + 1))) / 2;
+      if (btn.classList.contains('dock__btn--summon')) f *= ORB_DAMP;
+      const scale = 1 + (magnify - 1) * f;
+      /* the glyph magnifies, not the button. Scaling the
+         whole item dragged the dot and the label along
+         with it — the label ended up 15px further from
+         the bar purely as a side effect of the zoom. */
+      btn.querySelector('.dock__glyph').style.transform = `translateY(${-lift * f}px) scale(${scale})`;
+      if (d <= 1) btn.dataset.near = d; else delete btn.dataset.near;
+    });
+    dockTip();
+  }
+
+  /* Crossing onto a glyph, not hovering one: a sound on hover
+     fires on every pixel of a sweep. (원본은 여기서 소리를 냈다 —
+     이 사이트는 BGM 이 있으니 효과음은 넣지 않는다.) */
+  function dockTo(i) {
+    if (i === dockHover) return;
+    dockHover = i;
+    dockPaint();
+  }
+
+  function dockTrack(e) {
+    /* a mouse magnifies on hover, the way it always did; a
+       finger has to be down, or the bar would answer a scroll
+       passing over it */
+    if (e.pointerType !== 'mouse' && !dockDown) return;
+    dockTo(dockAt(e.clientX));
+  }
+
+  /* ── CAPTURE PHASE, and no pointer capture ───────────
+     Two different things with confusingly similar names.
+
+     The phase is capture so the bar hears the pointer before
+     anything inside it can stop it. Capture runs top-down,
+     before the child can stop it.
+
+     What this does NOT do is call setPointerCapture. The
+     touch is already captured to the item it began on
+     whether we ask or not, and those events reach here
+     with their real coordinates, which is all this needs.
+     Capturing on the bar as well would retarget the click
+     and take it from the item — breaking the mouse to fix
+     the finger. */
+  dockEl.addEventListener('pointerdown', e => {
+    dockDown = true;
+    /* ── disarmed HERE, not by the click ────────────────
+       `chose` used to be cleared by the click it was meant
+       to swallow, which assumes a click always follows a
+       touch. It does not: a finger that lands on one item
+       and lifts over another is a drag, and a browser is
+       entitled to send no click at all. Measured — the flag
+       stayed armed and ate the next real mouse click, so
+       the dock ignored the first thing you pressed after
+       any touch sweep. Cleared at the start of the next
+       gesture instead, which is true whatever the browser
+       decided to do with the last one. */
+    dockChose = false;
+    dockTo(dockAt(e.clientX));
+  }, true);
+  dockEl.addEventListener('pointermove', dockTrack, true);
+  /* ── and the touch has to CHOOSE something ────────────
+     With the bar holding the capture the button underneath
+     never gets its click, so the lift is where a finger
+     picks: whichever item it came to rest over. A mouse is
+     untouched by this — it still clicks the button. */
+  dockEl.addEventListener('pointerup', e => {
+    if (dockDown && e.pointerType !== 'mouse') {
+      const i = dockAt(e.clientX);
+      if (i !== null) {
+        dockChose = true;
+        go(dockBtns[i].dataset.go);
+      }
+    }
+    dockDown = false;
+    if (e.pointerType !== 'mouse') dockTo(null);
+  }, true);
+  dockEl.addEventListener('pointercancel', () => { dockDown = false; dockTo(null); }, true);
+  dockEl.addEventListener('pointerleave', () => { if (!dockDown) dockTo(null); });
+  /* the lift already chose — see `chose`. 캡처 단계에서 막아야
+     문서 전체의 [data-go] 처리기까지 내려가지 않는다. */
+  dockEl.addEventListener('click', e => {
+    if (dockChose && e.target.closest('.dock__btn')) { e.stopPropagation(); e.preventDefault(); }
+  }, true);
+
+  /* ── ONE TIP THAT TRAVELS ─────────────────────────────────
+     After the avatar tooltip in transitions.dev's share dialog: not a
+     label per icon blinking on and off, but one pill that slides
+     along to whichever icon is under the pointer and changes width to
+     fit the new word as it goes, both on one short curve. It keeps the
+     last word while it fades, so leaving the dock does not empty it
+     mid-fade. Its place is read off the item it sits over, centre to
+     centre, since a magnified dock does not lay out evenly. */
+  const tipEl = $('.dock__tip');
+  const tipWord = $('#dockTipWord');
+  let tipLast = -1;
+  function dockTip() {
+    const on = dockHover !== null;
+    if (on && dockHover !== tipLast) {
+      tipLast = dockHover;
+      const item = dockBtns[tipLast];
+      tipWord.textContent = item.getAttribute('aria-label');
+      /* offsetLeft is layout, so the glyph's own scale does not skew it */
+      const w = Math.ceil(tipWord.scrollWidth) + 24;
+      tipEl.style.width = w + 'px';
+      tipEl.style.transform = `translateX(${item.offsetLeft + item.offsetWidth / 2 - w / 2}px)`;
+      /* the first placing must not slide in from the bar's left edge:
+         until it has been placed once it moves without a transition */
+      if (!tipEl.dataset.ready) requestAnimationFrame(() => { tipEl.dataset.ready = ''; });
+    }
+    tipEl.dataset.on = on;
+  }
+
   /* ── 4. 로비 — 대표 서번트와 한마디 ─────────────────── */
   const speechName = $('#speechName');
   const speechText = $('#speechText');

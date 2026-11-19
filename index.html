@@ -379,26 +379,32 @@
 
     <!-- 하단 메뉴 -->
     <nav class="dock" aria-label="메뉴">
-      <button class="dock__btn" type="button" data-go="home">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5.5v-6h-5v6H4z"/></svg>
-        <span>홈</span>
+      <button class="dock__btn" type="button" aria-label="홈" data-go="home">
+        <span class="dock__glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M4 11 12 4l8 7v9h-5.5v-6h-5v6H4z"/></svg></span>
+        <span class="dock__dot" aria-hidden="true"></span>
+        <span class="dock__label">홈</span>
       </button>
-      <button class="dock__btn" type="button" data-go="cast">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="10" height="14" rx="1.2"/><path d="M17 7.5h1.8A1.2 1.2 0 0 1 20 8.7v10.6a1.2 1.2 0 0 1-1.2 1.2h-7.6A1.2 1.2 0 0 1 10 19.3"/></svg>
-        <span>캐스트</span>
+      <button class="dock__btn" type="button" aria-label="캐스트" data-go="cast">
+        <span class="dock__glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="10" height="14" rx="1.2"/><path d="M17 7.5h1.8A1.2 1.2 0 0 1 20 8.7v10.6a1.2 1.2 0 0 1-1.2 1.2h-7.6A1.2 1.2 0 0 1 10 19.3"/></svg></span>
+        <span class="dock__dot" aria-hidden="true"></span>
+        <span class="dock__label">캐스트</span>
       </button>
-      <button class="dock__btn dock__btn--summon" type="button" data-go="summon">
-        <span class="dock__orb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 14 10l8.5 2-8.5 2-2 8.5-2-8.5-8.5-2 8.5-2z"/></svg></span>
-        <span>소환</span>
+      <button class="dock__btn dock__btn--summon" type="button" aria-label="소환" data-go="summon">
+        <span class="dock__glyph"><span class="dock__orb"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 14 10l8.5 2-8.5 2-2 8.5-2-8.5-8.5-2 8.5-2z"/></svg></span></span>
+        <span class="dock__dot" aria-hidden="true"></span>
+        <span class="dock__label">소환</span>
       </button>
-      <button class="dock__btn" type="button" data-go="story">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5H10q2 0 2 2v13q0-2-2-2H3.5zM20.5 5H14q-2 0-2 2v13q0-2 2-2h6.5z"/></svg>
-        <span>스토리</span>
+      <button class="dock__btn" type="button" aria-label="스토리" data-go="story">
+        <span class="dock__glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 5H10q2 0 2 2v13q0-2-2-2H3.5zM20.5 5H14q-2 0-2 2v13q0-2 2-2h6.5z"/></svg></span>
+        <span class="dock__dot" aria-hidden="true"></span>
+        <span class="dock__label">스토리</span>
       </button>
-      <button class="dock__btn" type="button" data-go="info">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6M12 7.5v.2"/></svg>
-        <span>정보</span>
+      <button class="dock__btn" type="button" aria-label="정보" data-go="info">
+        <span class="dock__glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v6M12 7.5v.2"/></svg></span>
+        <span class="dock__dot" aria-hidden="true"></span>
+        <span class="dock__label">정보</span>
       </button>
+      <span class="dock__tip" aria-hidden="true"><span id="dockTipWord">홈</span></span>
     </nav>
   </div>
 </div>
