@@ -151,7 +151,7 @@
 
   function raiseCurtain() {
     curtain.classList.add('is-open');
-    window.setTimeout(() => curtain.classList.add('is-done'), reduce ? 50 : 1700);
+    window.setTimeout(() => curtain.classList.add('is-done'), reduce ? 50 : 2100);   // 막 1.9s · 조명 2s 가 끝난 뒤
   }
   if (reduce) raiseCurtain(); else window.setTimeout(raiseCurtain, 420);
 

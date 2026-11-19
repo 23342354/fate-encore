@@ -221,14 +221,44 @@ a{color:var(--accent-strong)}
       rgba(0,0,0,.05) 5.1vw),
     /* 바탕 — 천이 걷히는 위아래는 어둡게 */
     linear-gradient(180deg,var(--color-night),#1E3D9C 34%,#17348C 72%,#060B28);
-  transition:transform 1.5s cubic-bezier(.66,0,.2,1);
   will-change:transform;
 }
-.drape--l{left:0;transform-origin:left}
-.drape--r{right:0;transform-origin:right}
-.stage-curtain.is-open .drape--l{transform:translateX(-101%)}
-.stage-curtain.is-open .drape--r{transform:translateX(101%)}
+/* 커튼은 위 레일에 매달려 있다 — 기준점은 바깥 위 모서리 */
+/* 바깥쪽으로 8vw 더 걸쳐 둔다 — 안쪽으로 모일 때 화면 끝이 드러나지 않게 */
+.drape--l{left:-8vw;width:60vw;transform-origin:0 0}
+.drape--r{right:-8vw;width:60vw;transform-origin:100% 0}
+/* 막이 열리는 동안 가운데 틈으로 새어 나오는 무대 조명 */
+.stage-curtain::before{
+  content:"";position:absolute;inset:0;opacity:0;
+  background:radial-gradient(ellipse 34% 70% at 50% 46%,rgba(214,226,255,.55),rgba(120,150,230,.18) 55%,transparent 75%);
+}
+.stage-curtain.is-open::before{animation:stageGlow 2s ease-out both}
+.stage-curtain.is-open .drape--l{animation:drapeOpenL 1.9s both}
+.stage-curtain.is-open .drape--r{animation:drapeOpenR 1.9s both}
 .stage-curtain.is-done{display:none}
+/* 진짜 막처럼 —
+   ① 줄이 팽팽해지며 안쪽으로 살짝 모였다가(예비 동작)
+   ② 위가 먼저 끌려가고 무거운 밑단이 뒤따라 비스듬해지고(skew)
+   ③ 옆으로 걷힐수록 주름이 촘촘하게 몰리며(scaleX) 끝에서 밑단이 제자리로 돌아온다 */
+@keyframes drapeOpenL{
+  0%  {transform:translateX(0) skewX(0) scaleX(1);animation-timing-function:cubic-bezier(.45,0,.55,1)}
+  12% {transform:translateX(1.2%) skewX(.6deg) scaleX(1.01);animation-timing-function:cubic-bezier(.55,0,.3,1)}
+  58% {transform:translateX(-56%) skewX(3.5deg) scaleX(.72);animation-timing-function:cubic-bezier(.25,.1,.25,1)}
+  84% {transform:translateX(-92%) skewX(1.2deg) scaleX(.56);animation-timing-function:cubic-bezier(.3,0,.4,1)}
+  100%{transform:translateX(-104%) skewX(0) scaleX(.5)}
+}
+@keyframes drapeOpenR{
+  0%  {transform:translateX(0) skewX(0) scaleX(1);animation-timing-function:cubic-bezier(.45,0,.55,1)}
+  12% {transform:translateX(-1.2%) skewX(-.6deg) scaleX(1.01);animation-timing-function:cubic-bezier(.55,0,.3,1)}
+  58% {transform:translateX(56%) skewX(-3.5deg) scaleX(.72);animation-timing-function:cubic-bezier(.25,.1,.25,1)}
+  84% {transform:translateX(92%) skewX(-1.2deg) scaleX(.56);animation-timing-function:cubic-bezier(.3,0,.4,1)}
+  100%{transform:translateX(104%) skewX(0) scaleX(.5)}
+}
+@keyframes stageGlow{
+  0%{opacity:0}
+  35%{opacity:1}
+  100%{opacity:0}
+}
 
 /* ─────────── 타자기 ─────────── */
 /* 문장은 처음부터 자리를 차지하고, 글자만 하나씩 보인다 */
