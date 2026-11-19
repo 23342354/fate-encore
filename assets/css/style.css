@@ -1,7 +1,7 @@
 /* ===========================================================
    Fate / Encore
    모바일 게임 화면 구성. 타이틀 → 로비 → 하단 메뉴.
-   색은 로고 그림에서 뽑았다: 종이, 잉크, 청록 장미, 하늘빛 리본.
+   지금 색은 '천문 기록' — 크림 종이, 코발트 잉크, 금박, 밤하늘. 값은 아래 디자인 토큰에.
    =========================================================== */
 
 /* ─────────── IBM Plex Sans KR ─────────── */
@@ -36,22 +36,96 @@
   font-weight:600;font-display:swap;
 }
 
+/* ════════════════════════════════════════════════════════════════
+   디자인 토큰 — 3단
+   1) 원색(primitive, --p-*) : 실제 색 값은 여기에만 있다
+   2) 역할(semantic, --color-*) : 화면은 이 이름만 쓴다 — 색을 바꿀 땐 이 줄의 연결만 바꾼다
+   3) 컴포넌트 : 하단 메뉴(.dock)처럼 부품 안에서만 쓰는 이름은 그 부품 뿌리에 둔다
+   예전 이름(--accent, --cobalt, --paper …)은 아래 층에서 역할 이름을 가리키도록 남겨 둔다.
+   ════════════════════════════════════════════════════════════════ */
+:root{
+  /* 1. 원색 */
+  --p-cobalt-500:#2350AE;
+  --p-cobalt-700:#142F72;
+  --p-cobalt-400:#4E7FE6;
+  --p-cobalt-450:#2B5BC0;
+  --p-sky-400:#6A92DE;
+  --p-cobalt-50:#DCE4F6;
+  --p-cobalt-200:#9DB8FF;
+  --p-cobalt-250:#8FB0FF;
+  --p-cobalt-300:#8FAEEA;
+  --p-cobalt-850:#0B1A4A;
+  --p-cobalt-900:#0C1640;
+  --p-night-900:#081236;
+  --p-night-950:#070A18;
+  --p-night-975:#080C1E;
+  --p-cream-100:#EFE8D8;
+  --p-cream-50:#F3EEE3;
+  --p-cream-200:#E6DFCE;
+  --p-gold-500:#C9A75E;
+  --p-silver-50:#E9EEFA;
+  --p-red-500:#E0302A;
+  --p-cobalt-600:#1D3F92;
+  --p-cobalt-800:#0E215C;
+  --p-cobalt-350:#5A88EC;
+  --p-cream-150:#EFEADF;
+  --p-cream-300:#E2DBC9;
+  --p-ink-900:#1E2438;
+  --p-ink-500:#5E6683;
+  --p-cobalt-650:#1E3C80;
+  --p-gold-300:#D8C58E;
+  --p-gold-600:#B89A55;
+  --p-ink-950:#08090B;
+  /* 2. 역할 */
+  --color-ink:var(--p-ink-950);
+  --color-ink-print:var(--p-cobalt-600);
+  --color-primary-deep:var(--p-cobalt-800);
+  --color-primary-bright:var(--p-cobalt-350);
+  --color-surface:var(--p-cream-150);
+  --color-surface-shade:var(--p-cream-300);
+  --color-text:var(--p-ink-900);
+  --color-text-dim:var(--p-ink-500);
+  --color-voice:var(--p-cobalt-650);
+  --color-accent-soft:var(--p-gold-300);
+  --color-accent-muted:var(--p-gold-600);
+  --color-primary:var(--p-cobalt-500);
+  --color-primary-strong:var(--p-cobalt-700);
+  --color-primary-soft:var(--p-cobalt-400);
+  --color-primary-mid:var(--p-cobalt-450);
+  --color-sky:var(--p-sky-400);
+  --color-glow-faint:var(--p-cobalt-50);
+  --color-glow:var(--p-cobalt-200);
+  --color-glow-alt:var(--p-cobalt-250);
+  --color-glow-dim:var(--p-cobalt-300);
+  --color-night-raised:var(--p-cobalt-850);
+  --color-night-shadow:var(--p-cobalt-900);
+  --color-night:var(--p-night-900);
+  --color-night-deep:var(--p-night-950);
+  --color-night-ink:var(--p-night-975);
+  --color-paper:var(--p-cream-100);
+  --color-paper-light:var(--p-cream-50);
+  --color-paper-shade:var(--p-cream-200);
+  --color-accent:var(--p-gold-500);
+  --color-ink-on-night:var(--p-silver-50);
+  --color-danger:var(--p-red-500);
+}
+
 :root{
   /* 색 ─ 로고 그림에서 뽑았다 */
-  --paper:#EFEADF;        /* 종이 */
-  --paper-deep:#E2DBC9;   /* 그늘진 종이 */
-  --ink:#08090B;          /* 글자 잉크 */
-  --accent:#2350AE;       /* 장미의 청록 */
-  --accent-strong:#142F72;
-  --voice:#1E3C80;        /* 대사 */
-  --sky:#6A92DE;          /* 하늘빛 리본 */
-  --cream:#D8C58E;        /* 크림 리본 */
-  --sage:#B89A55;         /* 세이지 리본 */
-  --night:#070A18;        /* 어두운 면 */
+  --paper:var(--color-surface);        /* 종이 */
+  --paper-deep:var(--color-surface-shade);   /* 그늘진 종이 */
+  --ink:var(--color-ink);          /* 글자 잉크 */
+  --accent:var(--color-primary);       /* 장미의 청록 */
+  --accent-strong:var(--color-primary-strong);
+  --voice:var(--color-voice);        /* 대사 */
+  --sky:var(--color-sky);          /* 하늘빛 리본 */
+  --cream:var(--color-accent-soft);        /* 크림 리본 */
+  --sage:var(--color-accent-muted);         /* 세이지 리본 */
+  --night:var(--color-night-deep);        /* 어두운 면 */
   --on-accent:#FAFAF7;
 
-  --text:#1E2438;
-  --text-dim:#5E6683;
+  --text:var(--color-text);
+  --text-dim:var(--color-text-dim);
 
   /* rgba() 에 넣어 쓰는 색 성분 */
   --line:35,80,174;
@@ -78,10 +152,10 @@
   --ink:#FAFAF7;
   --text:#DCE4E6;
   --text-dim:#9FB1B8;
-  --accent:#8FAEEA;
-  --accent-strong:#DCE4F6;
+  --accent:var(--color-glow-dim);
+  --accent-strong:var(--color-glow-faint);
   --voice:#F1F4F3;
-  --on-accent:#070A18;
+  --on-accent:var(--color-night-deep);
   --line:156,195,222;
   --glow:190,216,234;
   --surface:15,27,36;
@@ -146,7 +220,7 @@ a{color:var(--accent-strong)}
       rgba(0,0,0,.3) 3.4vw,
       rgba(0,0,0,.05) 5.1vw),
     /* 바탕 — 천이 걷히는 위아래는 어둡게 */
-    linear-gradient(180deg,#081236,#1E3D9C 34%,#17348C 72%,#060B28);
+    linear-gradient(180deg,var(--color-night),#1E3D9C 34%,#17348C 72%,#060B28);
   transition:transform 1.5s cubic-bezier(.66,0,.2,1);
   will-change:transform;
 }
@@ -398,9 +472,9 @@ a{color:var(--accent-strong)}
   background:
     radial-gradient(circle,rgba(255,255,255,.07) .9px,transparent 1.1px) 0 0/6px 6px,
     radial-gradient(ellipse 70% 50% at 50% 24%,rgba(140,170,232,.35),transparent 70%),
-    linear-gradient(180deg,#2B5BC0,#15262F);
-  border:1.5px solid #08090B;
-  box-shadow:inset 0 0 0 6px #FAFAF7,inset 0 0 0 7.5px #08090B,6px 6px 0 #08090B;
+    linear-gradient(180deg,var(--color-primary-mid),#15262F);
+  border:1.5px solid var(--color-ink);
+  box-shadow:inset 0 0 0 6px #FAFAF7,inset 0 0 0 7.5px var(--color-ink),6px 6px 0 var(--color-ink);
 }
 .arch__glyph{width:40%;color:rgba(var(--glow),.85);transition:transform .45s cubic-bezier(.3,1.4,.5,1)}
 .arch__glyph svg{width:100%;height:auto;display:block}
@@ -684,7 +758,7 @@ a{color:var(--accent-strong)}
   position:relative;display:block;width:100%;aspect-ratio:3/4.1;
   padding:3px;border:0;border-radius:.6rem;cursor:pointer;
   font-family:var(--main);text-align:center;color:inherit;
-  background:linear-gradient(160deg,#DCE4F6,#6A92DE 30%,#2350AE 62%,#E3D9B8);
+  background:linear-gradient(160deg,var(--color-glow-faint),var(--color-sky) 30%,var(--color-primary) 62%,#E3D9B8);
   box-shadow:0 .25rem .9rem rgba(10,16,44,.18);
   transition:transform .2s ease,box-shadow .2s ease;
 }
@@ -695,7 +769,7 @@ button.card:active{transform:scale(.97)}
   border-radius:.45rem;overflow:hidden;
   background:
     radial-gradient(ellipse 70% 50% at 50% 26%,rgba(140,170,232,.42),transparent 70%),
-    linear-gradient(180deg,#2B5BC0,#14262F);
+    linear-gradient(180deg,var(--color-primary-mid),#14262F);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.25);
 }
 .card__glyph{width:46%;margin-bottom:24%;color:rgba(var(--glow),.85)}
@@ -975,7 +1049,7 @@ button.cwin--master:active{box-shadow:3px 3px 0 var(--ink)}
 }
 .fx__burst{
   position:fixed;inset:0;opacity:0;pointer-events:none;
-  background:radial-gradient(circle,#fff 0,#DCE4F6 30%,transparent 70%);
+  background:radial-gradient(circle,#fff 0,var(--color-glow-faint) 30%,transparent 70%);
 }
 .fx.is-charge .fx__burst{animation:burst 1.7s ease-in forwards}
 @keyframes burst{
@@ -995,7 +1069,7 @@ button.cwin--master:active{box-shadow:3px 3px 0 var(--ink)}
   position:relative;z-index:2;display:grid;gap:1.4rem;justify-items:center;
   width:100%;max-width:58rem;
 }
-.fx__title{margin:0;font-size:1rem;letter-spacing:.06em;color:#DCE4F6}
+.fx__title{margin:0;font-size:1rem;letter-spacing:.06em;color:var(--color-glow-faint)}
 .fx__actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
 .pulls{
   list-style:none;margin:0;padding:0;width:100%;
@@ -1012,7 +1086,7 @@ button.cwin--master:active{box-shadow:3px 3px 0 var(--ink)}
 .pull__back{
   position:absolute;inset:0;z-index:1;display:grid;place-items:center;
   font-size:1.8rem;color:rgba(190,205,240,.8);pointer-events:none;
-  background:linear-gradient(160deg,#2C566B,#070A18);
+  background:linear-gradient(160deg,#2C566B,var(--color-night-deep));
   border:2px solid rgba(190,205,240,.6);border-radius:.6rem;
   animation:flipOut .35s ease-in forwards;
   animation-delay:calc(var(--i) * .2s + .5s);
@@ -1152,7 +1226,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
   content:"안내문";display:block;margin-bottom:.5rem;
   font-family:var(--main);font-size:.72rem;letter-spacing:.3em;color:rgba(227,217,184,.75);
 }
-.vnp__p .more{color:#8FAEEA}
+.vnp__p .more{color:var(--color-glow-dim)}
 .vnp__p:not(.is-last) .more{display:none}
 /* 종이 카드 — 편지 */
 .vnp__letter{
@@ -1219,7 +1293,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
   transition:color .2s ease,background .2s ease;
 }
 .vnp__btn:hover{color:#fff;background:rgba(35,80,174,.55)}
-.vnp__btn[aria-pressed="true"],.vnp__btn[aria-expanded="true"]{color:#070A18;background:#8FAEEA;border-color:#DCE4F6}
+.vnp__btn[aria-pressed="true"],.vnp__btn[aria-expanded="true"]{color:var(--color-night-deep);background:var(--color-glow-dim);border-color:var(--color-glow-faint)}
 .vnp__btn--x{font-family:var(--main);letter-spacing:0;padding:.32rem .65rem}
 .vnp[data-scene="pov"] .vnp__btn,.vnp:has(.vnp__title:not([hidden])) .vnp__btn{color:var(--accent-strong);background:rgba(255,255,255,.7);border-color:rgba(35,80,174,.4)}
 .vnp__log{
@@ -1228,7 +1302,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
   background:rgba(8,15,20,.94);border:1px solid rgba(140,170,232,.35);border-radius:.4rem;
   user-select:text;-webkit-user-select:text;
 }
-.vnp__log-head{margin:0 0 .8rem;font-size:.8rem;letter-spacing:.2em;color:#8FAEEA}
+.vnp__log-head{margin:0 0 .8rem;font-size:.8rem;letter-spacing:.2em;color:var(--color-glow-dim)}
 .vnp__log-list{margin:0;padding:0;list-style:none;font-family:var(--sans);font-size:.93rem;line-height:1.85;color:#CFD9DC}
 .vnp__log-list li{padding:.5rem 0;border-top:1px solid rgba(140,170,232,.12)}
 .vnp__log-list .is-notice,.vnp__log-list .is-letter{font-family:'Nanum Myeongjo',var(--sans);color:#F2EBD8}
@@ -1244,11 +1318,11 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 .art__town{position:absolute;inset:0;width:100%;height:100%}
 .art__ridge{fill:#18283A}
 .art__ridge--far{fill:#2A3D55;opacity:.85}
-.art__houses{fill:#080C1E}
+.art__houses{fill:var(--color-night-ink)}
 .art__win{fill:#FFC978;opacity:0;animation:lit 1s ease forwards;animation-delay:var(--d)}
 @keyframes lit{to{opacity:.92}}
 
-.is-ukiha{background:#080C1E}
+.is-ukiha{background:var(--color-night-ink)}
 /* 그림이 들어간 우키하 — 천천히 다가가고, 노을 위로 밤이 번진다 */
 .vnp__bg.has-img.is-ukiha{animation:streetIn 24s ease-out forwards}
 @keyframes streetIn{from{transform:scale(1.08)}to{transform:scale(1)}}
@@ -1456,7 +1530,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
     linear-gradient(to top left,transparent calc(50% - 1px),rgba(150,125,80,.45) 50%,transparent calc(50% + 1px)) 100% 0/50% 54% no-repeat;
 }
 
-.is-montage{background:#080C1E}
+.is-montage{background:var(--color-night-ink)}
 .art__pan{
   position:absolute;inset:0 -12% 0 0;
   background:linear-gradient(180deg,#14223A,#3B4B6B 45%,#8A6E78 70%,#C99075);
@@ -1509,7 +1583,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 
 .art__mark{
   position:absolute;left:24%;bottom:9%;width:min(18vw,6rem);transform:translateX(-50%) rotate(-8deg);
-  color:#E0302A;filter:drop-shadow(0 0 .6rem rgba(224,48,42,.8));
+  color:var(--color-danger);filter:drop-shadow(0 0 .6rem rgba(224,48,42,.8));
 }
 .art__mark svg{width:100%;height:auto;display:block}
 
@@ -1593,7 +1667,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
   filter:drop-shadow(0 0 .8rem rgba(224,48,42,.85));
   animation:sealUp 1.4s ease forwards;
 }
-.fx-seal--svg{left:50%;top:40%;transform:translate(-50%,-50%);color:#E0302A}
+.fx-seal--svg{left:50%;top:40%;transform:translate(-50%,-50%);color:var(--color-danger)}
 .fx-seal--svg svg{width:100%;height:auto;display:block}
 .fx-seal--img{
   background:#D9241E;
@@ -1613,7 +1687,7 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 
 .fx-mark{
   position:absolute;left:50%;top:44%;width:min(46vmin,15rem);transform:translate(-50%,-50%);
-  color:#E0302A;filter:drop-shadow(0 0 .5rem rgba(224,48,42,.7));
+  color:var(--color-danger);filter:drop-shadow(0 0 .5rem rgba(224,48,42,.7));
 }
 .fx-mark svg{width:100%;height:auto;display:block;overflow:visible}
 /* 영주가 새겨지는 동안 방은 어두워지고 시선이 영주로 모인다 */
@@ -1997,7 +2071,7 @@ html{scrollbar-width:thin;scrollbar-color:rgba(var(--line),.5) rgba(var(--surfac
   --tape-sage:rgba(35,80,174,.5);
   --tape-cream:rgba(227,217,184,.75);
   --paper-shadow:0 1px 0 rgba(8,9,11,.05),0 .7rem 1.4rem -.7rem rgba(10,16,44,.32);
-  --pen:#142F72;
+  --pen:var(--color-primary-strong);
 }
 /* 줄 노트 배경 */
 .ruled{background:repeating-linear-gradient(180deg,transparent 0 calc(1.75rem - 1px),var(--rule-line) calc(1.75rem - 1px) 1.75rem),var(--note)}
@@ -2026,7 +2100,7 @@ html{scrollbar-width:thin;scrollbar-color:rgba(var(--line),.5) rgba(var(--surfac
 .dock__btn[aria-current="page"] span:last-child{background:linear-gradient(transparent 55%,rgba(106,146,222,.45) 55%);padding:0 .15rem}
 .dock__btn[aria-current="page"]::after{display:none}
 .dock__orb{  /* 밀랍 도장 */
-  background:radial-gradient(circle at 38% 32%,#4F7BD6,var(--accent) 52%,#142F72);
+  background:radial-gradient(circle at 38% 32%,#4F7BD6,var(--accent) 52%,var(--color-primary-strong));
   border:3px solid var(--note);
   box-shadow:0 0 0 1px rgba(8,9,11,.5),0 .35rem .9rem rgba(10,16,44,.35);
 }
@@ -2881,10 +2955,10 @@ html[data-screen="home"] .hud{transition:opacity .3s ease}
    로비는 검은 밤하늘에 코발트 빛과 은빛 별. 카세트와 신분증 모양은 그대로.
    ════════════════════════════════════════════════════════════════ */
 :root{
-  --cobalt:#2350AE;
-  --cobalt-deep:#142F72;
+  --cobalt:var(--color-primary);
+  --cobalt-deep:var(--color-primary-strong);
   --cobalt-glow:rgba(58,104,232,.55);
-  --gold:#C9A75E;
+  --gold:var(--color-accent);
   --gold-foil:linear-gradient(100deg,#B8914A,#EED9A0 42%,#C29B52 62%,#E4CB8A);
   --silver:#E6EBF7;
   --spark:url("../img/deco/sparkle.svg");
@@ -2916,7 +2990,7 @@ body{
 .dock::after{border-top:1px dashed rgba(184,154,85,.75)}
 .dock__btn[aria-current="page"] span:last-child{background:linear-gradient(transparent 58%,rgba(201,167,94,.5) 58%)}
 .dock__orb{
-  background:radial-gradient(circle at 50% 42%,#4E7FE6,var(--cobalt) 45%,#0D1F55 100%);
+  background:radial-gradient(circle at 50% 42%,var(--color-primary-soft),var(--cobalt) 45%,#0D1F55 100%);
   box-shadow:0 0 0 1px rgba(20,47,114,.6),0 0 1.2rem rgba(58,104,232,.5),0 .35rem .9rem rgba(10,16,44,.35);
 }
 
@@ -2935,12 +3009,12 @@ body{
 
 /* ── 로비 — 밤하늘 ── */
 :root{
-  --rv-cream:#E9EEFA;
+  --rv-cream:var(--color-ink-on-night);
   --rv-cream-dim:rgba(218,226,246,.66);
   --rv-glass:rgba(8,13,38,.6);
   --rv-glass-hi:rgba(14,24,66,.74);
   --rv-line:rgba(222,230,250,.66);
-  --rv-gold:#8FB0FF;
+  --rv-gold:var(--color-glow-alt);
   --rv-red:var(--cobalt);
 }
 html[data-screen="home"] .game::before{
@@ -2955,7 +3029,7 @@ html[data-screen="home"] .game::after{
     linear-gradient(180deg,rgba(3,5,16,.55),transparent 18%,transparent 72%,rgba(3,5,16,.55));
 }
 html[data-screen="home"] .hud__badge{box-shadow:0 0 0 3px rgba(8,13,38,.4),0 0 0 4px rgba(222,230,250,.25),0 0 1.1rem rgba(58,104,232,.55)}
-html[data-screen="home"] .chip svg{color:#9DB8FF}
+html[data-screen="home"] .chip svg{color:var(--color-glow)}
 
 /* 흩어진 별 */
 .lb-spark{position:absolute;z-index:1;pointer-events:none;background:var(--spark) center/contain no-repeat;filter:drop-shadow(0 0 .5rem rgba(110,150,255,.9))}
@@ -2968,7 +3042,7 @@ html[data-screen="home"] .chip svg{color:#9DB8FF}
 .lb-moons{display:flex;justify-content:space-between;align-items:center;padding:0 .3rem;margin-bottom:.15rem}
 .lb-moon{
   --ph:.5;width:1.15rem;height:1.15rem;border-radius:50%;position:relative;
-  background:radial-gradient(circle at 50% 50%,#1B2C66,#0C1640);
+  background:radial-gradient(circle at 50% 50%,#1B2C66,var(--color-night-shadow));
   box-shadow:inset 0 0 0 1px rgba(222,230,250,.35);
   overflow:hidden;
 }
@@ -2978,7 +3052,7 @@ html[data-screen="home"] .chip svg{color:#9DB8FF}
 }
 .lb-moon::after{   /* 그림자 — 위상 */
   content:"";position:absolute;inset:0;border-radius:50%;
-  background:#0C1640;transform:translateX(calc(var(--ph) * 100%));
+  background:var(--color-night-shadow);transform:translateX(calc(var(--ph) * 100%));
 }
 .lb-moon:not(.is-on)::after{display:none}
 .lb-moon.is-on[style*="--ph:1"]::after{display:none}
@@ -3000,7 +3074,7 @@ html[data-screen="home"] .chip svg{color:#9DB8FF}
 .lb-poster__orbit .o-const polyline{fill:none;stroke:rgba(230,236,252,.75);stroke-width:.6;stroke-dasharray:2 2}
 .lb-poster__orbit .o-const circle{fill:#fff}
 .lb-poster__orbit .o-lbl{font-family:var(--serif);font-style:italic;font-size:8px;fill:rgba(230,236,252,.8)}
-.lb-poster__tag{color:#9DB8FF}
+.lb-poster__tag{color:var(--color-glow)}
 .lb-poster__title{z-index:1}
 .lb-badge{
   background:none;color:var(--silver);transform:rotate(-6deg);
@@ -3025,20 +3099,20 @@ html[data-screen="home"] .chip svg{color:#9DB8FF}
   display:grid;place-items:center;font-family:var(--serif);font-size:.66rem;line-height:1;color:var(--rv-cream)}
 .lb-sq__en{left:1.95rem}
 .lb-sq__ico{color:#C9D6FF;filter:drop-shadow(0 0 .5rem rgba(110,150,255,.8))}
-.lb-sq small{color:#9DB8FF}
+.lb-sq small{color:var(--color-glow)}
 
 /* 4. 소환 — 둥근 글자띠와 은빛 별 */
 .lb-summon{background:radial-gradient(ellipse 45% 120% at 88% 50%,rgba(35,80,174,.55),transparent 70%),var(--rv-glass)}
 .lb-summon__ring{opacity:1;color:inherit}
 .lb-summon__ring .r-disc{fill:radial-gradient(#000,#000);fill:rgba(16,36,110,.85);stroke:rgba(222,230,250,.4);stroke-width:.6;filter:drop-shadow(0 0 5px rgba(58,104,232,.9))}
 .lb-summon__ring .r-text{font-family:var(--serif);font-size:7.4px;letter-spacing:.12em;fill:rgba(230,236,252,.85)}
-.lb-summon__ring .r-star{fill:#fff;filter:drop-shadow(0 0 3px #8FB0FF)}
+.lb-summon__ring .r-star{fill:#fff;filter:drop-shadow(0 0 3px var(--color-glow-alt))}
 .lb-summon__pen{font-family:var(--serif);font-style:italic;color:var(--silver);text-shadow:0 0 .8rem rgba(110,150,255,.8);right:5.6rem;bottom:.05rem;transform:none;opacity:1}
-.lb-summon__pen sup{font-size:.55em;margin-left:.05em;color:#9DB8FF}
+.lb-summon__pen sup{font-size:.55em;margin-left:.05em;color:var(--color-glow)}
 
 /* 왼쪽 아이콘 · 자막 · 서번트 */
 .lb-ico{filter:drop-shadow(0 0 .45rem rgba(58,104,232,.75)) drop-shadow(0 1px 2px rgba(0,0,0,.8))}
-.lb-ico[aria-pressed="true"]{color:#9DB8FF}
+.lb-ico[aria-pressed="true"]{color:var(--color-glow)}
 .lb-sub{text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 1rem rgba(3,5,16,.8)}
 .lb-fig__art{filter:drop-shadow(0 0 1.8rem rgba(58,104,232,.35))}
 .lb-fig:not(.has-art)::before{background:radial-gradient(ellipse 50% 60% at 50% 45%,rgba(110,150,255,.22),transparent 70%);border-color:rgba(222,230,250,.12)}
@@ -3068,10 +3142,10 @@ html[data-screen="home"] .chip svg{color:#9DB8FF}
 /* 낮 화면 — 천문 노트의 코발트 원반 · 금빛 별 */
 /* 소환 마법진 — 예전 그대로(가운데 빛). 폰에서도 남는 높이의 한가운데에 */
 .summon__ring{align-self:center}
-.chapter__no{background:radial-gradient(circle at 40% 35%,#4E7FE6,var(--cobalt) 55%,#0E215C);color:#fff;border:1.5px solid var(--gold);box-shadow:0 0 0 2px var(--note),0 0 0 3px rgba(20,47,114,.5)}
+.chapter__no{background:radial-gradient(circle at 40% 35%,var(--color-primary-soft),var(--cobalt) 55%,var(--color-primary-deep));color:#fff;border:1.5px solid var(--gold);box-shadow:0 0 0 2px var(--note),0 0 0 3px rgba(20,47,114,.5)}
 .chapter--locked .chapter__no{background:transparent;color:var(--text-dim);border:1px dashed rgba(20,47,114,.45);box-shadow:none}
 .panel__title::before{width:.85rem;height:.85rem;transform:none;background:var(--spark-gold) center/contain no-repeat}
-.desk__block{background:linear-gradient(160deg,#3B6BD8,var(--cobalt) 45%,#0E215C)!important}
+.desk__block{background:linear-gradient(160deg,#3B6BD8,var(--cobalt) 45%,var(--color-primary-deep))!important}
 @media (max-width:59.99rem) and (orientation:portrait){
   .lb-summon__pen,.lb-sq__en{display:none}
 }
@@ -3099,7 +3173,7 @@ html[data-screen="home"] .chip b{white-space:nowrap}
   background:
     url("../img/deco/stardust.svg") 0 0/600px auto,
     radial-gradient(ellipse 30% 120% at 50% 0%,rgba(58,104,232,.45),transparent 70%),
-    linear-gradient(180deg,#16307E,#0B1A4A 70%,#081236);
+    linear-gradient(180deg,#16307E,var(--color-night-raised) 70%,var(--color-night));
   border:1px solid rgba(201,167,94,.75);border-bottom:0;border-radius:1.1rem 1.1rem 0 0;
   box-shadow:0 -.5rem 1.4rem -.5rem rgba(10,16,44,.45),inset 0 1px 0 rgba(255,255,255,.12);
 }
@@ -3119,8 +3193,8 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 .dock__btn--summon[aria-current="page"]{color:#fff}
 .dock__orb{
   position:relative;width:3.8rem;height:3.8rem;
-  background:radial-gradient(circle at 50% 40%,#5A88EC,var(--cobalt) 45%,#0B1A4A 100%);
-  border:2px solid #EFE8D8;
+  background:radial-gradient(circle at 50% 40%,var(--color-primary-bright),var(--cobalt) 45%,var(--color-night-raised) 100%);
+  border:2px solid var(--color-paper);
   box-shadow:0 0 0 1.5px rgba(201,167,94,.9),0 0 0 5px rgba(11,26,74,.85),0 0 0 6px rgba(201,167,94,.45),0 0 1.6rem rgba(58,104,232,.65);
 }
 .dock__orb::before{   /* 점선 궤도 */
@@ -3158,14 +3232,14 @@ html[data-screen="home"] .chip b{white-space:nowrap}
   /* 서곡 NEW — 아이콘 옆 작은 빛점 */
   .lb-badge{
     top:.1rem;right:.35rem;bottom:auto;width:.5rem;height:.5rem;padding:0;border:0;border-radius:50%;
-    font-size:0;color:transparent;background:#8FB0FF;transform:none;box-shadow:0 0 .5rem #8FB0FF;
+    font-size:0;color:transparent;background:var(--color-glow-alt);transform:none;box-shadow:0 0 .5rem var(--color-glow-alt);
   }
   /* 소환 — 맨 아래 빛나는 메달 */
   .lb-summon{margin-top:.25rem}
   .lb-summon .lb-mini svg{
     width:2.9rem;height:2.9rem;padding:.6rem;border-radius:50%;
-    background:radial-gradient(circle at 50% 40%,#5A88EC,var(--cobalt) 50%,#0B1A4A);
-    border:1.5px solid #EFE8D8;fill:#fff;stroke:none;
+    background:radial-gradient(circle at 50% 40%,var(--color-primary-bright),var(--cobalt) 50%,var(--color-night-raised));
+    border:1.5px solid var(--color-paper);fill:#fff;stroke:none;
     box-shadow:0 0 0 1px rgba(201,167,94,.9),0 0 1.2rem rgba(58,104,232,.8);
   }
   .lb-summon .lb-mini{gap:.3rem}
@@ -3183,11 +3257,11 @@ html[data-screen="home"] .chip b{white-space:nowrap}
   filter:drop-shadow(0 .55rem .8rem rgba(0,0,0,.5)) drop-shadow(0 0 1.2rem rgba(58,104,232,.25));
   container-type:inline-size;
 }
-.lb .lb-ticket{color:#1D3F92}
+.lb .lb-ticket{color:var(--color-ink-print)}
 .lb-tk{position:relative;display:flex;aspect-ratio:2.5/1;width:100%;text-align:left;text-shadow:0 1px 0 rgba(255,255,255,.65)}
 .lb-tk__body,.lb-tk__stub{
   position:relative;height:100%;
-  background:url("../img/deco/grain.svg"),linear-gradient(180deg,#F3EEE3,#E6DFCE);
+  background:url("../img/deco/grain.svg"),linear-gradient(180deg,var(--color-paper-light),var(--color-paper-shade));
 }
 /* 본권 — 왼쪽 우표 물결, 오른쪽 절취 구멍과 반달 홈 */
 .lb-tk__body{
@@ -3249,9 +3323,9 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 .lb-tk__cell b svg{width:2.6cqw;height:2.6cqw;fill:var(--gold);filter:drop-shadow(0 0 1px rgba(150,110,40,.6))}
 .lb-tk__big{font-family:var(--serif);font-size:8.4cqw;line-height:1;place-content:center;padding:0 2.6cqw}
 .lb-tk__seal{width:10.5cqw;height:10.5cqw;transition:transform .4s ease}
-.lb-tk__seal .s-disc{fill:#1D3F92}
-.lb-tk__seal .s-ring{fill:none;stroke:#EFE8D8;stroke-width:.7;stroke-dasharray:1.2 1.4}
-.lb-tk__seal .s-moon{fill:#EFE8D8}
+.lb-tk__seal .s-disc{fill:var(--color-ink-print)}
+.lb-tk__seal .s-ring{fill:none;stroke:var(--color-paper);stroke-width:.7;stroke-dasharray:1.2 1.4}
+.lb-tk__seal .s-moon{fill:var(--color-paper)}
 .lb-tk__seal .s-star{fill:var(--gold)}
 .lb-tk__enter{font-family:'Nanum Myeongjo',var(--main);font-weight:800;font-size:5.2cqw;letter-spacing:.2em;line-height:1;margin-right:-.2em}
 .lb-tk__en{font-family:var(--serif);font-size:2.3cqw;letter-spacing:.3em;opacity:.75}
@@ -3301,10 +3375,10 @@ html[data-screen="home"] .chip b{white-space:nowrap}
      --font-ui    본문 글꼴
      --shadow-rgb 밤하늘 그림자 */
 .dock{
-  --ink:#E9EEFA;
+  --ink:var(--color-ink-on-night);
   --ink-rgb:233,238,250;
   --on-ink:var(--cobalt-deep);
-  --fill-on:#EFE8D8;
+  --fill-on:var(--color-paper);
   --fill-slab:var(--cobalt-deep);
   --font-ui:var(--main);
   --shadow-rgb:3,5,16;
@@ -3379,3 +3453,27 @@ html[data-screen="home"] .chip b{white-space:nowrap}
   .dock__glyph,.dock__dot,.dock__tip{transition:none}
 }
 .dock__btn--summon,.dock__btn--summon[data-near]{opacity:1}
+
+/* ── 정직한 상태 — 못 불러온 것은 못 불러왔다고 ── */
+.face-fallback{display:grid;place-items:center;width:52%;margin:auto;color:inherit}
+.face-fallback[hidden]{display:none}
+.face-fallback svg{width:100%;height:auto}
+.seal--missing{display:grid;place-items:center;padding:.4rem;font-size:.62rem;line-height:1.3;text-align:center;color:var(--color-text-dim);border:1px dashed currentColor;border-radius:50%;aspect-ratio:1}
+/* 음악: 대기는 은은하게 깜빡, 오류는 붉은 점 */
+.bgm-wait #btnBgm .chip__label{animation:bgmWait 1.6s ease-in-out infinite}
+@keyframes bgmWait{50%{opacity:.45}}
+.bgm-error #btnBgm .chip__label{color:var(--color-danger)}
+html[data-screen="home"].bgm-error #btnBgm .chip__label{color:#FF9C92}
+.bgm-error #casState{color:var(--color-danger)}
+@media (prefers-reduced-motion:reduce){.bgm-wait #btnBgm .chip__label{animation:none}}
+
+/* ── 손가락 크기 — 터치 화면에서는 누를 자리를 44px 이상으로 ──
+   모양은 그대로 두고 누르는 범위만 넓힌다(안쪽 여백 + 같은 만큼 바깥 여백 빼기). */
+@media (pointer:coarse){
+  #btnBgm,html[data-screen="home"] #btnBgm{min-height:44px;min-width:44px}
+  .seg__btn,#segServant,#segMaster,.pf-tab,#tabStatus,#tabLore,#tabSkill,#tabNp,.gbtn,#notifyEmail{min-height:44px}
+  #pfClose{min-width:44px;min-height:44px}
+  .pf-link,#standMaster{padding-block:.7rem;margin-block:-.7rem}
+  .lb-ticket .lb-mini,.lb-mini{min-height:44px;align-content:center}
+}
+.lb .player{cursor:pointer}   /* 작은 재생 단추 대신 카세트 전체를 눌러도 된다 */

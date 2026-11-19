@@ -18,7 +18,8 @@
   const svg = inner =>
     `<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">${inner}</svg>`;
   // 영주 그림 — 장식이라 대체 글은 비운다 (이름은 카드와 프로필에 따로 적혀 있다)
-  const seal = src => `<img class="seal" src="${src}" alt="" decoding="async">`;
+  // 영주 그림을 못 불러오면 깨진 그림 아이콘 대신 '그림 없음' 표시
+  const seal = src => `<img class="seal" src="${src}" alt="영주 그림" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'seal seal--missing',textContent:'영주 그림을 불러오지 못했어요'}))">`;
   const GLYPH_SEALED =
     '<svg viewBox="0 0 64 64" fill="currentColor" stroke="none"><path d="M32 13a10 10 0 1 1 0 20 10 10 0 0 1 0-20z"/><path d="M13 55c0-11 8.5-17 19-17s19 6 19 17z"/></svg>';
 
@@ -166,13 +167,34 @@
   try { bgmOn = window.localStorage.getItem('fe-bgm') !== 'off'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
 
   const playerBtn = $('#playerBtn');
+  /* 화면이 거짓말하지 않게 — "켜 둠"과 "소리가 나는 중"은 다르다.
+     켬 · 끔 말고도 두 가지를 따로 보여 준다.
+       대기 : 켜 두었지만 브라우저가 아직 재생을 허락하지 않았다 → 누르면 재생
+       오류 : 음악 파일을 불러오지 못했다 → 누르면 다시 불러온다
+     오류를 '끔'으로 그리면, 사용자는 자기가 껐다고 믿고 다시 켜지 않는다. */
+  let bgmTrouble = null;   // null | 'wait' | 'error'
+  const BGM_TEXT = {
+    on:    { chip: 'BGM',       cas: 'Now Playing', aria: '배경음악 끄기' },
+    off:   { chip: 'BGM',       cas: 'Paused',      aria: '배경음악 켜기' },
+    wait:  { chip: 'BGM 대기',  cas: 'Ready',       aria: '배경음악 재생 대기 중 — 누르면 재생' },
+    error: { chip: 'BGM 오류',  cas: "Can't load",  aria: '배경음악을 불러오지 못했어요 — 누르면 다시 시도' },
+  };
   function paintBgm() {
+    const state = !bgmOn ? 'off' : (bgmTrouble || 'on');
+    const t = BGM_TEXT[state];
     [btnBgm, playerBtn].forEach(b => {
-      b.setAttribute('aria-pressed', String(bgmOn));
-      b.setAttribute('aria-label', bgmOn ? '배경음악 끄기' : '배경음악 켜기');
+      b.setAttribute('aria-pressed', String(state === 'on'));
+      b.setAttribute('aria-label', t.aria);
     });
-    document.documentElement.classList.toggle('bgm-off', !bgmOn);
+    btnBgm.querySelector('.chip__label').textContent = t.chip;
+    $('#casState').textContent = t.cas;
+    const root = document.documentElement.classList;
+    root.toggle('bgm-off', state !== 'on');
+    root.toggle('bgm-wait', state === 'wait');
+    root.toggle('bgm-error', state === 'error');
   }
+  bgm.addEventListener('error', () => { bgmTrouble = 'error'; paintBgm(); });
+  bgm.addEventListener('playing', () => { if (bgmTrouble) { bgmTrouble = null; paintBgm(); } });
   function fadeTo(target, done) {
     window.clearInterval(fadeTimer);
     if (reduce) { bgm.volume = target; done && done(); return; }
@@ -191,7 +213,11 @@
     if (!bgmOn) return;
     bgm.volume = 0;
     const p = bgm.play();
-    if (p && p.then) p.then(() => fadeTo(bgmTarget)).catch(() => {});
+    if (p && p.then) p.then(() => fadeTo(bgmTarget)).catch(err => {
+      // 막힌 이유를 구분한다 — 허락이 없어서인지, 파일이 없어서인지
+      bgmTrouble = err && err.name === 'NotAllowedError' ? 'wait' : 'error';
+      paintBgm();
+    });
     else fadeTo(bgmTarget);
   }
   // 음량을 v 로 천천히 옮긴다. 0 이면 소리만 줄이고 멈추지는 않는다
@@ -204,7 +230,16 @@
   function stopBgm() { fadeTo(0, () => bgm.pause()); }
 
   playerBtn.addEventListener('click', () => btnBgm.click());
+  // 재생 단추가 손가락보다 작다 — 카세트 어디를 눌러도 같은 일을 한다
+  const cassette = playerBtn.closest('.player');
+  cassette && cassette.addEventListener('click', e => { if (!e.target.closest('#playerBtn')) btnBgm.click(); });
   btnBgm.addEventListener('click', () => {
+    // 대기 · 오류일 때 누르면 끄는 게 아니라 다시 시도한다
+    if (bgmOn && bgmTrouble) {
+      if (bgmTrouble === 'error') bgm.load();
+      bgmTrouble = null; paintBgm(); playBgm();
+      return;
+    }
     bgmOn = !bgmOn;
     try { window.localStorage.setItem('fe-bgm', bgmOn ? 'on' : 'off'); } catch (e) { /* 무시 */ }
     paintBgm();
@@ -500,12 +535,17 @@
   // 그림이 있는 서번트는 그림을, 없으면 문양을 보여 준다
   function setArt(imgSel, boxSel, src) {
     const img = $(imgSel);
+    // 그림 파일을 못 불러오면 빈 자리나 깨진 그림 대신 원래 문양으로 돌아간다
+    img.onerror = src ? () => setArt(imgSel, boxSel, null) : null;
     if (src) img.src = src; else img.removeAttribute('src');
     img.hidden = !src;
     $(boxSel).classList.toggle('has-art', !!src);
     $(boxSel).parentElement.classList.toggle('has-art', !!src);
   }
-  const faceImg = (r, cls) => `<img class="${cls}" src="${r.face}" alt="" decoding="async">`;
+  // 얼굴 컷을 못 불러오면 그 자리에 문양을 그린다 (바로 뒤에 숨겨 둔 문양이 드러난다)
+  const faceImg = (r, cls) =>
+    `<img class="${cls}" src="${r.face}" alt="" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false">` +
+    `<span class="face-fallback" hidden aria-hidden="true">${r.glyph}</span>`;
 
   function feature(index) {
     const item = lines[index];
