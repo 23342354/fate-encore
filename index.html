@@ -108,6 +108,7 @@
         <div class="lb">
           <div class="lb-bg" aria-hidden="true"></div>
           <span class="lb-type" id="standType" aria-hidden="true">CASTER</span>
+          <span class="lb-spark s1" aria-hidden="true"></span><span class="lb-spark s2" aria-hidden="true"></span><span class="lb-spark s3" aria-hidden="true"></span>
 
           <!-- 스탠딩 — 누르면 다음 서번트의 한마디 -->
           <button class="lb-fig" type="button" id="standArch" aria-label="다음 서번트의 한마디 듣기">
@@ -126,12 +127,20 @@
 
           <!-- 오른쪽 — 메인 메뉴 -->
           <div class="lb-menu">
+            <div class="lb-moons" id="lbMoons" aria-hidden="true"></div>
             <button class="lb-poster" type="button" id="bannerPrologue" aria-label="서곡 — 발신인 없는 초대장 읽기">
               <span class="lb-poster__img" aria-hidden="true"></span>
-              <span class="lb-poster__tag">Prologue</span>
+              <svg class="lb-poster__orbit" viewBox="0 0 300 130" aria-hidden="true">
+                <defs><path id="lbOrbit" d="M150 17a128 48 0 1 1-.1 0"/></defs>
+                <ellipse cx="150" cy="65" rx="116" ry="37" class="o-fill"/>
+                <text class="o-text"><textPath href="#lbOrbit">PROLOGUE · AN INVITATION WITHOUT A SENDER · UKIHA, FUKUOKA · THE SIXTH ·</textPath></text>
+                <g class="o-const"><polyline points="196,48 214,40 236,46 250,62 242,80 222,86"/>
+                  <circle cx="196" cy="48" r="1.8"/><circle cx="214" cy="40" r="1.4"/><circle cx="236" cy="46" r="2.4"/><circle cx="250" cy="62" r="1.4"/><circle cx="242" cy="80" r="1.8"/><circle cx="222" cy="86" r="1.4"/></g>
+                <text class="o-lbl" x="244" y="43">α</text>
+              </svg>
+              <span class="lb-poster__tag">Prologue · 序</span>
               <span class="lb-poster__title"><small>서곡</small>발신인 없는 초대장</span>
-              <span class="lb-poster__pen" aria-hidden="true">an invitation</span>
-              <span class="lb-badge" id="storyBadge">NEW</span>
+              <span class="lb-badge" id="storyBadge">New</span>
             </button>
             <button class="lb-ticket" type="button" data-go="story">
               <span class="lb-ticket__main"><small>Enter</small><i>the</i><b>Story</b></span>
@@ -139,21 +148,26 @@
             </button>
             <div class="lb-pair">
               <button class="lb-sq" type="button" data-go="cast" data-seg="servant" id="btnRoster" aria-label="서번트 — 캐스트 화면 열기">
-                <span class="lb-sq__en">Servant</span>
+                <span class="lb-sq__no" aria-hidden="true">1</span><span class="lb-sq__en">Servant</span>
                 <svg class="lb-sq__ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M24 6c5 0 8 4 8 9s-3 9-8 9-8-4-8-9 3-9 8-9z"/><path d="M9 43c1.5-9 7.5-14 15-14s13.5 5 15 14"/><path d="M33 8l6-3M35 13h6"/></svg>
                 <b>서번트</b><small><span id="rosterCount">4 / 7</span></small>
                 <span class="sr" id="rosterGrid"></span>
               </button>
               <button class="lb-sq" type="button" data-go="cast" data-seg="master" aria-label="마스터 — 캐스트 화면 열기">
-                <span class="lb-sq__en">Master</span>
+                <span class="lb-sq__no" aria-hidden="true">2</span><span class="lb-sq__en">Master</span>
                 <svg class="lb-sq__ico" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="12" width="32" height="24" rx="1.5"/><circle cx="18" cy="23" r="4"/><path d="M12 32c1-3 3.2-4.5 6-4.5s5 1.5 6 4.5M28 20h8M28 25h8M28 30h5"/></svg>
                 <b>마스터</b><small>4명</small>
               </button>
             </div>
             <button class="lb-summon" id="btnSummon" type="button" data-go="summon">
               <span class="lb-summon__txt"><small>Summon</small><b>소환</b><em>Pick Up · 공개 <span id="tileCount">4</span>기</em></span>
-              <svg class="lb-summon__ring" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="50" cy="50" r="44"/><circle cx="50" cy="50" r="36"/><circle cx="50" cy="50" r="7"/><path d="M50 14 71 79 16 39h68L29 79z"/><path d="M50 6v8M50 86v8M6 50h8M86 50h8"/></svg>
-              <span class="lb-summon__pen" aria-hidden="true">Summon</span>
+              <svg class="lb-summon__ring" viewBox="0 0 100 100" aria-hidden="true">
+                <defs><path id="lbRing" d="M50 11a39 39 0 1 1-.1 0"/></defs>
+                <circle cx="50" cy="50" r="30" class="r-disc"/>
+                <text class="r-text"><textPath href="#lbRing">SUMMON · THE SIXTH HOLY GRAIL WAR · 第六次 ·</textPath></text>
+                <path class="r-star" d="M50 24C51 44 56 49 76 50C56 51 51 56 50 76C49 56 44 51 24 50C44 49 49 44 50 24Z"/>
+              </svg>
+              <span class="lb-summon__pen" aria-hidden="true">Summon<sup>†</sup></span>
             </button>
           </div>
 

@@ -460,6 +460,10 @@
   $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
   $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
     `<span class="roster__cell${r.name ? ' is-on' : ''}"><i aria-hidden="true"></i>${r.cls.slice(0, 3)}</span>`).join('');
+  // 로비 위 달 일곱 개 — 차오르는 순서로, 공개된 서번트만 빛난다
+  const PHASES = [.12, .3, .5, 1, .5, .3, .12];
+  $('#lbMoons').innerHTML = ROSTER.map((r, k) =>
+    `<span class="lb-moon${r.name ? ' is-on' : ''}" style="--ph:${PHASES[k] ?? 1}" title="${r.cls}"></span>`).join('');
 
   document.addEventListener('click', e => {
     const card = e.target.closest('button.card, button.cwin');
