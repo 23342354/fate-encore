@@ -47,7 +47,7 @@
       glyph: svg('<path d="M16 44 L16 26 l8 8 8 -14 8 14 8 -8 0 18 z"/><path d="M16 48 L48 48"/>') },
   ];
   const lines = ROSTER.filter(r => r.name);   // 공개된 서번트만
-  // 마스터 문양 — 영주 그림이 없는 마스터는 령주를 본뜬 기본 표식. 그림은 ROSTER 의 masterGlyph
+  // 마스터 문양 — 영주 그림이 없는 마스터는 영주를 본뜬 기본 표식. 그림은 ROSTER 의 masterGlyph
   const GLYPH_MASTER = svg('<path d="M32 9 C25 19 25 27 32 33 C39 27 39 19 32 9 Z"/><path d="M13 29 C21 35 27 41 32 55 C37 41 43 35 51 29"/><path d="M21 24 q-7 11 4 19"/><path d="M43 24 q7 11 -4 19"/>');
   const masterGlyph = r => r.masterGlyph || GLYPH_MASTER;
 
@@ -455,7 +455,7 @@
   }
   segS.addEventListener('click', () => showSide('servant'));
   segM.addEventListener('click', () => showSide('master'));
-  $('#hudCount').textContent = `${lines.length}/${ROSTER.length}`;
+  $("#hudCount").textContent = `${lines.length} / ${ROSTER.length}`;
   $('#tileCount').textContent = lines.length;
   $('#rosterCount').textContent = `${lines.length} / ${ROSTER.length}`;
   $('#rosterGrid').innerHTML = ROSTER.map((r, k) =>
