@@ -1029,6 +1029,7 @@
     ready = false;
     for (;;) {
       at++;
+      vnp.style.setProperty('--vn-prog', SCRIPT.length ? Math.min(1, (at + 1) / SCRIPT.length).toFixed(4) : 0);
       const s = SCRIPT[at];
       if (!s || s.end) { finishPrologue(); return; }
 

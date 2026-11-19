@@ -1224,40 +1224,82 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 }
 .vnp__fx{pointer-events:none}
 
-/* 지명 자막 */
+/* 서곡 전용 이름 — 밤 위의 은빛 글자, 금실, 코발트 빛 */
+.vnp{
+  --vn-ink:var(--color-ink-on-night);
+  --vn-ink-dim:rgba(233,238,250,.62);
+  --vn-gilt:var(--color-accent);
+  --vn-gilt-soft:rgba(216,197,142,.55);
+  --vn-glow:var(--color-glow);
+  --vn-glass:rgba(7,10,24,.62);
+  --vn-line:rgba(233,238,250,.18);
+  --vn-measure:36rem;
+}
+
+/* 지명 자막 — 금실 한 줄 위에 명조, 앞에 은빛 별 */
 .vnp__place{
-  position:absolute;left:clamp(1.2rem,5vw,4rem);bottom:clamp(6rem,16vh,9rem);z-index:3;margin:0;
-  font-family:'Nanum Myeongjo',var(--sans);font-size:clamp(1.05rem,2.6vw,1.4rem);line-height:1.8;
-  letter-spacing:.12em;color:#fff;text-shadow:0 1px 12px rgba(0,0,0,.7);
-  padding-left:1rem;border-left:2px solid rgba(255,255,255,.7);
+  position:absolute;left:clamp(1.2rem,6vw,5rem);bottom:clamp(6rem,17vh,10rem);z-index:5;margin:0;pointer-events:none;
+  padding:.9rem 1.4rem .9rem 1.25rem;
+  font-family:'Nanum Myeongjo',var(--sans);font-weight:700;font-size:clamp(1.05rem,2.6vw,1.45rem);line-height:1.75;
+  letter-spacing:.14em;color:var(--vn-ink);text-shadow:0 1px 14px rgba(4,6,16,.85),0 0 2px rgba(4,6,16,.6);
+  background:linear-gradient(90deg,rgba(7,10,24,.55),rgba(7,10,24,.18) 70%,transparent);
+  border-left:1px solid var(--vn-gilt);
   opacity:0;transform:translateX(-.6rem);transition:opacity 1.2s ease,transform 1.2s ease;
+}
+.vnp__place::before{
+  content:"";position:absolute;left:-.4rem;top:-.4rem;width:.8rem;height:.8rem;
+  background:var(--vn-ink);-webkit-mask:url(../img/deco/sparkle.svg) center/contain no-repeat;mask:url(../img/deco/sparkle.svg) center/contain no-repeat;
+  filter:drop-shadow(0 0 .35rem rgba(157,184,255,.9));
 }
 .vnp__place.is-on{opacity:1;transform:none}
 
-/* 전면 글 — 페이트 원작처럼 화면 위로 문단이 쌓인다 */
+/* 전면 글 — 페이트 원작처럼 화면 위로 문단이 쌓인다.
+   그림은 살리고 글줄 뒤만 짙게: 화면 전체를 고르게 덮던 막 대신 글 기둥 뒤로 모이는 밤빛 */
 .vnp__page{
   position:absolute;z-index:4;inset:0;overflow:hidden;
-  padding:clamp(4.2rem,11vh,6.5rem) max(clamp(1.3rem,6vw,4rem),calc((100% - 40rem) / 2)) clamp(3.2rem,9vh,5rem);
-  background:linear-gradient(180deg,rgba(4,8,12,.6),rgba(4,8,12,.42) 40%,rgba(4,8,12,.62));
+  padding:clamp(4.6rem,12vh,7rem) max(clamp(1.4rem,6vw,4rem),calc((100% - var(--vn-measure)) / 2)) clamp(3.6rem,10vh,5.5rem);
+  background:
+    radial-gradient(ellipse 46rem 120% at 50% 30%,rgba(5,8,22,.62),rgba(5,8,22,.3) 70%,transparent),
+    linear-gradient(180deg,rgba(5,8,22,.55),rgba(5,8,22,.22) 45%,rgba(5,8,22,.5));
   opacity:0;transition:opacity .6s ease;
 }
 .vnp__page.is-on{opacity:1}
 .vnp__p{
-  margin:0 0 1.15em;
-  font-family:var(--sans);font-size:clamp(1rem,2.3vw,1.14rem);line-height:1.95;letter-spacing:-.003em;
-  color:#EEF2F3;text-shadow:0 1px 6px rgba(0,0,0,.65);
-  animation:pIn .5s ease;
+  margin:0 0 1.2em;
+  font-family:var(--sans);font-weight:400;font-size:clamp(1.02rem,2.3vw,1.16rem);line-height:2;letter-spacing:-.005em;
+  color:var(--vn-ink);text-shadow:0 1px 3px rgba(4,6,16,.9),0 0 18px rgba(4,6,16,.55);
+  animation:pIn .6s ease;
 }
-@keyframes pIn{from{opacity:0}}
+/* 앞 문단은 한 걸음 물러난다 — 지금 읽는 줄이 또렷하게 */
+.vnp__p:not(.is-last){color:rgba(233,238,250,.78);transition:color .6s ease}
+@keyframes pIn{from{opacity:0;transform:translateY(.25rem)}}
+
+/* 안내문 — 활판으로 찍은 공문: 명조, 금실 세로선, 머리에 라틴 꼬리표 */
 .vnp__p--notice{
-  font-family:'Nanum Myeongjo',var(--sans);color:#F2EBD8;
-  padding:.1rem 0 .1rem 1rem;border-left:1px solid rgba(227,217,184,.6);
+  position:relative;
+  font-family:'Nanum Myeongjo',var(--sans);font-weight:700;letter-spacing:.02em;color:#F3EBD6;
+  padding:.15rem 0 .15rem 1.2rem;border-left:1px solid var(--vn-gilt-soft);
 }
+.vnp__p--notice:not(.is-last){color:rgba(243,235,214,.74)}
+.vnp__p--notice:first-child{margin-top:.4rem}
 .vnp__p--notice:first-child::before{
-  content:"안내문";display:block;margin-bottom:.5rem;
-  font-family:var(--main);font-size:.72rem;letter-spacing:.3em;color:rgba(227,217,184,.75);
+  content:"안내문  ·  Notice";display:block;margin:0 0 .85rem;white-space:pre;
+  font-family:var(--serif);font-style:italic;font-weight:400;font-size:.82rem;letter-spacing:.24em;color:var(--vn-gilt);
 }
-.vnp__p .more{color:var(--color-glow-dim)}
+.vnp__p--notice:first-child::after{
+  content:"";position:absolute;left:-.3rem;top:-.25rem;width:.6rem;height:.6rem;
+  background:var(--vn-gilt);-webkit-mask:url(../img/deco/sparkle.svg) center/contain no-repeat;mask:url(../img/deco/sparkle.svg) center/contain no-repeat;
+}
+
+/* 다음 표시 — ▼ 대신 숨 쉬는 은빛 별 */
+.vnp__p .more{
+  display:inline-block;width:.72em;height:.72em;margin-left:.45em;vertical-align:-.02em;
+  font-size:inherit;color:transparent;overflow:hidden;
+  background:var(--vn-ink);-webkit-mask:url(../img/deco/sparkle.svg) center/contain no-repeat;mask:url(../img/deco/sparkle.svg) center/contain no-repeat;
+  filter:drop-shadow(0 0 .3rem rgba(157,184,255,.95));
+  animation:vnMore 1.8s ease-in-out infinite;
+}
+@keyframes vnMore{0%,100%{opacity:.45;transform:scale(.8)}50%{opacity:1;transform:scale(1.05) rotate(45deg)}}
 .vnp__p:not(.is-last) .more{display:none}
 /* 종이 카드 — 편지 */
 .vnp__letter{
@@ -1289,12 +1331,37 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 .vnp__cg::before{top:0}
 .vnp__cg::after{bottom:0}
 .vnp__cg.has-img::before,.vnp__cg.has-img::after{display:none}
-.vnp__cg p{
-  margin:0;max-width:min(86vw,32rem);padding:0 1rem;text-align:center;
-  font-family:'Nanum Myeongjo',var(--sans);font-size:clamp(1rem,2.6vw,1.2rem);line-height:2;
-  color:rgba(238,242,243,.86);letter-spacing:.03em;
+/* 그림이 없을 때 — 비어 있는 액자. 은빛 이중선 틀과 네 귀의 별, 위에 '일러스트 미수록' */
+.vnp__cg:not(.has-img){
+  background:
+    url(../img/deco/stardust.svg) center/cover,
+    radial-gradient(ellipse at 50% 50%,#0B1A4A 0%,#070A18 70%);
 }
-.vnp__cg p::before,.vnp__cg p::after{content:"—";margin:0 .7em;color:rgba(140,170,232,.6)}
+.vnp__cg p{
+  position:relative;z-index:1;margin:0;
+  width:min(84vw,34rem);padding:clamp(2.4rem,7vh,3.6rem) clamp(1.4rem,5vw,2.6rem);text-align:center;
+  font-family:'Nanum Myeongjo',var(--sans);font-weight:700;font-size:clamp(1.02rem,2.6vw,1.22rem);line-height:2;
+  color:var(--vn-ink);letter-spacing:.04em;
+  border:1px solid var(--vn-line);
+  box-shadow:inset 0 0 0 5px rgba(7,10,24,.6),inset 0 0 0 6px var(--vn-line),0 0 2.4rem -.6rem rgba(58,104,232,.45);
+}
+.vnp__cg p:empty{display:none}
+.vnp__cg p::before{
+  content:"Illustration  ·  미수록";position:absolute;left:50%;top:0;transform:translate(-50%,-50%);
+  padding:0 .9rem;white-space:pre;background:#08102E;
+  font-family:var(--serif);font-style:italic;font-weight:400;font-size:.78rem;letter-spacing:.22em;color:var(--vn-gilt);
+}
+.vnp__cg p::after{
+  content:"";position:absolute;inset:-.35rem;pointer-events:none;
+  background:
+    var(--vn-ink-dim);
+  -webkit-mask:
+    url(../img/deco/sparkle.svg) left top/.7rem no-repeat,url(../img/deco/sparkle.svg) right top/.7rem no-repeat,
+    url(../img/deco/sparkle.svg) left bottom/.7rem no-repeat,url(../img/deco/sparkle.svg) right bottom/.7rem no-repeat;
+  mask:
+    url(../img/deco/sparkle.svg) left top/.7rem no-repeat,url(../img/deco/sparkle.svg) right top/.7rem no-repeat,
+    url(../img/deco/sparkle.svg) left bottom/.7rem no-repeat,url(../img/deco/sparkle.svg) right bottom/.7rem no-repeat;
+}
 
 /* 타이틀 */
 .vnp__title{
@@ -1311,38 +1378,81 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 .vnp__war{margin:0;font-family:'Nanum Myeongjo',var(--sans);font-size:clamp(.95rem,2.4vw,1.1rem);letter-spacing:.1em;color:var(--accent)}
 .vnp__copy{margin:0;font-size:clamp(1rem,2.4vw,1.15rem);color:var(--text)}
 
-/* 조작 */
+/* 조작 — 밤 유리 한 장에 은빛 이중선. 칸 사이는 가는 선, 켜진 칸은 아래 금실과 코발트 빛 */
 .vnp__bar{
-  position:absolute;z-index:8;top:calc(.7rem + env(safe-area-inset-top));right:.7rem;
-  display:flex;gap:.35rem;cursor:default;
+  position:absolute;z-index:8;top:calc(.8rem + env(safe-area-inset-top));right:.8rem;
+  display:flex;align-items:stretch;cursor:default;
+  background:var(--vn-glass);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  border:1px solid var(--vn-line);border-radius:var(--r-tab,.35rem);
+  box-shadow:inset 0 0 0 3px rgba(7,10,24,.4),inset 0 0 0 4px rgba(222,230,250,.08),0 0 1.4rem -.5rem rgba(58,104,232,.45);
+  transition:background .4s ease,border-color .4s ease;
 }
 .vnp__btn{
-  padding:.32rem .75rem;cursor:pointer;
-  font-family:var(--display);font-size:.78rem;letter-spacing:.16em;line-height:1.6;
-  color:rgba(238,242,243,.8);background:rgba(4,8,12,.45);
-  border:1px solid rgba(140,170,232,.4);border-radius:2px;
-  transition:color .2s ease,background .2s ease;
+  position:relative;min-height:2.25rem;padding:0 .95rem;cursor:pointer;
+  font-family:var(--serif);font-size:.86rem;letter-spacing:.2em;line-height:1;
+  color:var(--vn-ink-dim);background:none;border:0;border-radius:0;
+  transition:color .2s ease,text-shadow .2s ease;
 }
-.vnp__btn:hover{color:#fff;background:rgba(35,80,174,.55)}
-.vnp__btn[aria-pressed="true"],.vnp__btn[aria-expanded="true"]{color:var(--color-night-deep);background:var(--color-glow-dim);border-color:var(--color-glow-faint)}
-.vnp__btn--x{font-family:var(--main);letter-spacing:0;padding:.32rem .65rem}
-.vnp[data-scene="pov"] .vnp__btn,.vnp:has(.vnp__title:not([hidden])) .vnp__btn{color:var(--accent-strong);background:rgba(255,255,255,.7);border-color:rgba(35,80,174,.4)}
+.vnp__btn + .vnp__btn{border-left:1px solid var(--vn-line)}
+.vnp__btn::after{
+  content:"";position:absolute;left:50%;bottom:.3rem;width:0;height:1px;
+  background:var(--vn-gilt);transform:translateX(-50%);transition:width .25s ease;
+}
+.vnp__btn:hover{color:var(--vn-ink);text-shadow:0 0 .6rem rgba(157,184,255,.8)}
+.vnp__btn:hover::after{width:1rem}
+.vnp__btn:active{transform:translateY(1px)}
+.vnp__btn:focus-visible{outline:2px solid var(--vn-glow);outline-offset:-4px}
+.vnp__btn[aria-pressed="true"],.vnp__btn[aria-expanded="true"]{color:var(--vn-ink);text-shadow:0 0 .7rem rgba(157,184,255,.95)}
+.vnp__btn[aria-pressed="true"]::after,.vnp__btn[aria-expanded="true"]::after{width:calc(100% - 1.6rem)}
+.vnp__btn--x{font-family:var(--main);font-size:.95rem;letter-spacing:0;padding:0 .85rem}
+.vnp__btn--x::after{display:none}
+/* 밝은 종이 장면(타이틀 · 시점)에서는 크림 칩으로 바꾼다 — 코발트 잉크 */
+.vnp[data-scene="pov"] .vnp__bar,.vnp:has(.vnp__title:not([hidden])) .vnp__bar{
+  background:rgba(243,238,227,.86);border-color:rgba(20,47,114,.22);box-shadow:0 1px 0 rgba(8,9,11,.05),0 .7rem 1.4rem -.7rem rgba(10,16,44,.32);
+}
+.vnp[data-scene="pov"] .vnp__btn,.vnp:has(.vnp__title:not([hidden])) .vnp__btn{color:var(--color-primary-strong);text-shadow:none}
+.vnp[data-scene="pov"] .vnp__btn + .vnp__btn,.vnp:has(.vnp__title:not([hidden])) .vnp__btn + .vnp__btn{border-left-color:rgba(20,47,114,.16)}
+
+/* 진행 — 화면 맨 위의 금실. 서곡을 얼마나 읽었는지 */
+.vnp__prog{
+  position:absolute;z-index:8;left:0;right:0;top:0;height:2px;pointer-events:none;
+  background:linear-gradient(90deg,rgba(184,145,74,.0),rgba(201,167,94,.18));
+}
+.vnp__prog::before{
+  content:"";position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--vn-prog,0));
+  background:linear-gradient(90deg,#B8914A,#EED9A0 60%,#E4CB8A);
+  box-shadow:0 0 .5rem rgba(238,217,160,.55);
+  transition:transform .8s ease;
+}
+
+/* 지난 문장 — 밤 유리 노트. 줄마다 은빛 실선, 안내문·편지는 명조 */
 .vnp__log{
-  position:absolute;z-index:9;inset:3.4rem .7rem .7rem;overflow-y:auto;cursor:default;
-  padding:1.2rem clamp(1rem,4vw,2rem);
-  background:rgba(8,15,20,.94);border:1px solid rgba(140,170,232,.35);border-radius:.4rem;
-  user-select:text;-webkit-user-select:text;
+  position:absolute;z-index:9;top:calc(3.9rem + env(safe-area-inset-top));right:.8rem;bottom:.8rem;
+  width:min(calc(100% - 1.6rem),40rem);overflow-y:auto;cursor:default;
+  padding:1.4rem clamp(1.1rem,4vw,2.2rem) 1.6rem;
+  background:rgba(7,10,24,.93);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border:1px solid var(--vn-line);border-radius:var(--r-panel,.6rem);
+  box-shadow:inset 0 0 0 4px rgba(7,10,24,.6),inset 0 0 0 5px rgba(222,230,250,.08),0 0 2.4rem -.6rem rgba(58,104,232,.5);
+  user-select:text;-webkit-user-select:text;scrollbar-width:thin;scrollbar-color:rgba(157,184,255,.35) transparent;
 }
-.vnp__log-head{margin:0 0 .8rem;font-size:.8rem;letter-spacing:.2em;color:var(--color-glow-dim)}
-.vnp__log-list{margin:0;padding:0;list-style:none;font-family:var(--sans);font-size:.93rem;line-height:1.85;color:#CFD9DC}
-.vnp__log-list li{padding:.5rem 0;border-top:1px solid rgba(140,170,232,.12)}
-.vnp__log-list .is-notice,.vnp__log-list .is-letter{font-family:'Nanum Myeongjo',var(--sans);color:#F2EBD8}
-.vnp__log-list .is-cg,.vnp__log-list .is-place{color:#8FA4AC;font-size:.85rem}
+.vnp__log-head{
+  display:flex;align-items:baseline;gap:.8rem;margin:0 0 1rem;padding-bottom:.85rem;
+  font-family:'Nanum Myeongjo',var(--sans);font-weight:700;font-size:1.05rem;letter-spacing:.06em;color:var(--vn-ink);
+  border-bottom:1px solid var(--vn-gilt-soft);
+}
+.vnp__log-head::after{content:"Backlog";font-family:var(--serif);font-style:italic;font-weight:400;font-size:.9rem;letter-spacing:.12em;color:var(--vn-gilt)}
+.vnp__log-list{margin:0;padding:0;list-style:none;font-family:var(--sans);font-size:.95rem;line-height:1.9;color:rgba(233,238,250,.86)}
+.vnp__log-list li{padding:.6rem 0;border-top:1px solid rgba(233,238,250,.08)}
+.vnp__log-list li:first-child{border-top:0}
+.vnp__log-list .is-notice,.vnp__log-list .is-letter{font-family:'Nanum Myeongjo',var(--sans);font-weight:700;color:#F3EBD6;padding-left:.9rem;border-left:1px solid var(--vn-gilt-soft)}
+.vnp__log-list .is-cg,.vnp__log-list .is-place{color:var(--vn-ink-dim);font-size:.86rem;letter-spacing:.04em}
 .vnp__hint{
-  position:absolute;z-index:7;left:0;right:0;bottom:calc(.8rem + env(safe-area-inset-bottom));margin:0;
-  text-align:center;font-size:.74rem;color:rgba(238,242,243,.5);pointer-events:none;
+  position:absolute;z-index:7;left:0;right:0;bottom:calc(1rem + env(safe-area-inset-bottom));margin:0;
+  text-align:center;font-family:var(--serif);font-size:.82rem;letter-spacing:.14em;color:var(--vn-ink-dim);
+  text-shadow:0 1px 6px rgba(4,6,16,.8);pointer-events:none;
   animation:hintOut 1s ease 6s forwards;
 }
+@media (hover:none){.vnp__btn{min-height:2.75rem}}
 @keyframes hintOut{to{opacity:0}}
 
 /* ── 임시 배경 ── 그림이 들어오면 대신 쓰인다 */
