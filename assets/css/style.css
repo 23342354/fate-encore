@@ -223,40 +223,41 @@ a{color:var(--accent-strong)}
     linear-gradient(180deg,var(--color-night),#1E3D9C 34%,#17348C 72%,#060B28);
   will-change:transform;
 }
-/* 커튼은 위 레일에 매달려 있다 — 기준점은 바깥 위 모서리 */
-/* 바깥쪽으로 8vw 더 걸쳐 둔다 — 안쪽으로 모일 때 화면 끝이 드러나지 않게 */
-.drape--l{left:-8vw;width:60vw;transform-origin:0 0}
-.drape--r{right:-8vw;width:60vw;transform-origin:100% 0}
+/* 레퍼런스처럼 — 가운데 실금으로 갈라진 뒤, 위는 레일 가까이 오래 붙어 있고
+   밑단이 먼저 크게 휘어 벌어진다(종 모양). 주름은 세로 그대로, 천의 가장자리만 곡선으로 걷힌다.
+   속도 변화는 단계 사이 간격에 이미 들어 있어 linear 로 재생한다. */
+.drape--l{left:0;width:50.5vw}
+.drape--r{right:0;width:50.5vw}
 /* 막이 열리는 동안 가운데 틈으로 새어 나오는 무대 조명 */
 .stage-curtain::before{
   content:"";position:absolute;inset:0;opacity:0;
-  background:radial-gradient(ellipse 34% 70% at 50% 46%,rgba(214,226,255,.55),rgba(120,150,230,.18) 55%,transparent 75%);
+  background:radial-gradient(ellipse 34% 70% at 50% 46%,rgba(214,226,255,.5),rgba(120,150,230,.16) 55%,transparent 75%);
 }
-.stage-curtain.is-open::before{animation:stageGlow 2s ease-out both}
-.stage-curtain.is-open .drape--l{animation:drapeOpenL 1.9s both}
-.stage-curtain.is-open .drape--r{animation:drapeOpenR 1.9s both}
+.stage-curtain.is-open::before{animation:stageGlow 1.6s ease-out both}
+.stage-curtain.is-open .drape--l{animation:drapeOpenL 1.4s linear both}
+.stage-curtain.is-open .drape--r{animation:drapeOpenR 1.4s linear both}
 .stage-curtain.is-done{display:none}
-/* 진짜 막처럼 —
-   ① 줄이 팽팽해지며 안쪽으로 살짝 모였다가(예비 동작)
-   ② 위가 먼저 끌려가고 무거운 밑단이 뒤따라 비스듬해지고(skew)
-   ③ 옆으로 걷힐수록 주름이 촘촘하게 몰리며(scaleX) 끝에서 밑단이 제자리로 돌아온다 */
 @keyframes drapeOpenL{
-  0%  {transform:translateX(0) skewX(0) scaleX(1);animation-timing-function:cubic-bezier(.45,0,.55,1)}
-  12% {transform:translateX(1.2%) skewX(.6deg) scaleX(1.01);animation-timing-function:cubic-bezier(.55,0,.3,1)}
-  58% {transform:translateX(-56%) skewX(3.5deg) scaleX(.72);animation-timing-function:cubic-bezier(.25,.1,.25,1)}
-  84% {transform:translateX(-92%) skewX(1.2deg) scaleX(.56);animation-timing-function:cubic-bezier(.3,0,.4,1)}
-  100%{transform:translateX(-104%) skewX(0) scaleX(.5)}
+  0%{clip-path:polygon(0 0,100% 0%,100% 10%,100% 20%,100% 30%,100% 40%,100% 50%,100% 60%,100% 70%,100% 80%,100% 90%,100% 100%,0 100%)}
+  7%{clip-path:polygon(0 0,99.6% 0%,99.59% 10%,99.57% 20%,99.53% 30%,99.48% 40%,99.43% 50%,99.36% 60%,99.28% 70%,99.2% 80%,99.1% 90%,99% 100%,0 100%)}
+  28%{clip-path:polygon(0 0,96% 0%,95.84% 10%,95.45% 20%,94.85% 30%,94.08% 40%,93.13% 50%,92.01% 60%,90.74% 70%,89.31% 80%,87.73% 90%,86% 100%,0 100%)}
+  50%{clip-path:polygon(0 0,77% 0%,76.57% 10%,75.51% 20%,73.91% 30%,71.81% 40%,69.25% 50%,66.23% 60%,62.79% 70%,58.93% 80%,54.66% 90%,50% 100%,0 100%)}
+  64%{clip-path:polygon(0 0,56% 0%,55.49% 10%,54.23% 20%,52.34% 30%,49.85% 40%,46.81% 50%,43.24% 60%,39.16% 70%,34.59% 80%,29.53% 90%,24% 100%,0 100%)}
+  79%{clip-path:polygon(0 0,20% 0%,19.68% 10%,18.9% 20%,17.71% 30%,16.16% 40%,14.26% 50%,12.03% 60%,9.48% 70%,6.62% 80%,3.46% 90%,0% 100%,0 100%)}
+  100%{clip-path:polygon(0 0,0% 0%,0% 10%,0% 20%,0% 30%,0% 40%,0% 50%,0% 60%,0% 70%,0% 80%,0% 90%,0% 100%,0 100%)}
 }
 @keyframes drapeOpenR{
-  0%  {transform:translateX(0) skewX(0) scaleX(1);animation-timing-function:cubic-bezier(.45,0,.55,1)}
-  12% {transform:translateX(-1.2%) skewX(-.6deg) scaleX(1.01);animation-timing-function:cubic-bezier(.55,0,.3,1)}
-  58% {transform:translateX(56%) skewX(-3.5deg) scaleX(.72);animation-timing-function:cubic-bezier(.25,.1,.25,1)}
-  84% {transform:translateX(92%) skewX(-1.2deg) scaleX(.56);animation-timing-function:cubic-bezier(.3,0,.4,1)}
-  100%{transform:translateX(104%) skewX(0) scaleX(.5)}
+  0%{clip-path:polygon(100% 0,0% 0%,0% 10%,0% 20%,0% 30%,0% 40%,0% 50%,0% 60%,0% 70%,0% 80%,0% 90%,0% 100%,100% 100%)}
+  7%{clip-path:polygon(100% 0,0.4% 0%,0.41% 10%,0.43% 20%,0.47% 30%,0.52% 40%,0.57% 50%,0.64% 60%,0.72% 70%,0.8% 80%,0.9% 90%,1% 100%,100% 100%)}
+  28%{clip-path:polygon(100% 0,4% 0%,4.16% 10%,4.55% 20%,5.15% 30%,5.92% 40%,6.87% 50%,7.99% 60%,9.26% 70%,10.69% 80%,12.27% 90%,14% 100%,100% 100%)}
+  50%{clip-path:polygon(100% 0,23% 0%,23.43% 10%,24.49% 20%,26.09% 30%,28.19% 40%,30.75% 50%,33.77% 60%,37.21% 70%,41.07% 80%,45.34% 90%,50% 100%,100% 100%)}
+  64%{clip-path:polygon(100% 0,44% 0%,44.51% 10%,45.77% 20%,47.66% 30%,50.15% 40%,53.19% 50%,56.76% 60%,60.84% 70%,65.41% 80%,70.47% 90%,76% 100%,100% 100%)}
+  79%{clip-path:polygon(100% 0,80% 0%,80.32% 10%,81.1% 20%,82.29% 30%,83.84% 40%,85.74% 50%,87.97% 60%,90.52% 70%,93.38% 80%,96.54% 90%,100% 100%,100% 100%)}
+  100%{clip-path:polygon(100% 0,100% 0%,100% 10%,100% 20%,100% 30%,100% 40%,100% 50%,100% 60%,100% 70%,100% 80%,100% 90%,100% 100%,100% 100%)}
 }
 @keyframes stageGlow{
   0%{opacity:0}
-  35%{opacity:1}
+  40%{opacity:1}
   100%{opacity:0}
 }
 
