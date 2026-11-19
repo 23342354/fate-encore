@@ -3090,3 +3090,42 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 @media (max-width:59.99rem) and (orientation:portrait){
   html[data-screen="home"] .hud__res{margin-top:-.5rem;padding:.55rem .4rem .5rem 1.4rem}
 }
+
+/* ── 하단 메뉴 — 밤하늘 띠 ──
+   남색 띠에 은빛 별가루, 금빛 이중선. 지금 있는 화면은 아이콘 아래 금빛 별.
+   가운데 소환은 크림 테두리를 두른 코발트 메달에 천천히 도는 점선 궤도. */
+.dock::before{
+  inset:1.2rem 0 0;
+  background:
+    url("../img/deco/stardust.svg") 0 0/600px auto,
+    radial-gradient(ellipse 30% 120% at 50% 0%,rgba(58,104,232,.45),transparent 70%),
+    linear-gradient(180deg,#16307E,#0B1A4A 70%,#081236);
+  border:1px solid rgba(201,167,94,.75);border-bottom:0;border-radius:1.1rem 1.1rem 0 0;
+  box-shadow:0 -.5rem 1.4rem -.5rem rgba(10,16,44,.45),inset 0 1px 0 rgba(255,255,255,.12);
+}
+.dock::after{   /* 안쪽 은빛 선 */
+  content:"";position:absolute;z-index:-1;left:4px;right:4px;top:calc(1.2rem + 4px);bottom:0;
+  border:.5px solid rgba(222,230,250,.28);border-bottom:0;border-radius:.85rem .85rem 0 0;pointer-events:none;
+}
+.dock__btn{color:rgba(218,226,246,.62);gap:.12rem}
+.dock__btn svg{filter:drop-shadow(0 0 .35rem rgba(58,104,232,.0));transition:filter .25s ease}
+.dock__btn:hover{color:#F1F4FC}
+.dock__btn[aria-current="page"]{color:#fff;font-weight:600}
+.dock__btn[aria-current="page"] svg{filter:drop-shadow(0 0 .45rem rgba(140,175,255,.9))}
+.dock__btn[aria-current="page"] span:last-child{background:none;padding:0}
+.dock__btn::after{width:.62rem;height:.62rem;transform:none;background:none}
+.dock__btn[aria-current="page"]::after{display:block;background:var(--spark-gold) center/contain no-repeat;filter:drop-shadow(0 0 .25rem rgba(238,217,160,.9))}
+.dock__btn--summon{color:rgba(218,226,246,.75)}
+.dock__btn--summon[aria-current="page"]{color:#fff}
+.dock__orb{
+  position:relative;width:3.8rem;height:3.8rem;
+  background:radial-gradient(circle at 50% 40%,#5A88EC,var(--cobalt) 45%,#0B1A4A 100%);
+  border:2px solid #EFE8D8;
+  box-shadow:0 0 0 1.5px rgba(201,167,94,.9),0 0 0 5px rgba(11,26,74,.85),0 0 0 6px rgba(201,167,94,.45),0 0 1.6rem rgba(58,104,232,.65);
+}
+.dock__orb::before{   /* 점선 궤도 */
+  content:"";position:absolute;inset:-.85rem;border-radius:50%;
+  border:1px dashed rgba(201,167,94,.55);animation:spinflat 30s linear infinite;pointer-events:none;
+}
+.dock__orb svg{filter:drop-shadow(0 0 .35rem rgba(200,220,255,.95))}
+@media (prefers-reduced-motion:reduce){.dock__orb::before{animation:none}}
