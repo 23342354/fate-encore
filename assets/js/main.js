@@ -275,6 +275,16 @@
   document.addEventListener('click', e => {
     const el = e.target.closest('[data-go]');
     if (!el) return;
+    // 로비 입장권 — 그루터기가 뜯겨 떨어진 뒤에 스토리로
+    if (el.classList.contains('lb-ticket') && !el.classList.contains('is-torn')) {
+      const tk = el.querySelector('.lb-tk');
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (tk && getComputedStyle(tk).display !== 'none' && !still) {
+        el.classList.add('is-torn');
+        setTimeout(() => { go('story'); setTimeout(() => el.classList.remove('is-torn'), 300); }, 700);
+        return;
+      }
+    }
     go(el.dataset.go);
     // 로비의 서번트 / 마스터 칸 — 캐스트 화면의 해당 탭을 연다
     if (el.dataset.seg) $(el.dataset.seg === 'master' ? '#segMaster' : '#segServant').click();

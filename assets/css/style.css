@@ -3175,46 +3175,64 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 }
 
 /* ── 로비 입장권 — 활판 인쇄 초대장 ──
-   크림 종이에 코발트 잉크, 양옆은 우표처럼 물결 모양으로 따고, 절취선 위아래는 반달 홈.
-   칸은 가는 선으로 나누고 글자는 종이에 눌린 듯. 오른쪽 그루터기에 달 도장과 세로 입장. */
+   크림 종이에 코발트 잉크. 본권과 그루터기는 따로 오려 붙인 두 장이라
+   마우스를 올리면 그루터기가 절취선에서 반쯤 뜯겨 들리고, 누르면 완전히 뜯겨 떨어진다. */
 .lb-ticket{
-  display:block;height:auto;padding:0;background:none;color:inherit;
+  display:block;height:auto;padding:0;border:0;background:none;color:inherit;
   -webkit-mask:none;mask:none;
   filter:drop-shadow(0 .55rem .8rem rgba(0,0,0,.5)) drop-shadow(0 0 1.2rem rgba(58,104,232,.25));
   container-type:inline-size;
 }
 .lb .lb-ticket{color:#1D3F92}
-.lb-tk{
-  --perf:77%;
-  position:relative;display:grid;grid-template-columns:7cqw 1fr 23cqw;
-  aspect-ratio:2.5/1;width:100%;
+.lb-tk{position:relative;display:flex;aspect-ratio:2.5/1;width:100%;text-align:left;text-shadow:0 1px 0 rgba(255,255,255,.65)}
+.lb-tk__body,.lb-tk__stub{
+  position:relative;height:100%;
   background:url("../img/deco/grain.svg"),linear-gradient(180deg,#F3EEE3,#E6DFCE);
+}
+/* 본권 — 왼쪽 우표 물결, 오른쪽 절취 구멍과 반달 홈 */
+.lb-tk__body{
+  flex:0 0 77%;display:grid;grid-template-columns:9.1cqw 1fr;
   -webkit-mask:
     radial-gradient(circle 1.6cqw at 0 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
-    radial-gradient(circle 1.6cqw at 100% 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
-    radial-gradient(circle 2.6cqw at var(--perf) 0,#0000 97%,#000),
-    radial-gradient(circle 2.6cqw at var(--perf) 100%,#0000 97%,#000);
+    radial-gradient(circle .55cqw at 100% 50%,#0000 96%,#000) 0 0/100% 2.2cqw repeat-y,
+    radial-gradient(circle 2.6cqw at 100% 0,#0000 97%,#000),
+    radial-gradient(circle 2.6cqw at 100% 100%,#0000 97%,#000);
   -webkit-mask-composite:source-in;
-          mask:
+  mask:
     radial-gradient(circle 1.6cqw at 0 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
-    radial-gradient(circle 1.6cqw at 100% 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
-    radial-gradient(circle 2.6cqw at var(--perf) 0,#0000 97%,#000),
-    radial-gradient(circle 2.6cqw at var(--perf) 100%,#0000 97%,#000);
+    radial-gradient(circle .55cqw at 100% 50%,#0000 96%,#000) 0 0/100% 2.2cqw repeat-y,
+    radial-gradient(circle 2.6cqw at 100% 0,#0000 97%,#000),
+    radial-gradient(circle 2.6cqw at 100% 100%,#0000 97%,#000);
   mask-composite:intersect;
-  text-shadow:0 1px 0 rgba(255,255,255,.65);   /* 눌린 활자 */
-  text-align:left;
 }
-/* 안쪽 테두리 — 활판 선 */
-.lb-tk::before{content:"";position:absolute;inset:4cqw 3cqw;border:1.5px solid rgba(29,63,146,.85);pointer-events:none}
-/* 절취선 */
-.lb-tk::after{content:"";position:absolute;left:var(--perf);top:4.5cqw;bottom:4.5cqw;border-left:1.5px dashed rgba(29,63,146,.6);pointer-events:none}
+.lb-tk__body::before{content:"";position:absolute;inset:4cqw 0 4cqw 3cqw;border:1.5px solid rgba(29,63,146,.85);border-right:0;pointer-events:none}
+/* 그루터기 — 오른쪽 우표 물결, 왼쪽 절취 구멍과 반달 홈 */
+.lb-tk__stub{
+  flex:1 1 auto;display:grid;justify-items:center;align-content:center;gap:.6cqw;
+  padding:4cqw 8.4cqw 4cqw 1.6cqw;
+  border-left:1.5px dashed rgba(29,63,146,.55);
+  transform-origin:0 100%;
+  transition:transform .45s cubic-bezier(.3,1.4,.5,1);
+  -webkit-mask:
+    radial-gradient(circle 1.6cqw at 100% 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
+    radial-gradient(circle .55cqw at 0 50%,#0000 96%,#000) 0 0/100% 2.2cqw repeat-y,
+    radial-gradient(circle 2.6cqw at 0 0,#0000 97%,#000),
+    radial-gradient(circle 2.6cqw at 0 100%,#0000 97%,#000);
+  -webkit-mask-composite:source-in;
+  mask:
+    radial-gradient(circle 1.6cqw at 100% 50%,#0000 97%,#000) 0 0/100% 4.4cqw repeat-y,
+    radial-gradient(circle .55cqw at 0 50%,#0000 96%,#000) 0 0/100% 2.2cqw repeat-y,
+    radial-gradient(circle 2.6cqw at 0 0,#0000 97%,#000),
+    radial-gradient(circle 2.6cqw at 0 100%,#0000 97%,#000);
+  mask-composite:intersect;
+}
+.lb-tk__stub::before{content:"";position:absolute;inset:4cqw 3cqw 4cqw 0;border:1.5px solid rgba(29,63,146,.85);border-left:0;pointer-events:none}
 .lb-tk__no{
-  grid-column:1;align-self:center;justify-self:end;margin-right:-.6cqw;
-  writing-mode:vertical-rl;transform:rotate(180deg);
+  grid-column:1;align-self:center;justify-self:center;
+  writing-mode:vertical-rl;transform:translateX(.9cqw) rotate(180deg);
   font-family:var(--serif);font-size:2.9cqw;letter-spacing:.08em;white-space:nowrap;
 }
-.lb-tk__main{grid-column:2;display:grid;grid-template-rows:auto auto 1fr;padding:5.2cqw 2cqw 4.6cqw 1.6cqw;min-width:0;border-left:1.5px solid rgba(29,63,146,.85);margin:4cqw 0}
-.lb-tk__main{padding-top:1.2cqw;padding-bottom:0}
+.lb-tk__main{grid-column:2;display:grid;grid-template-rows:auto auto 1fr;padding:1.2cqw 2cqw 0 1.6cqw;min-width:0;border-left:1.5px solid rgba(29,63,146,.85);margin:4cqw 0}
 .lb-tk__top{
   display:block;font-family:var(--serif);font-size:2.55cqw;letter-spacing:.2em;text-transform:uppercase;
   border-bottom:1px solid rgba(29,63,146,.7);padding-bottom:.6cqw;white-space:nowrap;overflow:hidden;
@@ -3230,22 +3248,36 @@ html[data-screen="home"] .chip b{white-space:nowrap}
 .lb-tk__cell b{display:flex;align-items:center;gap:.8cqw;font-family:'Nanum Myeongjo',var(--main);font-weight:700;font-size:3.3cqw;white-space:nowrap}
 .lb-tk__cell b svg{width:2.6cqw;height:2.6cqw;fill:var(--gold);filter:drop-shadow(0 0 1px rgba(150,110,40,.6))}
 .lb-tk__big{font-family:var(--serif);font-size:8.4cqw;line-height:1;place-content:center;padding:0 2.6cqw}
-.lb-tk__stub{
-  grid-column:3;position:relative;display:grid;justify-items:center;align-content:center;
-  padding:4cqw 3.6cqw 4cqw 1.2cqw;gap:.6cqw;
-}
-.lb-tk__seal{width:10.5cqw;height:10.5cqw}
+.lb-tk__seal{width:10.5cqw;height:10.5cqw;transition:transform .4s ease}
 .lb-tk__seal .s-disc{fill:#1D3F92}
 .lb-tk__seal .s-ring{fill:none;stroke:#EFE8D8;stroke-width:.7;stroke-dasharray:1.2 1.4}
 .lb-tk__seal .s-moon{fill:#EFE8D8}
 .lb-tk__seal .s-star{fill:var(--gold)}
 .lb-tk__enter{font-family:'Nanum Myeongjo',var(--main);font-weight:800;font-size:5.2cqw;letter-spacing:.2em;line-height:1;margin-right:-.2em}
 .lb-tk__en{font-family:var(--serif);font-size:2.3cqw;letter-spacing:.3em;opacity:.75}
+/* 세로 문장 — 안쪽 테두리 안, 두 줄 */
 .lb-tk__vert{
-  position:absolute;right:1.2cqw;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;
-  font-family:var(--serif);font-style:italic;font-size:1.75cqw;white-space:nowrap;opacity:.7;
+  position:absolute;right:4.3cqw;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;
+  font-family:var(--serif);font-style:italic;font-size:1.85cqw;line-height:1.3;white-space:nowrap;opacity:.72;text-align:center;
 }
-.lb-ticket:hover .lb-tk__seal{transform:rotate(-12deg);transition:transform .4s ease}
+/* 마우스 오버 — 반쯤 뜯긴다 */
+.lb-ticket:hover .lb-tk__stub,.lb-ticket:focus-visible .lb-tk__stub{transform:translate(1.4cqw,-.4cqw) rotate(9deg)}
+.lb-ticket:hover .lb-tk__seal{transform:rotate(-12deg)}
+.lb-ticket:hover{transform:none}
+/* 클릭 — 완전히 뜯겨 떨어진다 */
+.lb-ticket.is-torn .lb-tk__stub{animation:tkTear .75s cubic-bezier(.45,0,.75,.4) forwards}
+.lb-ticket.is-torn .lb-tk__body{animation:tkJolt .3s ease-out}
+@keyframes tkTear{
+  0%{transform:translate(1.4cqw,-.4cqw) rotate(9deg)}
+  22%{transform:translate(4cqw,-3cqw) rotate(18deg)}
+  100%{transform:translate(14cqw,62cqw) rotate(58deg);opacity:0}
+}
+@keyframes tkJolt{40%{transform:translateX(-1cqw) rotate(-1deg)}}
+@media (prefers-reduced-motion:reduce){
+  .lb-tk__stub{transition:none}
+  .lb-ticket:hover .lb-tk__stub{transform:none}
+  .lb-ticket.is-torn .lb-tk__stub,.lb-ticket.is-torn .lb-tk__body{animation:none}
+}
 /* 낮은 화면 — 메뉴가 넘치지 않게 */
 @media (min-width:60rem) and (max-height:50rem){
   .lb-moons{display:none}
