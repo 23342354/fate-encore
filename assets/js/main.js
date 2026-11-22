@@ -1190,8 +1190,9 @@
       if (isOpen(c)) {
         const seen = !hasRoute(c) && chapterSeen(c);
         const sub = (c.sub && String(c.sub).trim()) ? esc(String(c.sub)) : '—';
-        li.innerHTML = `<button class="chapter chapter--act${seen ? ' is-clear' : ''}" type="button">${no}
-          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">${sub}</span></span>
+        const lead = c.lead ? `${esc(String(c.lead))} 루트` : '';
+        li.innerHTML = `<button class="chapter chapter--act${seen ? ' is-clear' : ''}" type="button"${lead ? ` aria-label="${title} — ${sub}, ${lead}"` : ''}>${no}
+          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub chapter__sub--name">${sub}</span></span>
           <span class="chapter__go">${seen ? '다시 보기' : '보기'}</span></button>`;
         li.firstElementChild.addEventListener('click', () => hasRoute(c) ? openRoute(c) : openPrologue(c));
       } else {
@@ -1201,23 +1202,25 @@
       }
       list.appendChild(li);
     });
-    // 화면 위 한 줄 설명도 공개 상태를 따라간다
+    // 화면 위 한 줄 설명도 공개 상태를 따라간다. 막 하나가 한 사람의 루트다
     const note = $('#storyNote');
     if (note && CHAPTERS.length) {
-      const open = CHAPTERS.filter(isOpen).length;
+      const opened = CHAPTERS.filter(isOpen);
       const total = CHAPTERS.length;
       const kn = n => ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'][n] || String(n);
-      note.textContent = open === 0
-        ? `서곡과 ${kn(total)} 개의 막. 서곡은 지금 볼 수 있고, ${kn(total)} 막은 아직 공개되지 않았다.`
-        : open === total
-          ? `서곡과 ${kn(total)} 개의 막. 모두 지금 볼 수 있다.`
-          : `서곡과 ${kn(total)} 개의 막. 서곡과 ${kn(open)} 막은 지금 볼 수 있고, 나머지 ${kn(total - open)} 막은 아직 공개되지 않았다.`;
+      const head = `서곡과 ${kn(total)} 개의 막. 막마다 서로 다른 루트로 갈라진다.`;
+      note.textContent = opened.length === 0
+        ? `${head} 서곡은 지금 볼 수 있고, ${kn(total)} 루트는 아직 공개되지 않았다.`
+        : opened.length === total
+          ? `${head} 모두 지금 볼 수 있다.`
+          : `${head} 서곡과 ${opened.map(c => c.title).join(' · ')}은 지금 볼 수 있고, 나머지 ${kn(total - opened.length)} 루트는 아직 공개되지 않았다.`;
     }
   }
 
   /* ── 루트 차트 ──────────────────────────────────────────
-     위에서 아래로 흐르는 본편 줄기, 선택지마다 옆으로 뻗는 갈래.
-     별자리를 잇듯 그린다. 이름이 없는 칸은 번호로만 — 공개 전 내용은 지어내지 않는다. */
+     한 막 = 한 사람의 루트. 위에서 아래로 흐르는 본편 줄기에서, 선택지마다 갈래가 옆으로 뻗는다.
+     칸을 반듯한 격자에 두지 않고 별자리처럼 흩어 놓는다 — 막 번호로 고정된 난수를 써서
+     같은 막은 늘 같은 모양이다. 이름이 없는 칸은 번호로만 — 공개 전 내용은 지어내지 않는다. */
   const rt      = $('#route');
   const rtMap   = $('#routeMap');
   const rtList  = $('#routeList');
@@ -1226,13 +1229,12 @@
   const STAR = 'M0-8 1.9-1.9 8 0 1.9 1.9 0 8-1.9 1.9-8 0-1.9-1.9z';
   const END_NAME = { bad: 'BAD END', normal: 'NORMAL END', true: 'TRUE END' };
 
-  // 데이터 → 칸(nodes)과 선(edges). 줄기는 0열, 갈래는 ±1열부터 옆으로
+  // 데이터 → 칸(nodes)과 선(edges). col 은 줄기에서 몇 칸 옆인지(오른쪽 +, 왼쪽 −)
   function routeModel(c) {
     const nextC = CHAPTERS[CHAPTERS.indexOf(c) + 1];
     const count = { choice: 0, bad: 0, normal: 0, true: 0 };
     const nodes = [], edges = [];
-    let reach = 0;
-    const make = (n, col, row, spine) => {
+    const make = (n, col, row, spine, parent) => {
       const type = n.type || 'scene';
       const kind = type === 'end' ? (n.kind || 'bad') : '';
       if (type === 'choice') count.choice++;
@@ -1247,13 +1249,13 @@
           else label = `${END_NAME[kind] || 'END'} ${pad2(count[kind])}`;
         }
       }
-      const node = { type, kind, label, col, row, spine };
+      const node = { type, kind, label, col, row, spine, parent };
       nodes.push(node);
       return node;
     };
     let prev = null;
     c.route.forEach((n, row) => {
-      const node = make(n, 0, row, true);
+      const node = make(n, 0, row, true, prev);
       if (prev) edges.push({ a: prev, b: node, branch: false });
       if (node.type === 'choice' && Array.isArray(n.branches)) {
         node.branches = [];
@@ -1262,71 +1264,213 @@
           let p = node;
           const chain = [];
           (br || []).forEach((m, j) => {
-            const bn = make(m, side * (j + 1), row, false);
+            const bn = make(m, side * (j + 1), row, false, p);
             edges.push({ a: p, b: bn, branch: true });
             chain.push(bn);
             p = bn;
           });
-          reach = Math.max(reach, chain.length);
           node.branches.push(chain);
         });
       }
       prev = node;
     });
     const ends = nodes.filter(n => n.type === 'end' && n.kind !== 'next');
-    return { nodes, edges, reach, rows: c.route.length, count, ends, next: nodes.some(n => n.kind === 'next'), nextC };
+    return { nodes, edges, rows: c.route.length, count, ends, next: nodes.some(n => n.kind === 'next'), nextC };
   }
 
-  function nodeSVG(n, x, y, d) {
+  function nodeSVG(n, d) {
     const t = `<title>${esc(n.label || '장면')}</title>`;
-    const g = s => `<g class="rc-node" style="--d:${d}ms" transform="translate(${x} ${y})">${t}${s}</g>`;
+    const g = s => `<g class="rc-node" style="--d:${d}ms" transform="translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})">${t}${s}</g>`;
     if (n.type === 'start')  return g('<circle class="rc-start" r="7"/><circle class="rc-scene" r="3"/>');
     if (n.type === 'choice') return g('<path class="rc-choice" d="M0-8 8 0 0 8-8 0z"/>');
     if (n.type === 'end') {
       if (n.kind === 'bad')  return g('<circle class="rc-bad" r="7.5"/><path class="rc-bad-x" d="M-3.2-3.2 3.2 3.2M3.2-3.2-3.2 3.2"/>');
       if (n.kind === 'next') return g('<circle class="rc-start" r="9"/><path class="rc-next" d="M-4.5-2 0 2.5 4.5-2"/>');
-      return g(`<path class="rc-star${n.kind === 'true' ? ' rc-star--true' : ''}" d="${STAR}" transform="scale(1.25)"/>`);
+      return g(`<path class="rc-star${n.kind === 'true' ? ' rc-star--true' : ''}" d="${STAR}" transform="scale(1.35)"/>`);
     }
-    return g('<circle class="rc-scene" r="4.5"/>');
+    // 장면 — 별의 밝기(크기)를 조금씩 다르게
+    return g(`<circle class="rc-scene" r="${n.mag.toFixed(1)}"/>`);
   }
 
   function renderRoute() {
     if (!rtChapter) return;
     const m = routeModel(rtChapter);
-    const cols = m.reach * 2 + 1;
-    const avail = Math.max(240, rtMap.clientWidth);
-    // 양 끝에 BAD END 이름 절반(약 34px)이 들어갈 자리를 남기고 칸 간격을 정한다.
-    // 320px 폰에서도 다섯 열이 창 안에 들어가도록 최소 46px
-    const EDGE = 68;
-    const COL = Math.max(46, Math.min(118, (avail - EDGE) / cols));
+    const R = rng(7919 * (parseInt(rtChapter.no, 10) || 1) + 1301);
+    const rand = (a, b) => a + R() * (b - a);
+    const W = Math.max(240, rtMap.clientWidth) - 1;
+    const PAD = 40;                                 // 양옆 — 끝 이름이 들어갈 자리
+    const COL = Math.max(48, Math.min(104, (W - 2 * PAD) / 4.4));
     const ROW = 62;
-    const W = Math.max(avail - 1, Math.round(cols * COL + EDGE));
-    const H = Math.round((m.rows - 1) * ROW + 72);
-    const px = n => W / 2 + n.col * COL;
-    const py = n => 26 + n.row * ROW;
-    const edges = m.edges.map(e =>
-      `<line class="rc-edge${e.branch ? ' rc-edge--branch' : ''}" x1="${px(e.a)}" y1="${py(e.a)}" x2="${px(e.b)}" y2="${py(e.b)}"/>`).join('');
-    const nodes = m.nodes.map(n => nodeSVG(n, px(n), py(n), n.row * 45 + Math.abs(n.col) * 60)).join('');
-    const labels = m.nodes.filter(n => n.label).map(n => {
-      const cls = ['rc-label'];
-      if (n.type === 'end') cls.push('rc-label--' + n.kind);
-      if (n.type === 'choice') cls.push('rc-label--choice');
-      // 분기 이름은 마름모 위(옆은 갈래가 지나간다), 그 밖의 줄기 이름은 왼쪽, 갈래 끝의 이름은 칸 아래
-      if (n.type === 'choice') return `<text class="${cls.join(' ')}" x="${px(n)}" y="${py(n) - 14}" text-anchor="middle">${esc(n.label)}</text>`;
-      if (n.spine) return `<text class="${cls.join(' ')}" x="${px(n) - 15}" y="${py(n) + 4}" text-anchor="end">${esc(n.label)}</text>`;
-      return `<text class="${cls.join(' ')}" x="${px(n)}" y="${py(n) + 23}" text-anchor="middle">${esc(n.label)}</text>`;
-    }).join('');
-    rtMap.innerHTML = `<svg class="rc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">
-      <line class="rc-axis" x1="${W / 2}" y1="6" x2="${W / 2}" y2="${H - 6}"/>${edges}${nodes}${labels}</svg>`;
+    const MIN_GAP = 30;                             // 별과 별 사이 최소 거리
+    const placed = [], lines = [];
+    // 두 선분이 끝점 말고 교차하는가
+    const cross = (a, b, c, d) => {
+      const o = (p, q, r) => (q.x - p.x) * (r.y - p.y) - (q.y - p.y) * (r.x - p.x);
+      if (a === c || a === d || b === c || b === d) return false;
+      return o(a, b, c) * o(a, b, d) < 0 && o(c, d, a) * o(c, d, b) < 0;
+    };
+    // 점 p 에서 선분 ab 까지 거리
+    const distSeg = (p, a, b) => {
+      const dx = b.x - a.x, dy = b.y - a.y, L = dx * dx + dy * dy || 1;
+      const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / L));
+      return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+    };
+    // 이 자리에 별을 두면 — 별끼리 가깝거나, 새 선이 다른 선을 가로지르거나, 다른 별을 스치는 만큼 벌점
+    const cost = (parent, x, y, n) => {
+      const q = { x, y };
+      let c = 0;
+      // 엔딩끼리는 이름이 붙으니 더 떨어뜨린다
+      placed.forEach(o => {
+        const gap = (n && n.type === 'end' && o.type === 'end') ? 64 : MIN_GAP;
+        if (Math.hypot(o.x - x, o.y - y) < gap) c += 10;
+      });
+      if (parent) {
+        // 선이 엇갈리는 것이 가장 나쁘다 — 어느 갈래가 어디로 가는지 헷갈린다
+        lines.forEach(([a, b]) => { if (cross(parent, q, a, b)) c += 80; });
+        placed.forEach(o => { if (o !== parent && distSeg(o, parent, q) < 13) c += 20; });
+        lines.forEach(([a, b]) => { if (distSeg(q, a, b) < 13 && a !== parent && b !== parent) c += 20; });
+      }
+      return c;
+    };
+    const put = (n, x, y) => { n.x = x; n.y = y; placed.push(n); if (n.parent) lines.push([n.parent, n]); };
 
-    // 머리말 — 엔딩 수와 분기 수
+    // 1) 줄기 — 정해진 리듬 없이 걷는다. 걸음마다 방향을 조금 혹은 크게 틀고, 보폭도 제각각.
+    //    아래로만 내려가되(위로 되돌아가지 않음) 창 가운데 띠 안에서 벽에 닿으면 튕겨 나온다
+    const spine = m.nodes.filter(n => n.spine);
+    const lo = W * 0.24, hi = W * 0.76;
+    let heading = rand(-0.6, 0.6);                  // 곧장 아래(0)에서 얼마나 기울었는지(라디안)
+    spine.forEach((n, i) => {
+      if (i === 0) { put(n, W / 2 + rand(-0.12, 0.12) * W, 30); return; }
+      const p = spine[i - 1];
+      let best = null;
+      for (let t = 0; t < 16; t++) {
+        let h = heading + (R() < 0.3 ? rand(-1.5, 1.5) : rand(-0.7, 0.7));   // 가끔 크게 꺾인다
+        h = Math.max(-1.2, Math.min(1.2, h));
+        const len = ROW * rand(0.7, 1.5) + (n.type === 'choice' ? 10 : 0);
+        let x = p.x + Math.sin(h) * len;
+        const y = p.y + Math.max(36, Math.cos(h) * len);
+        if (x < lo || x > hi) { h = -h; x = p.x + Math.sin(h) * len; }       // 벽에서 튕긴다
+        x = Math.max(lo, Math.min(hi, x));
+        const c = cost(p, x, y, n);
+        if (!best || c < best.c) best = { x, y, h, c };
+        if (c === 0) break;
+      }
+      heading = best.h;
+      put(n, best.x, best.y);
+    });
+
+    // 2) 갈래 — 분기에서 옆으로 뻗되 각도와 길이가 매번 다르고, 다음 걸음은 크게 틀어진다
+    m.nodes.filter(n => !n.spine).forEach(n => {
+      const side = Math.sign(n.col);
+      const first = Math.abs(n.col) === 1;
+      const p = n.parent;
+      let best = null;
+      for (let t = 0; t < 120; t++) {
+        let a;                                      // 수평에서 아래로 기운 각도(라디안)
+        if (first) a = rand(-0.55, 1.3);
+        else {
+          const prevA = Math.atan2(p.y - p.parent.y, Math.abs(p.x - p.parent.x) || 1);
+          a = prevA + (R() < 0.5 ? -1 : 1) * rand(0.6, 1.4);
+          a = Math.max(-0.9, Math.min(1.45, a));
+        }
+        let len = COL * rand(0.6, 1.6);
+        let x = p.x + side * Math.cos(a) * len;
+        if (x < PAD || x > W - PAD) {               // 창 밖으로 나가면 보폭을 줄인다
+          const room = side > 0 ? (W - PAD) - p.x : p.x - PAD;
+          len = Math.max(26, room / Math.max(0.3, Math.cos(a)));
+          x = p.x + side * Math.cos(a) * len;
+          x = Math.max(PAD, Math.min(W - PAD, x));
+        }
+        // 위로는 분기보다 조금만 — 위쪽 갈래와 엉키지 않게
+        const root = (() => { let r = p; while (!r.spine) r = r.parent; return r; })();
+        const y = Math.max(root.y - 26, p.y + Math.sin(a) * len, 20);
+        const c = cost(p, x, y, n);
+        if (!best || c < best.c) best = { x, y, c };
+        if (c === 0) break;
+      }
+      put(n, best.x, best.y);
+    });
+    // 별의 밝기 — 대부분 작고 어둡고, 몇 개만 크게
+    m.nodes.forEach(n => { n.mag = 2.3 + Math.pow(R(), 2.2) * 3.6; });
+    const H = Math.round(Math.max(...m.nodes.map(n => n.y)) + 56);
+
+    // 별가루 — 지도 바탕에 흩어진 희미한 별. 몇 개는 금빛 십자 별
+    let dust = '';
+    const nDust = Math.round(W * H / 3600);
+    for (let i = 0; i < nDust; i++) {
+      dust += `<circle class="rc-dust" cx="${(R() * W).toFixed(1)}" cy="${(R() * H).toFixed(1)}" r="${(0.4 + Math.pow(R(), 3) * 1.4).toFixed(2)}" opacity="${(0.2 + R() * 0.55).toFixed(2)}"/>`;
+    }
+    for (let i = 0; i < 5; i++) {
+      dust += `<path class="rc-glint" d="${STAR}" transform="translate(${(R() * W).toFixed(1)} ${(R() * H).toFixed(1)}) scale(${(0.3 + R() * 0.35).toFixed(2)})"/>`;
+    }
+    const edges = m.edges.map(e =>
+      `<line class="rc-edge${e.branch ? ' rc-edge--branch' : ''}" x1="${e.a.x.toFixed(1)}" y1="${e.a.y.toFixed(1)}" x2="${e.b.x.toFixed(1)}" y2="${e.b.y.toFixed(1)}"/>`).join('');
+    const nodes = m.nodes.map(n => nodeSVG(n, n.row * 45 + Math.abs(n.col) * 60)).join('');
+    rtMap.innerHTML = `<svg class="rc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">
+      ${dust}${edges}${nodes}<g class="rc-labels"></g></svg>`;
+
+    // 3) 이름 — 별 둘레 여덟 자리 가운데 다른 별 · 이름 · 선과 가장 덜 부딪히는 곳에 둔다
+    const svgEl = rtMap.querySelector('svg');
+    const layer = svgEl.querySelector('.rc-labels');
+    const NS = 'http://www.w3.org/2000/svg';
+    const boxes = [];
+    const segs = m.edges.map(e => [e.a.x, e.a.y, e.b.x, e.b.y]);
+    const hitRect = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
+    const segHitsRect = ([x1, y1, x2, y2], r) => {
+      for (let s = 0; s <= 12; s++) {
+        const x = x1 + (x2 - x1) * s / 12, y = y1 + (y2 - y1) * s / 12;
+        if (x > r.x && x < r.x + r.w && y > r.y && y < r.y + r.h) return true;
+      }
+      return false;
+    };
+    m.nodes.filter(n => n.label).forEach(n => {
+      const t = document.createElementNS(NS, 'text');
+      t.setAttribute('class', ['rc-label', n.type === 'end' ? 'rc-label--' + n.kind : '', n.type === 'choice' ? 'rc-label--choice' : ''].join(' ').trim());
+      t.textContent = n.label;
+      layer.appendChild(t);
+      const bb = t.getBBox();
+      const w = bb.width, h = bb.height || 14;
+      const gap = 12;
+      // 후보 — 끝 이름은 아래부터, 분기 이름은 위부터, 그 밖은 옆부터
+      const C = {
+        below: [n.x - w / 2, n.y + gap], above: [n.x - w / 2, n.y - gap - h],
+        right: [n.x + gap + 2, n.y - h / 2], left: [n.x - gap - 2 - w, n.y - h / 2],
+        br: [n.x + gap - 4, n.y + gap - 4], bl: [n.x - gap + 4 - w, n.y + gap - 4],
+        ar: [n.x + gap - 4, n.y - gap + 4 - h], al: [n.x - gap + 4 - w, n.y - gap + 4 - h],
+      };
+      const order = n.type === 'choice' ? ['above', 'al', 'ar', 'left', 'right', 'below', 'bl', 'br']
+        : n.type === 'end' && !n.spine ? ['below', n.col > 0 ? 'br' : 'bl', n.col > 0 ? 'right' : 'left', 'above', n.col > 0 ? 'ar' : 'al', 'bl', 'br', 'left', 'right']
+        : ['left', 'right', 'below', 'above', 'bl', 'br', 'al', 'ar'];
+      let pick = null, pickScore = Infinity;
+      order.forEach((key, i) => {
+        const [x, y] = C[key];
+        const r = { x: x - 2, y: y - 1, w: w + 4, h: h + 2 };
+        let score = i * 0.6;
+        if (r.x < 2 || r.x + r.w > W - 2 || r.y < 2) score += 1000;
+        m.nodes.forEach(o => { const rr = (o.type === 'scene' ? o.mag : 9) + 2; if (hitRect(r, { x: o.x - rr, y: o.y - rr, w: rr * 2, h: rr * 2 })) score += 200; });
+        boxes.forEach(b => { if (hitRect(r, b)) score += 200; });
+        segs.forEach(sg => { if (segHitsRect(sg, r)) score += 6; });
+        if (score < pickScore) { pickScore = score; pick = { x, y, r }; }
+      });
+      boxes.push(pick.r);
+      t.setAttribute('x', (pick.x).toFixed(1));
+      t.setAttribute('y', (pick.y + h * 0.78).toFixed(1));
+    });
+    // 이름이 아래로 넘치면 높이를 늘린다
+    const bottom = Math.max(H, ...boxes.map(b => b.y + b.h + 8));
+    if (bottom > H) { svgEl.setAttribute('height', Math.ceil(bottom)); svgEl.setAttribute('viewBox', `0 0 ${W} ${Math.ceil(bottom)}`); }
+
+    // 머리말 — 누구의 루트인지, 분기와 엔딩 수
     const bad = m.count.bad || 0;
     const other = m.ends.length - bad;
-    const parts = [`분기 ${m.count.choice}`,
-      `엔딩 ${m.ends.length}` + (m.ends.length && !other ? ' (모두 BAD END)' : other ? ` (BAD END ${bad} · 그 밖 ${other})` : '')];
+    const ends = `엔딩 ${m.ends.length}` + (m.ends.length && !other ? ' (모두 BAD END)'
+      : other ? ` (${[bad ? `BAD END ${bad}` : '', m.count.normal ? `NORMAL END ${m.count.normal}` : '', m.count.true ? `TRUE END ${m.count.true}` : ''].filter(Boolean).join(' · ')})` : '');
     $('#routeTitle').textContent = rtChapter.title || '';
-    $('#routeNote').textContent = parts.join(' · ') + '. ' +
-      (m.next ? `끝까지 살아남으면 ${m.nextC ? m.nextC.title : '다음 막'}으로 이어진다. ` : '') +
+    $('#routeLatin').textContent = (rtChapter.sub && String(rtChapter.sub).trim()) || 'Route Chart';
+    $('#routeNote').textContent =
+      (rtChapter.lead ? `${rtChapter.lead}의 루트. ` : '') +
+      `분기 ${m.count.choice} · ${ends}. ` +
+      (m.next ? `끝까지 가면 ${m.nextC ? m.nextC.title : '다음 막'}으로 이어진다. ` : '') +
       '공개되지 않은 갈래는 번호로만 적혀 있다.';
 
     // 화면 읽기 프로그램용 — 같은 지도를 순서 있는 목록으로
