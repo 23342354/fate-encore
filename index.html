@@ -521,6 +521,29 @@
       <div class="route__map" id="routeMap" tabindex="0" aria-label="루트 지도"></div>
       <ol class="sr-only" id="routeList"></ol>
     </div>
+    <!-- 엔딩 카드 — 차트의 엔딩 별을 누르면 창 안에서 올라온다 -->
+    <section class="route__ending" id="routeEnding" aria-labelledby="endTitle" hidden>
+      <div class="end-bar">
+        <button class="end-back" type="button" id="endBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>루트 차트</button>
+        <span class="end-count" id="endCount" aria-label="엔딩 순서"></span>
+      </div>
+      <article class="end-card">
+        <span class="end-card__tape" aria-hidden="true"></span>
+        <header class="end-card__head">
+          <p class="end-card__kicker"><span id="endKicker"></span><i id="endRoute"></i></p>
+          <h3 class="end-card__title" id="endTitle"></h3>
+        </header>
+        <div class="end-card__text" id="endText"></div>
+        <footer class="end-card__foot">
+          <p class="end-card__meta" id="endMeta"></p>
+          <span class="end-card__stamp" id="endStamp" aria-hidden="true"></span>
+        </footer>
+      </article>
+      <nav class="end-nav" aria-label="다른 엔딩">
+        <button class="end-nav__btn" type="button" id="endPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span><small>이전</small><b id="endPrevName"></b></span></button>
+        <button class="end-nav__btn end-nav__btn--next" type="button" id="endNext"><span><small>다음</small><b id="endNextName"></b></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </nav>
+    </section>
   </div>
 </div>
 

@@ -1225,7 +1225,7 @@
   const rtMap   = $('#routeMap');
   const rtList  = $('#routeList');
   const rtClose = $('#routeClose');
-  let rtChapter = null, rtFocus = null, rtRaf = 0;
+  let rtChapter = null, rtFocus = null, rtRaf = 0, rtEnds = [], endAt = -1;
   const STAR = 'M0-8 1.9-1.9 8 0 1.9 1.9 0 8-1.9 1.9-8 0-1.9-1.9z';
   const END_NAME = { bad: 'BAD END', normal: 'NORMAL END', true: 'TRUE END' };
 
@@ -1249,7 +1249,8 @@
           else label = `${END_NAME[kind] || 'END'} ${pad2(count[kind])}`;
         }
       }
-      const node = { type, kind, label, col, row, spine, parent };
+      const node = { type, kind, label, col, row, spine, parent,
+        title: n.title ? String(n.title) : '', text: n.text || '' };
       nodes.push(node);
       return node;
     };
@@ -1280,7 +1281,12 @@
 
   function nodeSVG(n, d) {
     const t = `<title>${esc(n.label || '장면')}</title>`;
-    const g = s => `<g class="rc-node" style="--d:${d}ms" transform="translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})">${t}${s}</g>`;
+    const pos = `transform="translate(${n.x.toFixed(1)} ${n.y.toFixed(1)})"`;
+    // 엔딩 별 — 누르면 엔딩 카드. 손가락으로도 누르기 쉽게 보이지 않는 넓은 원을 깐다
+    const isEnd = n.endIndex != null;
+    const g = isEnd
+      ? s => `<g class="rc-node rc-node--end${n.title ? ' is-known' : ''}" style="--d:${d}ms" ${pos} data-end="${n.endIndex}" tabindex="0" role="button" aria-label="${esc(n.label)}${n.title ? ` — ${esc(n.title)}` : ' — 미공개'}"><circle class="rc-hit" r="20"/>${s}</g>`
+      : s => `<g class="rc-node" style="--d:${d}ms" ${pos} aria-hidden="true">${t}${s}</g>`;
     if (n.type === 'start')  return g('<circle class="rc-start" r="7"/><circle class="rc-scene" r="3"/>');
     if (n.type === 'choice') return g('<path class="rc-choice" d="M0-8 8 0 0 8-8 0z"/>');
     if (n.type === 'end') {
@@ -1405,9 +1411,11 @@
     }
     const edges = m.edges.map(e =>
       `<line class="rc-edge${e.branch ? ' rc-edge--branch' : ''}" x1="${e.a.x.toFixed(1)}" y1="${e.a.y.toFixed(1)}" x2="${e.b.x.toFixed(1)}" y2="${e.b.y.toFixed(1)}"/>`).join('');
+    m.ends.forEach((n, i) => { n.endIndex = i; });
+    rtEnds = m.ends;
     const nodes = m.nodes.map(n => nodeSVG(n, n.row * 45 + Math.abs(n.col) * 60)).join('');
-    rtMap.innerHTML = `<svg class="rc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">
-      ${dust}${edges}${nodes}<g class="rc-labels"></g></svg>`;
+    rtMap.innerHTML = `<svg class="rc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="group" aria-label="루트 지도 — 엔딩 별을 누르면 엔딩 카드가 열린다" focusable="false">
+      <g aria-hidden="true">${dust}${edges}</g>${nodes}<g class="rc-labels" aria-hidden="true"></g></svg>`;
 
     // 3) 이름 — 별 둘레 여덟 자리 가운데 다른 별 · 이름 · 선과 가장 덜 부딪히는 곳에 둔다
     const svgEl = rtMap.querySelector('svg');
@@ -1427,6 +1435,7 @@
       const t = document.createElementNS(NS, 'text');
       t.setAttribute('class', ['rc-label', n.type === 'end' ? 'rc-label--' + n.kind : '', n.type === 'choice' ? 'rc-label--choice' : ''].join(' ').trim());
       t.textContent = n.label;
+      if (n.endIndex != null) { t.dataset.end = n.endIndex; t.classList.add('rc-label--link'); if (n.title) t.classList.add('is-known'); }
       layer.appendChild(t);
       const bb = t.getBBox();
       const w = bb.width, h = bb.height || 14;
@@ -1471,7 +1480,7 @@
       (rtChapter.lead ? `${rtChapter.lead}의 루트. ` : '') +
       `분기 ${m.count.choice} · ${ends}. ` +
       (m.next ? `끝까지 가면 ${m.nextC ? m.nextC.title : '다음 막'}으로 이어진다. ` : '') +
-      '공개되지 않은 갈래는 번호로만 적혀 있다.';
+      '공개되지 않은 갈래는 번호로만 적혀 있다. 엔딩 별을 누르면 그 엔딩으로 들어간다.';
 
     // 화면 읽기 프로그램용 — 같은 지도를 순서 있는 목록으로
     const say = n => n.type === 'scene' ? (n.label || '장면') : n.label;
@@ -1480,6 +1489,77 @@
       return `<li>${esc(say(n))}${br.length ? ` — 갈래: ${br.map(b => esc(b)).join(' / ')}` : ''}</li>`;
     }).join('');
   }
+
+  /* ── 엔딩 카드 ───────────────────────────────────────────
+     차트의 엔딩 별을 누르면 루트 창 안에서 카드가 올라온다. 이전/다음으로 엔딩을 넘긴다.
+     title · text 가 없는 엔딩은 공개되지 않았다고 정직하게 보여 준다. */
+  const endBox = $('#routeEnding');
+  const endBack = $('#endBack');
+  const KIND_NAME = { bad: 'BAD END', normal: 'NORMAL END', true: 'TRUE END' };
+  function rootChoice(n) { let r = n; while (r && !r.spine) r = r.parent; return r; }
+  function paintEnding() {
+    const n = rtEnds[endAt];
+    if (!n) return;
+    const known = !!n.title;
+    const kindName = KIND_NAME[n.kind] || 'END';
+    endBox.dataset.kind = n.kind;
+    endBox.classList.toggle('is-sealed', !known);
+    $('#endKicker').textContent = n.label;
+    $('#endRoute').textContent = (rtChapter.sub && String(rtChapter.sub).trim()) || rtChapter.title || '';
+    $('#endTitle').textContent = known ? n.title : '아직 공개되지 않은 엔딩';
+    const paras = Array.isArray(n.text) ? n.text : (n.text ? [n.text] : []);
+    $('#endText').innerHTML = known && paras.length
+      ? paras.map(t => `<p>${rich(String(t))}</p>`).join('')
+      : `<p class="is-empty">${known ? '—' : '이 엔딩의 내용은 공개 전이다. 별의 자리만 먼저 적어 둔다.'}</p>`;
+    $('#endStamp').textContent = known ? kindName : '미공개';
+    const root = rootChoice(n);
+    $('#endMeta').textContent = n.spine
+      ? `${rtChapter.title} · 본편 줄기의 끝`
+      : `${rtChapter.title} · ${root && root.label ? root.label : '분기'}에서 갈라진 엔딩`;
+    const pad = v => String(v).padStart(2, '0');
+    $('#endCount').textContent = `${pad(endAt + 1)} / ${pad(rtEnds.length)}`;
+    const prev = rtEnds[endAt - 1], next = rtEnds[endAt + 1];
+    $('#endPrev').disabled = !prev; $('#endNext').disabled = !next;
+    $('#endPrevName').textContent = prev ? prev.label : '';
+    $('#endNextName').textContent = next ? next.label : '';
+    // 카드가 새로 놓이는 연출 — 넘길 때마다 다시
+    const card = endBox.querySelector('.end-card');
+    card.classList.remove('is-in'); void card.offsetWidth; card.classList.add('is-in');
+    endBox.scrollTop = 0;
+  }
+  function openEnding(i) {
+    if (!rtEnds[i]) return;
+    endAt = i;
+    // 제목줄 바로 아래부터 창을 덮는다 — 뒤의 차트는 스크롤 자리를 그대로 지킨다
+    endBox.style.top = rt.querySelector('.pwin__bar').offsetHeight + 'px';
+    endBox.hidden = false;
+    rt.classList.add('is-ending');
+    paintEnding();
+    endBack.focus({ preventScroll: true });
+  }
+  function closeEnding() {
+    if (endBox.hidden) return;
+    const i = endAt;
+    endBox.hidden = true;
+    rt.classList.remove('is-ending');
+    endAt = -1;
+    const star = rtMap.querySelector(`.rc-node--end[data-end="${i}"]`);
+    if (star) star.focus({ preventScroll: false });
+  }
+  endBack.addEventListener('click', closeEnding);
+  $('#endPrev').addEventListener('click', () => { if (endAt > 0) { endAt--; paintEnding(); } });
+  $('#endNext').addEventListener('click', () => { if (endAt < rtEnds.length - 1) { endAt++; paintEnding(); } });
+  rtMap.addEventListener('click', e => {
+    const hit = e.target.closest('[data-end]');
+    if (hit) openEnding(Number(hit.dataset.end));
+  });
+  rtMap.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const hit = e.target.closest && e.target.closest('.rc-node--end');
+    if (!hit) return;
+    e.preventDefault();
+    openEnding(Number(hit.dataset.end));
+  });
 
   function openRoute(c) {
     if (rt.hidden) rtFocus = document.activeElement;
@@ -1491,6 +1571,7 @@
     rtClose.focus();
   }
   function closeRoute() {
+    endBox.hidden = true; rt.classList.remove('is-ending'); endAt = -1;
     rt.hidden = true;
     rtChapter = null;
     if (rtFocus && rtFocus.focus) rtFocus.focus();
@@ -1731,9 +1812,15 @@
     }
     // 루트 차트 — Esc 로 닫고, Tab 은 창 안(닫기 · 지도)에서만 돈다
     if (!rt.hidden) {
-      if (e.key === 'Escape') { closeRoute(); return; }
+      if (e.key === 'Escape') { endBox.hidden ? closeRoute() : closeEnding(); return; }
+      if (!endBox.hidden && (e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !(e.target.closest && e.target.closest('input,textarea'))) {
+        (e.key === 'ArrowLeft' ? $('#endPrev') : $('#endNext')).click();
+        return;
+      }
       if (e.key === 'Tab') {
-        const f = [rtClose, rtMap];
+        const scope = endBox.hidden ? rt : endBox;
+        const f = [rtClose, ...scope.querySelectorAll('button:not([disabled]), [tabindex="0"]')]
+          .filter((el, k, a) => a.indexOf(el) === k && el.getClientRects().length && !el.closest('[hidden]'));
         const i = f.indexOf(document.activeElement);
         e.preventDefault();
         f[(i + (e.shiftKey ? f.length - 1 : 1) + f.length) % f.length].focus();
