@@ -1004,7 +1004,8 @@ button.cwin--master:active{box-shadow:3px 3px 0 var(--ink)}
 .cwin--master.cwin--sealed .win__bar,.cwin--master.cwin--sealed .cwin__no{background:#8E9AA0}
 .cwin--master.cwin--sealed .cwin__kicker{color:#7B878D}
 .idc__stamp{
-  position:absolute;right:1.2rem;top:44%;padding:.15rem .7rem;
+  /* 바코드 위에 찍는다 — 가운데 높이에 두면 폰에서 Class 값(SABER 등)을 덮었다 */
+  position:absolute;right:1.2rem;bottom:3rem;padding:.15rem .7rem;
   font-family:var(--main);font-size:1.1rem;font-weight:600;letter-spacing:.3em;
   color:rgba(150,40,40,.72);border:2.5px solid rgba(150,40,40,.62);border-radius:.25rem;
   transform:rotate(-12deg);pointer-events:none;
@@ -1198,6 +1199,11 @@ button.chapter:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--in
 .newsletter__input::placeholder{color:rgba(var(--text-rgb),.5)}
 .newsletter__input:focus{border-color:var(--accent-strong);outline:none;box-shadow:0 0 0 2px rgba(var(--glow),.35)}
 .newsletter__msg{flex:1 1 100%;margin:0;min-height:1.5em;font-size:.85rem;line-height:1.6;color:var(--voice)}
+/* 오류는 Signal Red 를 선으로만 — 크림 위 붉은 글자는 대비가 4.5:1 에 못 미친다 */
+.newsletter__msg.is-error{color:var(--color-text);padding-left:.6rem;border-left:2px solid var(--color-danger)}
+.newsletter__msg.is-ok{padding-left:.6rem;border-left:2px solid var(--color-primary)}
+.newsletter__input[aria-invalid="true"]{border-bottom-color:var(--color-danger)}
+.newsletter__form[aria-busy="true"] [type="submit"]{opacity:.6;cursor:progress}
 .fan{margin:0 0 .6rem;font-size:.84rem;line-height:1.8;color:var(--text-dim)}
 .fan--meta{margin:0;font-size:.78rem}
 
