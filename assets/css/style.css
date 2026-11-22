@@ -3880,3 +3880,109 @@ html[data-screen="home"].bgm-error #btnBgm .chip__label{color:#FF9C92}
 .route__ending:not([hidden]){display:flex;flex-direction:column}
 .route__ending .end-card{width:100%;max-width:32rem;margin:auto auto 0;flex:none}
 .route__ending .end-nav{width:100%;max-width:32rem;margin:1.1rem auto auto;flex:none}
+
+/* ════════════════════════════════════════════════════════════════
+   스토리 화면 다시 짜기 — 빈 여백 없이 화면 높이를 채운다
+   위: 밤하늘 사진 띠의 서곡 / 아래: 남은 높이를 다 쓰는 네 막(작은 별자리 칸)
+   ════════════════════════════════════════════════════════════════ */
+#s-story:not([hidden]){display:flex;flex-direction:column}
+#s-story .screen__head{width:100%;flex:none}
+#s-story .chapters{
+  flex:1 0 auto;width:100%;   /* 남는 높이는 채우되, 내용보다 작아지지는 않는다(낮은 화면은 스크롤) */
+  grid-template-rows:auto minmax(15rem,1fr);gap:clamp(.45rem,1.6vw,.8rem);
+  align-content:stretch;
+}
+#s-story .chapters > li{display:flex}
+#s-story .chapters > li > .chapter{flex:1}
+
+/* ── 서곡 — 밤으로 물든 방, 초대장 사진 위 은빛 글자 ── */
+.chapter--prologue{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:clamp(6.2rem,17vh,9rem);padding:1rem clamp(1rem,3.5vw,1.6rem);
+  color:var(--color-ink-on-night);background:var(--color-night);
+  border-radius:.35rem;box-shadow:var(--paper-shadow),inset 0 0 0 1px rgba(201,167,94,.55);
+}
+.prologue__bg{
+  position:absolute;inset:0;z-index:-1;
+  background:
+    linear-gradient(90deg,rgba(8,18,54,.94) 0%,rgba(8,18,54,.72) 45%,rgba(8,18,54,.35) 100%),
+    url("../img/story/room-letter.jpg") center 40%/cover no-repeat;
+  transition:transform .6s cubic-bezier(.2,.8,.3,1);
+}
+.prologue__bg::after{   /* 별가루 */
+  content:"";position:absolute;inset:0;background:url("../img/deco/stardust.svg") center/600px auto repeat;opacity:.55;
+}
+button.chapter--prologue:hover{transform:translateY(-2px);box-shadow:var(--paper-shadow),inset 0 0 0 1px rgba(201,167,94,.8),0 0 1.6rem -.4rem rgba(58,104,232,.55)}
+button.chapter--prologue:hover .prologue__bg{transform:scale(1.04)}
+.chapter--prologue .chapter__title{color:#fff;font-size:clamp(1.2rem,3.6vw,1.5rem)}
+.chapter--prologue .chapter__sub{color:rgba(233,238,250,.78)}
+.chapter--prologue .chapter__go{color:var(--color-accent-soft);letter-spacing:.06em}
+.prologue__kicker{
+  font-family:var(--serif);font-size:clamp(.62rem,1.8vw,.74rem);letter-spacing:.2em;text-transform:uppercase;
+  display:block;color:var(--color-glow);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.chapter--prologue.is-clear .chapter__title::after{background:transparent;border:1px solid var(--color-accent-soft);color:var(--color-accent-soft)}
+.chapter--prologue:focus-visible{outline:2px solid var(--pen);outline-offset:3px}
+
+/* ── 막 칸 — 위에서 아래로: Act 번호 · 제목 · 작은 별자리 · 루트 이름 · 보기 ── */
+#s-story .chapter--act{
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:.35rem;
+  padding:clamp(.8rem,2.4vw,1.2rem) clamp(.3rem,1.4vw,.9rem) clamp(.7rem,2vw,1rem);
+  text-align:center;border-radius:.35rem;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 45%,rgba(35,80,174,.07),transparent 70%),
+    var(--note);
+}
+#s-story button.chapter--act{box-shadow:var(--paper-shadow),inset 0 0 0 1px rgba(201,167,94,.5)}
+#s-story button.chapter--act::before{   /* 위 가장자리 금실 바느질 */
+  content:"";position:absolute;left:12%;right:12%;top:.4rem;border-top:1px dashed rgba(201,167,94,.8);
+}
+#s-story .chapter--locked{background:rgba(242,237,225,.55);box-shadow:inset 0 0 0 1px rgba(20,47,114,.14)}
+#s-story .chapter--locked::after{   /* 점선 테두리 */
+  content:"";position:absolute;inset:.3rem;border:1px dashed rgba(20,47,114,.28);border-radius:.25rem;pointer-events:none;
+}
+.act__head{display:grid;justify-items:center;gap:.05rem}
+.act__roman{font-family:var(--display);font-size:clamp(.66rem,1.9vw,.8rem);letter-spacing:.28em;color:var(--color-primary);text-transform:uppercase;margin-right:-.28em}
+.chapter--locked .act__roman{color:var(--text-dim)}
+.act__title{font-size:clamp(.92rem,2.7vw,1.15rem);white-space:nowrap}
+.act__sky{position:relative;flex:1;width:100%;min-height:4.5rem}
+/* 그림은 칸 높이를 정하지 않고, 칸이 남겨 준 자리만 채운다 */
+.act__sky svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.act__body{display:grid;justify-items:center;gap:.15rem;line-height:1.3}
+.act__lead{font-size:clamp(.62rem,1.8vw,.78rem);color:var(--text);word-break:keep-all}
+.act__count{font-family:var(--serif);font-size:clamp(.66rem,1.8vw,.8rem);letter-spacing:.06em;color:var(--text-dim)}
+#s-story .act__go{display:inline-flex;align-items:center;gap:.15rem;margin-top:.15rem;font-size:.8rem}
+#s-story .act__go svg{width:.9rem;height:.9rem;color:currentColor;display:inline}
+#s-story .chapter--locked .act__go svg{width:1.15rem;height:1.15rem;color:var(--text-dim)}
+
+/* 작은 별자리 */
+.ms-dust{fill:var(--pen)}
+.ms-edge{stroke:var(--pen);stroke-width:1.1;vector-effect:non-scaling-stroke;opacity:.8}
+.ms-edge--branch{stroke:var(--color-primary);stroke-dasharray:2 3;opacity:.6}
+.ms-star{fill:var(--color-primary)}
+.ms-choice{fill:var(--note);stroke:var(--pen);stroke-width:1;vector-effect:non-scaling-stroke}
+.ms-bad{fill:var(--note);stroke:var(--text-dim);stroke-width:1;stroke-dasharray:1.5 1.5;vector-effect:non-scaling-stroke}
+.ms-bad.is-known{stroke:var(--pen);stroke-dasharray:none}
+.ms-true{fill:var(--note);stroke:var(--gold);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.ms-sealed{fill:none;stroke:rgba(20,47,114,.42);stroke-width:1;stroke-dasharray:2 2;vector-effect:non-scaling-stroke}
+.ms-q{font-family:var(--display);font-size:26px;fill:rgba(20,47,114,.28)}
+button.chapter--act:hover .act__sky svg{filter:drop-shadow(0 0 .35rem rgba(58,104,232,.35))}
+
+/* 폰 — 칸이 좁으니 주인공 이름과 엔딩 수는 접는다 */
+@media (max-width:30rem){
+  #s-story .chapters{grid-template-rows:auto minmax(13rem,1fr)}
+  .act__lead,.act__count{display:none}
+  .chapter--prologue .chapter__no{width:2.1rem;height:2.1rem}
+}
+/* 낮은 가로 화면 — 막 칸 높이를 줄인다 */
+@media (max-height:30rem) and (orientation:landscape){
+  #s-story .chapters{grid-template-rows:auto minmax(11rem,1fr)}
+  .chapter--prologue{min-height:5rem}
+}
+/* 낮은 세로 화면(작은 폰) — 막 칸을 조금 줄여 스크롤 없이 */
+@media (max-height:40rem) and (orientation:portrait){
+  #s-story .chapters{grid-template-rows:auto minmax(9.5rem,1fr)}
+  .chapter--prologue{min-height:5.4rem;padding-block:.75rem}
+  #s-story .chapter--act{gap:.2rem;padding-block:.65rem .55rem}
+  .act__sky{min-height:2.6rem}
+}

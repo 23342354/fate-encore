@@ -1177,6 +1177,57 @@
   const chapterSeen = c => {
     try { return window.localStorage.getItem('fe-chapter-' + c.no) === 'clear'; } catch (e) { return false; }
   };
+  // 막 칸의 작은 별자리. 열린 루트는 줄기와 갈래를 잇고(내용 있는 엔딩은 진하게),
+  // 잠긴 막은 아직 이어지지 않은 별 몇 개만 흩어 둔다. 막 번호로 늘 같은 모양
+  function miniSky(c, i, open) {
+    const R = rng(4271 * (i + 1) + 77);
+    const W = 100, H = 200;
+    let svg = '';
+    for (let k = 0; k < 20; k++) {
+      svg += `<circle class="ms-dust" cx="${(R() * W).toFixed(1)}" cy="${(R() * H).toFixed(1)}" r="${(0.5 + R() * 0.8).toFixed(2)}" opacity="${(0.25 + R() * 0.5).toFixed(2)}"/>`;
+    }
+    if (!open || !hasRoute(c)) {
+      const pts = [];
+      for (let k = 0; k < 7; k++) pts.push([14 + R() * 72, 20 + k * 26 + (R() - 0.5) * 14]);
+      { const xs = pts.map(q => q[0]); const sh = 50 - (Math.min(...xs) + Math.max(...xs)) / 2; pts.forEach(q => { q[0] += sh; }); }
+      pts.forEach(([x, y]) => { svg += `<circle class="ms-sealed" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(2.4 + R() * 2.2).toFixed(1)}"/>`; });
+      svg += `<text class="ms-q" x="50" y="${H / 2 + 9}" text-anchor="middle">?</text>`;
+      return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" focusable="false">${svg}</svg>`;
+    }
+    const m = routeModel(c);
+    const spine = m.nodes.filter(n => n.spine);
+    const step = (H - 24) / Math.max(1, spine.length - 1);
+    let x = 50, h = (R() - 0.5) * 0.8;
+    spine.forEach((n, k) => {
+      if (k) { h = Math.max(-1.1, Math.min(1.1, h + (R() - 0.5) * 1.8)); x = Math.max(24, Math.min(76, x + Math.sin(h) * 24)); }
+      n.mx = x; n.my = 12 + k * step;
+    });
+    m.nodes.filter(n => !n.spine).forEach(n => {
+      const side = Math.sign(n.col), p = n.parent;
+      n.mx = Math.max(6, Math.min(94, p.mx + side * (13 + R() * 12)));
+      n.my = p.my + (R() * 18 - 5);
+    });
+    // 별자리 전체를 칸 가운데로 — 걷다 보면 한쪽으로 쏠리므로, 둘러싼 상자의 가운데를 칸 가운데에 맞춘다.
+    // 너무 넓거나 길면 같은 비율로 줄여 여백 안에 넣는다
+    {
+      const xs = m.nodes.map(n => n.mx), ys = m.nodes.map(n => n.my);
+      const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+      const k = Math.min(1, (W - 16) / Math.max(1, x1 - x0), (H - 20) / Math.max(1, y1 - y0));
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      m.nodes.forEach(n => { n.mx = W / 2 + (n.mx - cx) * k; n.my = H / 2 + (n.my - cy) * k; });
+    }
+    const line = (a, b, cls) => `<line class="${cls}" x1="${a.mx.toFixed(1)}" y1="${a.my.toFixed(1)}" x2="${b.mx.toFixed(1)}" y2="${b.my.toFixed(1)}"/>`;
+    m.edges.forEach(e => { svg += line(e.a, e.b, e.branch ? 'ms-edge ms-edge--branch' : 'ms-edge'); });
+    m.nodes.forEach(n => {
+      const cx = n.mx.toFixed(1), cy = n.my.toFixed(1);
+      if (n.type === 'end' && n.kind === 'bad') svg += `<circle class="ms-bad${n.title ? ' is-known' : ''}" cx="${cx}" cy="${cy}" r="3.4"/>`;
+      else if (n.type === 'end') svg += `<path class="ms-true" d="${STAR}" transform="translate(${cx} ${cy}) scale(.75)"/>`;
+      else if (n.type === 'choice') svg += `<path class="ms-choice" d="M0-4 4 0 0 4-4 0z" transform="translate(${cx} ${cy})"/>`;
+      else svg += `<circle class="ms-star" cx="${cx}" cy="${cy}" r="${(1.7 + R() * 1.5).toFixed(1)}"/>`;
+    });
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" focusable="false">${svg}</svg>`;
+  }
+
   function paintChapters() {
     const list = $('#chapters');
     if (!list) return;
@@ -1185,20 +1236,28 @@
       const li = document.createElement('li');
       li.dataset.chapter = String(i);
       li.className = 'chapters__act';
-      const no    = `<span class="chapter__no"><span>${esc(String(c.no || i + 1))}</span></span>`;
+      const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][i] || String(i + 1);
       const title = esc(String(c.title || `제${i + 1}막`));
+      const head = `<span class="act__head"><span class="act__roman" aria-hidden="true">Act ${roman}</span><span class="chapter__title act__title">${title}</span></span>`;
       if (isOpen(c)) {
         const seen = !hasRoute(c) && chapterSeen(c);
         const sub = (c.sub && String(c.sub).trim()) ? esc(String(c.sub)) : '—';
-        const lead = c.lead ? `${esc(String(c.lead))} 루트` : '';
-        li.innerHTML = `<button class="chapter chapter--act${seen ? ' is-clear' : ''}" type="button"${lead ? ` aria-label="${title} — ${sub}, ${lead}"` : ''}>${no}
-          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub chapter__sub--name">${sub}</span></span>
-          <span class="chapter__go">${seen ? '다시 보기' : '보기'}</span></button>`;
+        const lead = c.lead ? esc(String(c.lead)) : '';
+        let count = '';
+        if (hasRoute(c)) {
+          const ends = routeModel(c).ends;
+          count = `<span class="act__count">엔딩 ${ends.filter(n => n.title).length} / ${ends.length}</span>`;
+        }
+        li.innerHTML = `<button class="chapter chapter--act${seen ? ' is-clear' : ''}" type="button" aria-label="${title} — ${sub}${lead ? `, ${lead} 루트` : ''}">${head}
+          <span class="act__sky" aria-hidden="true">${miniSky(c, i, true)}</span>
+          <span class="chapter__body act__body"><span class="chapter__sub chapter__sub--name">${sub}</span>${lead ? `<span class="act__lead">${lead}</span>` : ''}${count}</span>
+          <span class="chapter__go act__go">${seen ? '다시 보기' : '보기'}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></span></button>`;
         li.firstElementChild.addEventListener('click', () => hasRoute(c) ? openRoute(c) : openPrologue(c));
       } else {
-        li.innerHTML = `<div class="chapter chapter--act chapter--locked">${no}
-          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">비공개</span></span>
-          <span class="chapter__go" role="img" aria-label="잠김">${LOCK_SVG}</span></div>`;
+        li.innerHTML = `<div class="chapter chapter--act chapter--locked" aria-label="${title} — 비공개">${head}
+          <span class="act__sky" aria-hidden="true">${miniSky(c, i, false)}</span>
+          <span class="chapter__body act__body"><span class="chapter__sub">비공개</span></span>
+          <span class="chapter__go act__go" role="img" aria-label="잠김">${LOCK_SVG}</span></div>`;
       }
       list.appendChild(li);
     });
@@ -1396,6 +1455,13 @@
       }
       put(n, best.x, best.y);
     });
+    // 별자리 전체를 창 가운데로 — 걷는 동안 한쪽으로 쏠린 만큼 가로로 되돌린다.
+    // 칸들은 이미 양옆 여백(PAD) 안에 있으니 가운데로 옮겨도 그 안에 머문다
+    {
+      const xs = m.nodes.map(n => n.x);
+      const shift = W / 2 - (Math.min(...xs) + Math.max(...xs)) / 2;
+      m.nodes.forEach(n => { n.x += shift; });
+    }
     // 별의 밝기 — 대부분 작고 어둡고, 몇 개만 크게
     m.nodes.forEach(n => { n.mag = 2.3 + Math.pow(R(), 2.2) * 3.6; });
     const H = Math.round(Math.max(...m.nodes.map(n => n.y)) + 56);
