@@ -756,7 +756,9 @@
   /* ── 7. 서곡 — 스토리 재생 ──────────────────────────
      스크립트는 prologue.js. 위에서부터 한 줄씩 실행한다.
      배경·연출을 기다리는 동안에는 눌러도 넘어가지 않는다. */
-  const SCRIPT = window.PROLOGUE || [];
+  // 지금 재생 중인 스크립트. 서곡이 기본이고, 열린 막을 누르면 그 막의 script 로 바뀐다
+  let SCRIPT = window.PROLOGUE || [];
+  let playing = null;       // null 이면 서곡, 아니면 CHAPTERS 의 한 줄
   const ASSETS = Object.assign({ bg: {}, sfx: {}, cg: {} }, window.PROLOGUE_ASSETS || {});
   const vnp      = $('#vnp');
   const vnpPage  = $('#vnpPage');
@@ -1118,7 +1120,11 @@
     vnp.classList.remove('is-holding', 'is-leaving');
   }
 
-  function openPrologue() {
+  // chapter 를 주면 그 막을, 없으면 서곡을 튼다
+  function openPrologue(chapter) {
+    playing = (chapter && Array.isArray(chapter.script)) ? chapter : null;
+    SCRIPT = playing ? playing.script : (window.PROLOGUE || []);
+    vnp.setAttribute('aria-label', playing ? playing.title : '서곡');
     vnpFocus = document.activeElement;
     resetPlayer();
     stopTyping();               // 로비 대사 타이핑은 멈춰 둔다
@@ -1145,15 +1151,67 @@
     $('#storyBadge').classList.toggle('is-clear', seen);
   }
   function finishPrologue() {
-    try { window.localStorage.setItem('fe-prologue', 'clear'); } catch (e) { /* 무시 */ }
+    const chapter = playing;
+    const key = chapter ? 'fe-chapter-' + chapter.no : 'fe-prologue';
+    try { window.localStorage.setItem(key, 'clear'); } catch (e) { /* 무시 */ }
     paintClear();
+    paintChapters();
     vnp.classList.add('is-leaving');
     window.setTimeout(() => {
       closePrologue();
-      go('summon');             // "소환에 관한 페이지를 펼친다" → 첫 플레이
+      // 서곡은 "소환에 관한 페이지를 펼친다" → 첫 플레이. 막은 스토리 목록으로 돌아온다
+      if (!chapter) { go('summon'); return; }
+      // 목록을 다시 그려 원래 버튼은 사라졌다 — 새로 그린 같은 막의 버튼으로 초점을 돌린다
+      const again = $(`#chapters li[data-chapter="${CHAPTERS.indexOf(chapter)}"] button`);
+      if (again) again.focus({ preventScroll: true });
     }, reduce ? 0 : 900);
   }
   paintClear();
+
+  // ── 막 목록 ── chapters.js 의 CHAPTERS 로 서곡 아래를 그린다
+  const CHAPTERS = Array.isArray(window.CHAPTERS) ? window.CHAPTERS : [];
+  const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  const isOpen = c => Array.isArray(c.script) && c.script.length > 0;
+  const chapterSeen = c => {
+    try { return window.localStorage.getItem('fe-chapter-' + c.no) === 'clear'; } catch (e) { return false; }
+  };
+  function paintChapters() {
+    const list = $('#chapters');
+    if (!list) return;
+    list.querySelectorAll('li[data-chapter]').forEach(li => li.remove());
+    CHAPTERS.forEach((c, i) => {
+      const li = document.createElement('li');
+      li.dataset.chapter = String(i);
+      const no    = `<span class="chapter__no"><span>${esc(String(c.no || i + 1))}</span></span>`;
+      const title = esc(String(c.title || `제${i + 1}막`));
+      if (isOpen(c)) {
+        const seen = chapterSeen(c);
+        const sub = (c.sub && String(c.sub).trim()) ? esc(String(c.sub)) : '—';
+        li.innerHTML = `<button class="chapter${seen ? ' is-clear' : ''}" type="button">${no}
+          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">${sub}</span></span>
+          <span class="chapter__go">${seen ? '다시 보기' : '보기'}</span></button>`;
+        li.firstElementChild.addEventListener('click', () => openPrologue(c));
+      } else {
+        li.innerHTML = `<div class="chapter chapter--locked">${no}
+          <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">비공개</span></span>
+          <span class="chapter__go" role="img" aria-label="잠김">${LOCK_SVG}</span></div>`;
+      }
+      list.appendChild(li);
+    });
+    // 화면 위 한 줄 설명도 공개 상태를 따라간다
+    const note = $('#storyNote');
+    if (note && CHAPTERS.length) {
+      const open = CHAPTERS.filter(isOpen).length;
+      const total = CHAPTERS.length;
+      const kn = n => ['', '한', '두', '세', '네', '다섯', '여섯', '일곱', '여덟', '아홉', '열'][n] || String(n);
+      note.textContent = open === 0
+        ? `서곡과 ${kn(total)} 개의 막. 서곡은 지금 볼 수 있고, ${kn(total)} 막은 아직 공개되지 않았다.`
+        : open === total
+          ? `서곡과 ${kn(total)} 개의 막. 모두 지금 볼 수 있다.`
+          : `서곡과 ${kn(total)} 개의 막. 서곡과 ${kn(open)} 막은 지금 볼 수 있고, 나머지 ${kn(total - open)} 막은 아직 공개되지 않았다.`;
+    }
+  }
+  paintChapters();
 
   vnp.addEventListener('click', e => {
     if (e.target.closest('.vnp__bar, .vnp__log')) return;
@@ -1397,20 +1455,50 @@
     if (!fx.hidden) closeFx();
   });
 
-  /* ── 10. 소식지 ──────────────────────────────────────── */
+  /* ── 10. 소식지 ────────────────────────────────────────
+     받는 곳의 주소를 NEWSLETTER_ENDPOINT 에 적으면 접수가 시작된다.
+     메일 주소를 email 이라는 이름의 폼 값으로 POST 한다(Formspree · Getform ·
+     Google Apps Script 웹 앱처럼 폼을 받는 곳이면 된다). 2xx 로 답하면 접수된 것으로 본다.
+     비워 두면 아직 받는 곳이 없다고 정직하게 알린다. */
+  const NEWSLETTER_ENDPOINT = '';
   const form = $('#notifyForm');
   const msg  = $('#notifyMsg');
-  form && form.addEventListener('submit', e => {
+  const say = (text, state) => {
+    msg.textContent = text;
+    msg.classList.toggle('is-error', state === 'error');
+    msg.classList.toggle('is-ok', state === 'ok');
+  };
+  form && form.addEventListener('submit', async e => {
     e.preventDefault();
-    const input = $('#notifyEmail');
-    const value = input.value.trim();
+    const input  = $('#notifyEmail');
+    const submit = form.querySelector('[type="submit"]');
+    const value  = input.value.trim();
     if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      msg.textContent = '메일 주소 형식을 확인해 주세요. 예: name@example.com';
+      say('메일 주소 형식을 확인해 주세요. 예: name@example.com', 'error');
+      input.setAttribute('aria-invalid', 'true');
       input.focus();
       return;
     }
-    // 아직 받는 곳이 없다. 연결되면 이 자리에 보내는 처리를 넣는다.
-    msg.textContent = '아직 소식지 서버가 연결되지 않았습니다. 공개 전에 이 자리에서 접수가 시작됩니다.';
-    input.value = '';
+    input.removeAttribute('aria-invalid');
+    if (!NEWSLETTER_ENDPOINT) {
+      say('아직 소식지 서버가 연결되지 않았습니다. 공개 전에 이 자리에서 접수가 시작됩니다.');
+      return;                   // 받는 곳이 없으니 적은 주소는 지우지 않고 둔다
+    }
+    submit.disabled = true;
+    form.setAttribute('aria-busy', 'true');
+    say('보내는 중…');
+    try {
+      const body = new FormData();
+      body.append('email', value);
+      const res = await fetch(NEWSLETTER_ENDPOINT, { method: 'POST', body, headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(String(res.status));
+      say('접수되었습니다. 공개 소식이 생기면 이 주소로 알려 드릴게요.', 'ok');
+      input.value = '';
+    } catch (err) {
+      say('지금은 접수하지 못했어요. 잠시 뒤 다시 눌러 주세요.', 'error');
+    } finally {
+      submit.disabled = false;
+      form.removeAttribute('aria-busy');
+    }
   });
 })();

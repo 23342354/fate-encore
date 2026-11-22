@@ -14,6 +14,7 @@ assets/img/seal-*.png   마스터 영주 그림
 assets/img/servant-*    서번트 그림 (전신 · 상반신 · 얼굴)
 assets/audio/bgm.mp3    배경음악 — One Last Wish Once More For All That Never Was / @5minutejamms
 assets/js/prologue.js   서곡 스크립트 · 배경/효과음/일러스트 넣는 곳
+assets/js/chapters.js   스토리의 막 목록 — 막을 열 곳
 assets/js/masters.js    마스터 설정 — 마스터 프로필을 고칠 곳
 assets/js/cast.js       캐릭터 설정 — 설정을 고칠 곳은 여기다
 assets/js/main.js       참전 명단 · 화면 전환 · 로비 대사 · 소환 · 프로필
@@ -227,9 +228,9 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 - 오스카 조로아스터 · 카르타필루스는 설정 탭이 비어 있다.
 - 마스터 넷은 이름과 짝만 있다. 나머지 설정은 `masters.js` 에 전부 빈칸이다.
 - 카르타필루스의 보구 『EGO』는 본문이 불명으로만 적혀 있다.
-- 스토리의 네 막이 모두 잠겨 있다. `index.html` 의 `.chapter--locked` 를 서곡처럼 `<button class="chapter">` 로 바꾸면 열린 막이 된다.
+- 스토리의 네 막이 모두 잠겨 있다. 막을 열려면 `assets/js/chapters.js` 의 그 줄에 `script`(서곡과 같은 꼴의 줄 배열)와 `sub`(부제)를 넣는다. 스토리 화면 위의 한 줄 설명도 공개 수에 맞춰 바뀌고, 끝까지 보면 CLEAR 가 붙는다(`fe-chapter-<번호>`).
 - 서곡은 붉은 문양 장면을 빼고 모든 배경에 그림이 들어가 있다. 나머지 배경 · 효과음 · 일러스트는 빈칸이라 임시 배경과 지문 자막으로 대신한다.
-- 소식지 입력란은 받는 곳이 없다. `assets/js/main.js` 의 소식지 처리 부분에 전송 코드를 넣으면 된다.
+- 소식지 입력란은 받는 곳이 없다. `assets/js/main.js` 의 `NEWSLETTER_ENDPOINT` 에 폼을 받는 주소(Formspree · Getform · Google Apps Script 웹 앱 등)를 적으면 `email` 값으로 POST 하고, 보내는 중 · 접수됨 · 실패를 따로 보여 준다. 비워 두면 지금처럼 '아직 연결되지 않았다' 고 알린다.
 - 초상은 클래스 상징을 넣은 아치와 카드다. 그림이 준비되면 `ROSTER` 의 `glyph` 자리에 `<img>` 를 넣으면 된다.
 - HUD 의 영주 3 은 장식이다. 소환에 재화가 들지 않는다.
 
