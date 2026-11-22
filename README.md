@@ -244,9 +244,10 @@ GitHub Pages 로 올라간다. 저장소 **Settings → Pages → Source: `main`
 | --- | --- |
 | 로고 | @utakimid |
 | BGM — One Last Wish Once More For All That Never Was | @5minutejamms |
+| 이치노세 류가 영주 | @BCPM2600 |
 | 오즈 누벨 영주 | @t66rjp_com |
 | 마키오카 모쿠렌 영주 | 자작 |
 
-사이트 안에서는 타이틀 하단, 정보 > 크레딧, 정보 > 안내에 표기된다. 오즈 누벨 영주는 마스터 프로필에도 붙는다. 출처를 바꾸거나 더하면 `index.html` 의 세 군데를 같이 고친다.
+사이트 안에서는 타이틀 하단, 정보 > 크레딧, 정보 > 안내에 표기된다. 이치노세 류가 · 오즈 누벨 영주는 마스터 프로필에도 붙는다. 출처를 바꾸거나 더하면 `index.html` 의 세 군데를 같이 고친다.
 
 - 배경음악 파일은 `assets/audio/bgm.mp3` 다. 같은 이름으로 덮어쓰면 곡이 바뀐다.

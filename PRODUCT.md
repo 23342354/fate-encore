@@ -44,7 +44,7 @@ web
 ## Evidence on Hand
 
 - 로고: `assets/img/logo.png` (@utakimid)
-- 영주 그림 4장: `assets/img/seal-ryuga.png`, `seal-mokuren.png`(자작), `seal-lilian.png`, `seal-oz.png`(@t66rjp_com)
+- 영주 그림 4장: `assets/img/seal-ryuga.png`(@BCPM2600), `seal-mokuren.png`(자작), `seal-lilian.png`, `seal-oz.png`(@t66rjp_com)
 - 서번트 그림: 도로시만 있음(`servant-dorothy.webp`, `-bust`, `-face`). 다른 서번트는 클래스 문양으로 대신한다.
 - 서곡 배경 사진: `assets/img/story/`(우키하 풍경 12장 포함). 붉은 문양 장면, 효과음, 일러스트(cg)는 비어 있다.
 - 배경음악: `assets/audio/bgm.mp3` (One Last Wish Once More For All That Never Was / @5minutejamms)

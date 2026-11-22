@@ -29,7 +29,7 @@
       art: 'assets/img/servant-dorothy.webp',        // 로비 아치 — 전신
       bust: 'assets/img/servant-dorothy-bust.webp',  // 프로필 — 상반신
       face: 'assets/img/servant-dorothy-face.webp',  // 캐스트 · 소환 카드 — 얼굴
-      masterGlyph: seal('assets/img/seal-ryuga.png'),
+      masterGlyph: seal('assets/img/seal-ryuga.png'), masterGlyphCredit: '@BCPM2600',
       line: '저를 기다린 사람은 없었어도 제가 기다린 사람들은 있었으니까요.',
       glyph: svg('<path d="M18 12 q22 20 0 40"/><path d="M18 12 L18 52"/><path d="M22 32 L50 32"/><path d="M44 26 l6 6 -6 6"/>') },
     { cls: 'LANCER' },
