@@ -495,6 +495,35 @@
   </div>
 </div>
 
+<!-- 루트 차트 — 열린 막을 누르면 그 막의 갈래와 엔딩 지도. 내용은 assets/js/chapters.js 의 route -->
+<div class="profile route" id="route" hidden>
+  <div class="profile__scrim" id="routeScrim"></div>
+  <div class="pwin route__win" role="dialog" aria-modal="true" aria-labelledby="routeTitle">
+    <div class="win__bar pwin__bar">
+      <span class="win__file">Route Chart</span>
+      <span class="pwin__ctl">
+        <button class="pwin__x" type="button" id="routeClose" aria-label="닫기"></button>
+      </span>
+    </div>
+    <div class="route__body">
+      <header class="route__head">
+        <h2 class="route__title" id="routeTitle">제1막</h2>
+        <p class="route__latin">Route Chart</p>
+        <p class="route__note" id="routeNote"></p>
+      </header>
+      <ul class="route__legend" aria-hidden="true">
+        <li><svg viewBox="-10 -10 20 20"><circle class="rc-scene" r="4.5"/></svg>장면</li>
+        <li><svg viewBox="-10 -10 20 20"><path class="rc-choice" d="M0-7 7 0 0 7-7 0z"/></svg>분기</li>
+        <li><svg viewBox="-10 -10 20 20"><circle class="rc-bad" r="6.5"/><path class="rc-bad-x" d="M-3-3 3 3M3-3-3 3"/></svg>BAD END</li>
+        <li><svg viewBox="-10 -10 20 20"><path class="rc-star" d="M0-8 1.9-1.9 8 0 1.9 1.9 0 8-1.9 1.9-8 0-1.9-1.9z"/></svg>엔딩</li>
+        <li><svg viewBox="-10 -10 20 20"><path class="rc-next" d="M-5-3 0 3 5-3"/></svg>다음 막</li>
+      </ul>
+      <div class="route__map" id="routeMap" tabindex="0" aria-label="루트 지도"></div>
+      <ol class="sr-only" id="routeList"></ol>
+    </div>
+  </div>
+</div>
+
 <script src="assets/js/cast.js" defer></script>
 <script src="assets/js/masters.js" defer></script>
 <script src="assets/js/prologue.js" defer></script>

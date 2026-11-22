@@ -3660,3 +3660,107 @@ html[data-screen="home"].bgm-error #btnBgm .chip__label{color:#FF9C92}
   .lb-ticket .lb-mini,.lb-mini{min-height:44px;align-content:center}
 }
 .lb .player{cursor:pointer}   /* 작은 재생 단추 대신 카세트 전체를 눌러도 된다 */
+
+/* ════════════════════════════════════════════════════════════════
+   스토리 — 제1~4막을 서곡 아래 가로 네 칸으로
+   ════════════════════════════════════════════════════════════════ */
+.chapters{grid-template-columns:repeat(4,minmax(0,1fr))}
+.chapters > li:not(.chapters__act){grid-column:1/-1}      /* 서곡은 한 줄을 다 쓴다 */
+.chapter--act{
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:.55rem;
+  height:100%;padding:1.15rem .45rem .95rem;text-align:center;
+}
+.chapter--act .chapter__no{margin:.25rem 0 .2rem}
+.chapter--act .chapter__body{justify-items:center;gap:.1rem}
+.chapter--act .chapter__title{font-size:clamp(.9rem,2.6vw,1.05rem);white-space:nowrap}
+.chapter--act .chapter__sub{font-size:clamp(.68rem,2vw,.8rem);line-height:1.35;word-break:keep-all}
+.chapter--act .chapter__go{margin-top:auto;font-size:.8rem}
+.chapter--act.is-clear .chapter__title::after{display:block;margin:.3rem auto 0;width:max-content}
+@media (max-width:30rem){
+  .chapters{gap:.45rem}
+  .chapter--act{padding:.9rem .2rem .75rem;gap:.4rem}
+  .chapter--act .chapter__no{width:2.1rem;height:2.1rem}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   루트 차트 — 막의 갈래와 엔딩 지도. 크림 노트 위에 별자리처럼
+   ════════════════════════════════════════════════════════════════ */
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.route__win{width:min(46rem,100%);height:min(48rem,92dvh)}
+.route__body{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  padding:clamp(.9rem,3vw,1.5rem) clamp(.9rem,3.5vw,1.8rem) 0;
+}
+.route__head{
+  display:grid;grid-template-columns:auto 1fr;align-items:baseline;column-gap:.7rem;
+  padding-bottom:.6rem;border-bottom:1.5px solid var(--pen);
+  box-shadow:0 3px 0 -1.5px var(--note),0 4px 0 -1.5px rgba(20,47,114,.45);   /* 굵은 선 + 가는 선 */
+}
+.route__title{
+  margin:0;display:inline-flex;align-items:center;gap:.45rem;
+  font-family:'Nanum Myeongjo',var(--main);font-weight:700;font-size:1.45rem;color:var(--pen);
+}
+.route__title::before{
+  content:"";width:.8rem;height:.8rem;background:var(--color-primary);
+  clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);
+}
+.route__latin{margin:0;font-family:var(--serif);font-style:italic;font-size:1.05rem;letter-spacing:.06em;color:var(--color-primary)}
+.route__note{grid-column:1/-1;margin:.45rem 0 0;font-size:.86rem;line-height:1.65;color:var(--text-dim);word-break:keep-all}
+.route__legend{
+  display:flex;flex-wrap:wrap;gap:.35rem 1rem;margin:.8rem 0 .2rem;padding:0;list-style:none;
+  font-size:.78rem;color:var(--text-dim);
+}
+.route__legend li{display:inline-flex;align-items:center;gap:.3rem}
+.route__legend svg{width:1.05rem;height:1.05rem;overflow:visible}
+.route__map{
+  flex:1;min-height:0;overflow:auto;margin:0 calc(-1 * clamp(.9rem,3.5vw,1.8rem));
+  padding:.4rem 0 1.2rem;
+  background:
+    radial-gradient(circle,rgba(20,47,114,.16) .9px,transparent 1.2px) 0 0/22px 22px;   /* 성도의 좌표 점 */
+  overscroll-behavior:contain;scrollbar-gutter:stable;
+}
+.route__map:focus-visible{outline:2px solid var(--pen);outline-offset:-4px}
+.rc{display:block;margin:0 auto;overflow:visible}
+
+/* 선 — 줄기는 잉크 실선, 갈래는 궤도 점선 */
+.rc-axis{stroke:rgba(20,47,114,.12);stroke-width:7;stroke-linecap:round}
+.rc-edge{stroke:var(--pen);stroke-width:1.6;stroke-linecap:round}
+.rc-edge--branch{stroke:var(--color-primary);stroke-width:1.1;stroke-dasharray:3 4;opacity:.8}
+
+/* 칸 */
+.rc-scene{fill:var(--color-primary)}
+.rc-start{fill:var(--note);stroke:var(--pen);stroke-width:1.5}
+.rc-choice{fill:var(--note);stroke:var(--pen);stroke-width:1.6;stroke-linejoin:round}
+.rc-bad{fill:var(--note);stroke:var(--text-dim);stroke-width:1.2;stroke-dasharray:2.2 2.2}
+.rc-bad-x{stroke:var(--text-dim);stroke-width:1.3;stroke-linecap:round;fill:none}
+.rc-star{fill:var(--color-primary);stroke:var(--pen);stroke-width:.6;stroke-linejoin:round}
+.rc-star--true{fill:var(--note);stroke:var(--gold);stroke-width:1.4}
+.rc-next{fill:none;stroke:var(--pen);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* 이름 — 종이색 테두리로 선 위에서도 읽힌다 */
+.rc-label{
+  font-family:var(--main);font-size:12px;fill:var(--text);
+  paint-order:stroke;stroke:var(--note);stroke-width:4px;stroke-linejoin:round;
+}
+.rc-label--choice{font-family:'Nanum Myeongjo',var(--main);font-weight:700;fill:var(--pen)}
+.rc-label--bad{font-family:var(--serif);font-size:11.5px;letter-spacing:.08em;fill:var(--text-dim)}
+.rc-label--normal,.rc-label--true{font-family:var(--serif);font-size:12px;letter-spacing:.08em;fill:var(--pen)}
+.rc-label--next{font-family:'Nanum Myeongjo',var(--main);font-weight:700;fill:var(--pen)}
+
+/* 등장 — 위에서부터 별이 하나씩 켜진다 */
+.rc-node{transform-box:fill-box;transform-origin:center;animation:rcIn .5s cubic-bezier(.2,.8,.3,1) both;animation-delay:var(--d,0ms)}
+.route.is-still .rc-node{animation:none}
+@keyframes rcIn{from{opacity:0;scale:.4}}
+@media (prefers-reduced-motion:reduce){.rc-node{animation:none}}
+@media (pointer:coarse){#routeClose{min-width:44px;min-height:44px}}
+/* 루트 차트 — 창이 내용(그림 폭)에 밀려 화면 밖으로 커지지 않게 */
+.route{grid-template-columns:minmax(0,1fr)}
+.route__win{min-width:0}
+/* 폰 · 낮은 화면 — 머리말까지 통째로 넘겨서 지도에 높이를 다 준다 */
+@media (max-width:40rem),(max-height:40rem){
+  .route__win{height:auto;max-height:calc(100dvh - 2 * clamp(.6rem,3.5vw,2.6rem))}
+  .route__body{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable}
+  .route__map{flex:none;overflow:visible;padding-bottom:1.6rem}
+  .route__note{font-size:.8rem;line-height:1.6}
+  .route__legend{gap:.25rem .8rem;font-size:.74rem}
+}

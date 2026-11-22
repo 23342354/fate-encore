@@ -1168,10 +1168,12 @@
   }
   paintClear();
 
-  // ── 막 목록 ── chapters.js 의 CHAPTERS 로 서곡 아래를 그린다
+  // ── 막 목록 ── chapters.js 의 CHAPTERS 로 서곡 아래 가로 네 칸을 그린다
   const CHAPTERS = Array.isArray(window.CHAPTERS) ? window.CHAPTERS : [];
   const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-  const isOpen = c => Array.isArray(c.script) && c.script.length > 0;
+  const hasRoute  = c => Array.isArray(c.route) && c.route.length > 0;
+  const hasScript = c => Array.isArray(c.script) && c.script.length > 0;
+  const isOpen = c => hasRoute(c) || hasScript(c);
   const chapterSeen = c => {
     try { return window.localStorage.getItem('fe-chapter-' + c.no) === 'clear'; } catch (e) { return false; }
   };
@@ -1182,17 +1184,18 @@
     CHAPTERS.forEach((c, i) => {
       const li = document.createElement('li');
       li.dataset.chapter = String(i);
+      li.className = 'chapters__act';
       const no    = `<span class="chapter__no"><span>${esc(String(c.no || i + 1))}</span></span>`;
       const title = esc(String(c.title || `제${i + 1}막`));
       if (isOpen(c)) {
-        const seen = chapterSeen(c);
+        const seen = !hasRoute(c) && chapterSeen(c);
         const sub = (c.sub && String(c.sub).trim()) ? esc(String(c.sub)) : '—';
-        li.innerHTML = `<button class="chapter${seen ? ' is-clear' : ''}" type="button">${no}
+        li.innerHTML = `<button class="chapter chapter--act${seen ? ' is-clear' : ''}" type="button">${no}
           <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">${sub}</span></span>
           <span class="chapter__go">${seen ? '다시 보기' : '보기'}</span></button>`;
-        li.firstElementChild.addEventListener('click', () => openPrologue(c));
+        li.firstElementChild.addEventListener('click', () => hasRoute(c) ? openRoute(c) : openPrologue(c));
       } else {
-        li.innerHTML = `<div class="chapter chapter--locked">${no}
+        li.innerHTML = `<div class="chapter chapter--act chapter--locked">${no}
           <span class="chapter__body"><span class="chapter__title">${title}</span><span class="chapter__sub">비공개</span></span>
           <span class="chapter__go" role="img" aria-label="잠김">${LOCK_SVG}</span></div>`;
       }
@@ -1211,6 +1214,152 @@
           : `서곡과 ${kn(total)} 개의 막. 서곡과 ${kn(open)} 막은 지금 볼 수 있고, 나머지 ${kn(total - open)} 막은 아직 공개되지 않았다.`;
     }
   }
+
+  /* ── 루트 차트 ──────────────────────────────────────────
+     위에서 아래로 흐르는 본편 줄기, 선택지마다 옆으로 뻗는 갈래.
+     별자리를 잇듯 그린다. 이름이 없는 칸은 번호로만 — 공개 전 내용은 지어내지 않는다. */
+  const rt      = $('#route');
+  const rtMap   = $('#routeMap');
+  const rtList  = $('#routeList');
+  const rtClose = $('#routeClose');
+  let rtChapter = null, rtFocus = null, rtRaf = 0;
+  const STAR = 'M0-8 1.9-1.9 8 0 1.9 1.9 0 8-1.9 1.9-8 0-1.9-1.9z';
+  const END_NAME = { bad: 'BAD END', normal: 'NORMAL END', true: 'TRUE END' };
+
+  // 데이터 → 칸(nodes)과 선(edges). 줄기는 0열, 갈래는 ±1열부터 옆으로
+  function routeModel(c) {
+    const nextC = CHAPTERS[CHAPTERS.indexOf(c) + 1];
+    const count = { choice: 0, bad: 0, normal: 0, true: 0 };
+    const nodes = [], edges = [];
+    let reach = 0;
+    const make = (n, col, row, spine) => {
+      const type = n.type || 'scene';
+      const kind = type === 'end' ? (n.kind || 'bad') : '';
+      if (type === 'choice') count.choice++;
+      if (type === 'end' && kind !== 'next') count[kind] = (count[kind] || 0) + 1;
+      let label = n.label ? String(n.label) : '';
+      if (!label) {
+        if (type === 'start')  label = '시작';
+        if (type === 'choice') label = `분기 ${count.choice}`;
+        if (type === 'end') {
+          if (kind === 'next') label = nextC ? `${nextC.title}으로` : '다음 막으로';
+          else if (kind === 'true') label = 'TRUE END';
+          else label = `${END_NAME[kind] || 'END'} ${pad2(count[kind])}`;
+        }
+      }
+      const node = { type, kind, label, col, row, spine };
+      nodes.push(node);
+      return node;
+    };
+    let prev = null;
+    c.route.forEach((n, row) => {
+      const node = make(n, 0, row, true);
+      if (prev) edges.push({ a: prev, b: node, branch: false });
+      if (node.type === 'choice' && Array.isArray(n.branches)) {
+        node.branches = [];
+        n.branches.slice(0, 2).forEach((br, k) => {
+          const side = k === 0 ? 1 : -1;
+          let p = node;
+          const chain = [];
+          (br || []).forEach((m, j) => {
+            const bn = make(m, side * (j + 1), row, false);
+            edges.push({ a: p, b: bn, branch: true });
+            chain.push(bn);
+            p = bn;
+          });
+          reach = Math.max(reach, chain.length);
+          node.branches.push(chain);
+        });
+      }
+      prev = node;
+    });
+    const ends = nodes.filter(n => n.type === 'end' && n.kind !== 'next');
+    return { nodes, edges, reach, rows: c.route.length, count, ends, next: nodes.some(n => n.kind === 'next'), nextC };
+  }
+
+  function nodeSVG(n, x, y, d) {
+    const t = `<title>${esc(n.label || '장면')}</title>`;
+    const g = s => `<g class="rc-node" style="--d:${d}ms" transform="translate(${x} ${y})">${t}${s}</g>`;
+    if (n.type === 'start')  return g('<circle class="rc-start" r="7"/><circle class="rc-scene" r="3"/>');
+    if (n.type === 'choice') return g('<path class="rc-choice" d="M0-8 8 0 0 8-8 0z"/>');
+    if (n.type === 'end') {
+      if (n.kind === 'bad')  return g('<circle class="rc-bad" r="7.5"/><path class="rc-bad-x" d="M-3.2-3.2 3.2 3.2M3.2-3.2-3.2 3.2"/>');
+      if (n.kind === 'next') return g('<circle class="rc-start" r="9"/><path class="rc-next" d="M-4.5-2 0 2.5 4.5-2"/>');
+      return g(`<path class="rc-star${n.kind === 'true' ? ' rc-star--true' : ''}" d="${STAR}" transform="scale(1.25)"/>`);
+    }
+    return g('<circle class="rc-scene" r="4.5"/>');
+  }
+
+  function renderRoute() {
+    if (!rtChapter) return;
+    const m = routeModel(rtChapter);
+    const cols = m.reach * 2 + 1;
+    const avail = Math.max(240, rtMap.clientWidth);
+    // 양 끝에 BAD END 이름 절반(약 34px)이 들어갈 자리를 남기고 칸 간격을 정한다.
+    // 320px 폰에서도 다섯 열이 창 안에 들어가도록 최소 46px
+    const EDGE = 68;
+    const COL = Math.max(46, Math.min(118, (avail - EDGE) / cols));
+    const ROW = 62;
+    const W = Math.max(avail - 1, Math.round(cols * COL + EDGE));
+    const H = Math.round((m.rows - 1) * ROW + 72);
+    const px = n => W / 2 + n.col * COL;
+    const py = n => 26 + n.row * ROW;
+    const edges = m.edges.map(e =>
+      `<line class="rc-edge${e.branch ? ' rc-edge--branch' : ''}" x1="${px(e.a)}" y1="${py(e.a)}" x2="${px(e.b)}" y2="${py(e.b)}"/>`).join('');
+    const nodes = m.nodes.map(n => nodeSVG(n, px(n), py(n), n.row * 45 + Math.abs(n.col) * 60)).join('');
+    const labels = m.nodes.filter(n => n.label).map(n => {
+      const cls = ['rc-label'];
+      if (n.type === 'end') cls.push('rc-label--' + n.kind);
+      if (n.type === 'choice') cls.push('rc-label--choice');
+      // 분기 이름은 마름모 위(옆은 갈래가 지나간다), 그 밖의 줄기 이름은 왼쪽, 갈래 끝의 이름은 칸 아래
+      if (n.type === 'choice') return `<text class="${cls.join(' ')}" x="${px(n)}" y="${py(n) - 14}" text-anchor="middle">${esc(n.label)}</text>`;
+      if (n.spine) return `<text class="${cls.join(' ')}" x="${px(n) - 15}" y="${py(n) + 4}" text-anchor="end">${esc(n.label)}</text>`;
+      return `<text class="${cls.join(' ')}" x="${px(n)}" y="${py(n) + 23}" text-anchor="middle">${esc(n.label)}</text>`;
+    }).join('');
+    rtMap.innerHTML = `<svg class="rc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true" focusable="false">
+      <line class="rc-axis" x1="${W / 2}" y1="6" x2="${W / 2}" y2="${H - 6}"/>${edges}${nodes}${labels}</svg>`;
+
+    // 머리말 — 엔딩 수와 분기 수
+    const bad = m.count.bad || 0;
+    const other = m.ends.length - bad;
+    const parts = [`분기 ${m.count.choice}`,
+      `엔딩 ${m.ends.length}` + (m.ends.length && !other ? ' (모두 BAD END)' : other ? ` (BAD END ${bad} · 그 밖 ${other})` : '')];
+    $('#routeTitle').textContent = rtChapter.title || '';
+    $('#routeNote').textContent = parts.join(' · ') + '. ' +
+      (m.next ? `끝까지 살아남으면 ${m.nextC ? m.nextC.title : '다음 막'}으로 이어진다. ` : '') +
+      '공개되지 않은 갈래는 번호로만 적혀 있다.';
+
+    // 화면 읽기 프로그램용 — 같은 지도를 순서 있는 목록으로
+    const say = n => n.type === 'scene' ? (n.label || '장면') : n.label;
+    rtList.innerHTML = m.nodes.filter(n => n.spine).map(n => {
+      const br = (n.branches || []).map(ch => ch.map(say).join(' → ')).filter(Boolean);
+      return `<li>${esc(say(n))}${br.length ? ` — 갈래: ${br.map(b => esc(b)).join(' / ')}` : ''}</li>`;
+    }).join('');
+  }
+
+  function openRoute(c) {
+    if (rt.hidden) rtFocus = document.activeElement;
+    rtChapter = c;
+    rt.classList.remove('is-still');
+    rt.hidden = false;
+    rtMap.scrollTop = 0;
+    renderRoute();
+    rtClose.focus();
+  }
+  function closeRoute() {
+    rt.hidden = true;
+    rtChapter = null;
+    if (rtFocus && rtFocus.focus) rtFocus.focus();
+  }
+  rtClose.addEventListener('click', closeRoute);
+  $('#routeScrim').addEventListener('click', closeRoute);
+  // 창 크기가 바뀌면 다시 그린다. 이때는 등장 연출 없이
+  window.addEventListener('resize', () => {
+    if (rt.hidden) return;
+    cancelAnimationFrame(rtRaf);
+    rtRaf = requestAnimationFrame(() => { rt.classList.add('is-still'); renderRoute(); });
+  });
+
   paintChapters();
 
   vnp.addEventListener('click', e => {
@@ -1433,6 +1582,17 @@
       if (e.target.closest && e.target.closest('.vnp__bar')) return;   // 버튼 위에서는 버튼이 받는다
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight' || e.key === 'ArrowDown') {
         e.preventDefault(); vnpAdvance();
+      }
+      return;
+    }
+    // 루트 차트 — Esc 로 닫고, Tab 은 창 안(닫기 · 지도)에서만 돈다
+    if (!rt.hidden) {
+      if (e.key === 'Escape') { closeRoute(); return; }
+      if (e.key === 'Tab') {
+        const f = [rtClose, rtMap];
+        const i = f.indexOf(document.activeElement);
+        e.preventDefault();
+        f[(i + (e.shiftKey ? f.length - 1 : 1) + f.length) % f.length].focus();
       }
       return;
     }
